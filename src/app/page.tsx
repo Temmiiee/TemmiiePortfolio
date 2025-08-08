@@ -150,6 +150,9 @@ export default function Home() {
         </header>
         
         <div className="grid md:grid-cols-2 gap-12 items-start">
+          <div>
+            <ContactForm />
+          </div>
           <div className="space-y-6">
             <h3 className="font-headline text-2xl font-bold">Autres moyens de contact</h3>
             <p className="text-muted-foreground">
@@ -175,9 +178,6 @@ export default function Home() {
                 </Link>
               </Button>
             </div>
-          </div>
-          <div>
-            <ContactForm />
           </div>
         </div>
       </section>
