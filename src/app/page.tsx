@@ -124,6 +124,19 @@ export default function Home() {
         </div>
       </section>
       
+      {/* Projects Section */}
+      <section id="projets" className="scroll-mt-20">
+        <div className="text-center mb-12">
+          <h2 className="font-headline text-3xl md:text-4xl font-bold">Mes projets</h2>
+          <p className="text-lg text-muted-foreground mt-2">Quelques exemples de mon travail.</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-8">
+          {projects.map((project) => (
+            <ProjectCard key={project.slug} project={project} />
+          ))}
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section id="tarifs" className="scroll-mt-20">
         <div className="text-center mb-12">
@@ -153,19 +166,6 @@ export default function Home() {
                     </CardContent>
                 </Card>
             ))}
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section id="projets" className="scroll-mt-20">
-        <div className="text-center mb-12">
-          <h2 className="font-headline text-3xl md:text-4xl font-bold">Mes projets</h2>
-          <p className="text-lg text-muted-foreground mt-2">Quelques exemples de mon travail.</p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
         </div>
       </section>
 
