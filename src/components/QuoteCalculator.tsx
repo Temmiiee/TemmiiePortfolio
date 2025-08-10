@@ -342,7 +342,7 @@ export function QuoteCalculator() {
                 </Button>
                 </>
             ) : (
-                <p className="text-lg text-muted-foreground">Veuillez remplir les options ci-dessus pour obtenir une estimation.</p>
+                <p className="text-lg text-muted-foreground px-4">Veuillez remplir les options ci-dessus pour obtenir une estimation.</p>
             )}
         </div>
       </div>

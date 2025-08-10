@@ -57,7 +57,7 @@ const processSteps = [
 const pricingPlans = [
   {
     title: "Site Vitrine Essentiel",
-    price: "À partir de 490€",
+    price: "À partir de 550€",
     description: "La solution idéale pour démarrer et marquer votre présence en ligne avec un site professionnel.",
     features: [
       "Jusqu'à 3 pages",
@@ -73,7 +73,7 @@ const pricingPlans = [
   },
   {
     title: "Site Multi-pages Professionnel",
-    price: "À partir de 890€",
+    price: "À partir de 1150€",
     description: "Une solution complète pour les entreprises souhaitant détailler leurs services et leur activité.",
     features: [
       "Nombre de pages illimité",
@@ -125,8 +125,8 @@ export default function Home() {
   return (
     <div className="space-y-16 md:space-y-24">
       {/* Hero Section */}
-      <section id="accueil" className="text-center py-16 scroll-mt-20" aria-labelledby="hero-title">
-        <h1 id="hero-title" className="font-headline text-4xl md:text-6xl font-bold text-primary mb-4 animate-fade-in-down">
+      <section id="accueil" className="text-center py-12 md:py-16 scroll-mt-20" aria-labelledby="hero-title">
+        <h1 id="hero-title" className="font-headline text-4xl sm:text-5xl md:text-6xl font-bold text-primary mb-4 animate-fade-in-down">
           Matthéo Termine
         </h1>
         <p className="font-headline text-xl md:text-2xl text-foreground/80 mb-6 max-w-3xl mx-auto" role="doc-subtitle">
@@ -135,7 +135,7 @@ export default function Home() {
         <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto mb-8">
           Je réalise des sites web modernes, accessibles (normes RGAA), rapides et optimisés SEO.
         </p>
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild size="lg">
             <Link href="#projets" aria-label="Voir mes projets">Mes projets</Link>
           </Button>
@@ -176,8 +176,8 @@ export default function Home() {
           </header>
           <div className="relative">
               <div className="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-border" aria-hidden="true"></div>
-              <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
-                  {processSteps.map((step) => (
+              <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {processSteps.map((step, index) => (
                       <div key={step.title} className="flex flex-col items-center text-center p-4">
                           <div className="relative z-10 w-24 h-24 rounded-full bg-background border-4 border-primary flex items-center justify-center mb-4">
                               <div className="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center">
@@ -244,7 +244,7 @@ export default function Home() {
                                 <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
                                 <CardDescription className="mt-1">{plan.description}</CardDescription>
                            </div>
-                           <div className="flex items-center gap-6">
+                           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                                 <div className="flex items-center gap-2 text-primary">
                                    <Server className="h-6 w-6"/>
                                     <span className="font-semibold">Hébergement</span>
