@@ -39,6 +39,22 @@ export default function AccessibilityDeclaration() {
                         L'ensemble des contenus et des fonctionnalités du site sont accessibles. Il n'y a aucune non-conformité, dérogation ou contenu non soumis à l'obligation d'accessibilité.
                     </p>
 
+                    {/* 
+                    
+                    A décommenter et remplir si nécessaire
+                    
+                    <h3>Non conformité</h3>
+                    <p>[Lister ici les non-conformités]</p>
+
+                    <h3>Dérogations pour charge disproportionnée</h3>
+                    <p>[Lister ici les dérogations]</p>
+
+                    <h3>Contenus non soumis à l’obligation d’accessibilité</h3>
+                    <p>[Lister ici les contenus non soumis]</p> 
+                    
+                    */}
+
+
                     <h2>Établissement de cette déclaration d’accessibilité</h2>
                     <p>
                         Cette déclaration a été établie le 10 août 2025.
