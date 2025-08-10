@@ -29,7 +29,6 @@ const formSchema = z.object({
   designType: z.enum(["template", "custom"], {
       required_error: "Veuillez sélectionner un type de design.",
   }),
-  pageCount: z.coerce.number().min(1, "Il doit y avoir au moins 1 page.").max(50, "Pour plus de 50 pages, un devis sur mesure est nécessaire."),
   features: z.array(z.string()).optional(),
   maintenance: z.boolean().default(false).optional(),
   projectDescription: z.string().optional(),
@@ -56,7 +55,6 @@ const pricingModel = {
     template: 200,
     custom: 800,
   },
-  pagePrice: 60,
   features: featureOptions.reduce((acc, feature) => {
     acc[feature.id] = feature.price;
     return acc;
@@ -69,7 +67,6 @@ export function QuoteCalculator() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      pageCount: 5,
       features: [],
       maintenance: false,
       projectDescription: "",
@@ -92,9 +89,6 @@ export function QuoteCalculator() {
     if(finalData.designType) {
         base += pricingModel.designType[finalData.designType];
     }
-    if (finalData.pageCount) {
-        base += finalData.pageCount * pricingModel.pagePrice;
-    }
 
     let featurePrice = 0;
     if (finalData.features) {
@@ -108,7 +102,7 @@ export function QuoteCalculator() {
     }
     
     return { base, total: base + featurePrice };
-  }, [watchedValues]);
+  }, [watchedValues, formSchema]);
 
   return (
     <div className="space-y-8">
@@ -189,22 +183,6 @@ export function QuoteCalculator() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="pageCount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-lg font-semibold">3. Combien de pages souhaitez-vous ?</FormLabel>
-                <FormDescription>
-                    Indiquez le nombre de pages uniques (Accueil, Contact, À propos...).
-                </FormDescription>
-                <FormControl>
-                  <Input type="number" min="1" max="50" {...field} className="w-48"/>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           
           <FormField
             control={form.control}
@@ -212,7 +190,7 @@ export function QuoteCalculator() {
             render={() => (
               <FormItem>
                  <div className="mb-4">
-                    <FormLabel className="text-lg font-semibold">4. Fonctionnalités additionnelles</FormLabel>
+                    <FormLabel className="text-lg font-semibold">3. Fonctionnalités additionnelles</FormLabel>
                     <FormDescription>
                         Cochez toutes les fonctionnalités que vous souhaitez intégrer.
                     </FormDescription>
@@ -264,7 +242,7 @@ export function QuoteCalculator() {
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base font-semibold">
-                      5. Pack Lancement (Optionnel)
+                      4. Pack Lancement (Optionnel)
                     </FormLabel>
                     <FormDescription>
                       Inclure l'hébergement pour 1 an et un forfait de maintenance de 3h.
@@ -283,7 +261,7 @@ export function QuoteCalculator() {
             <Separator />
 
             <div>
-                <h3 className="text-lg font-semibold">6. Informations complémentaires</h3>
+                <h3 className="text-lg font-semibold">5. Informations complémentaires</h3>
                 <FormDescription>
                     Ces informations ne modifient pas le tarif mais m'aideront à mieux comprendre votre projet.
                 </FormDescription>
