@@ -71,6 +71,21 @@ const pricingPlans = [
     link: "/devis?siteType=vitrine&designType=template",
   },
   {
+    title: "Site Multi-pages Professionnel",
+    price: "À partir de 1150€",
+    description: "Une offre complète pour un site vitrine personnalisé et optimisé pour la croissance.",
+    features: [
+        "Jusqu'à 5 pages",
+        "Design 100% sur-mesure",
+        "Intégration de contenu (textes, images)",
+        "Formation à la gestion du site",
+        "Support prioritaire",
+    ],
+    cta: "Choisir cette offre",
+    featured: true,
+    link: "/devis?siteType=vitrine&designType=custom",
+  },
+  {
     title: "Application Web",
     price: "À partir de 2500€",
     description: "Une solution complète pour les projets complexes nécessitant des fonctionnalités sur mesure (SaaS, plateforme...).",
@@ -82,7 +97,7 @@ const pricingPlans = [
       "Accompagnement dédié",
     ],
     cta: "Choisir cette offre",
-    featured: true,
+    featured: false,
     link: "/devis?siteType=webapp",
   },
   {
