@@ -68,12 +68,12 @@ export function ContactForm() {
   return (
     <Card>
         <CardHeader>
-            <CardTitle className="font-headline text-2xl">Envoyer un message</CardTitle>
+            <CardTitle id="form-title" className="font-headline text-2xl">Envoyer un message</CardTitle>
             <CardDescription>Remplissez le formulaire ci-dessous.</CardDescription>
         </CardHeader>
         <CardContent>
             <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" aria-labelledby="form-title">
                 <FormField
                 control={form.control}
                 name="name"
@@ -94,7 +94,7 @@ export function ContactForm() {
                     <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                        <Input placeholder="votre.email@exemple.com" {...field} />
+                        <Input placeholder="votre.email@exemple.com" {...field} type="email" />
                     </FormControl>
                     <FormMessage />
                     </FormItem>

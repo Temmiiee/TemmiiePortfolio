@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { CodeXml, Gauge, Palette, ArrowRight, Accessibility, CheckCircle2 } from "lucide-react";
+import { CodeXml, Gauge, Palette, Accessibility, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { ProjectCard } from "@/components/ProjectCard";
 import { projects } from "@/lib/projects";
@@ -81,8 +81,8 @@ export default function Home() {
   return (
     <div className="space-y-16 md:space-y-24">
       {/* Hero Section */}
-      <section id="accueil" className="text-center py-16 scroll-mt-20">
-        <h1 className="font-headline text-4xl md:text-6xl font-bold text-primary mb-4 animate-fade-in-down">
+      <section id="accueil" className="text-center py-16 scroll-mt-20" aria-labelledby="hero-title">
+        <h1 id="hero-title" className="font-headline text-4xl md:text-6xl font-bold text-primary mb-4 animate-fade-in-down">
           Matthéo
         </h1>
         <p className="font-headline text-xl md:text-2xl text-foreground/80 mb-6 max-w-3xl mx-auto">
@@ -93,25 +93,25 @@ export default function Home() {
         </p>
         <div className="flex gap-4 justify-center">
           <Button asChild size="lg">
-            <Link href="#projets">Mes projets</Link>
+            <Link href="#projets" aria-label="Voir mes projets">Mes projets</Link>
           </Button>
           <Button asChild size="lg" variant="outline">
-            <Link href="#contact">Me contacter</Link>
+            <Link href="#contact" aria-label="Me contacter">Me contacter</Link>
           </Button>
         </div>
       </section>
 
       {/* Services Section */}
-      <section id="services" className="scroll-mt-20">
-        <div className="text-center mb-12">
-          <h2 className="font-headline text-3xl md:text-4xl font-bold">Mes services</h2>
+      <section id="services" className="scroll-mt-20" aria-labelledby="services-title">
+        <header className="text-center mb-12">
+          <h2 id="services-title" className="font-headline text-3xl md:text-4xl font-bold">Mes services</h2>
           <p className="text-lg text-muted-foreground mt-2">Ce que je peux faire pour vous.</p>
-        </div>
+        </header>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.map((service, index) => (
-            <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300">
+          {services.map((service) => (
+            <Card key={service.title} className="text-center hover:shadow-lg transition-shadow duration-300">
               <CardHeader>
-                <div className="mx-auto bg-primary/10 text-primary rounded-full p-4 w-fit mb-4">
+                <div className="mx-auto bg-primary/10 text-primary rounded-full p-4 w-fit mb-4" aria-hidden="true">
                   <service.icon className="w-8 h-8" />
                 </div>
                 <CardTitle className="font-headline text-xl">{service.title}</CardTitle>
@@ -125,11 +125,11 @@ export default function Home() {
       </section>
       
       {/* Projects Section */}
-      <section id="projets" className="scroll-mt-20">
-        <div className="text-center mb-12">
-          <h2 className="font-headline text-3xl md:text-4xl font-bold">Mes projets</h2>
+      <section id="projets" className="scroll-mt-20" aria-labelledby="projects-title">
+        <header className="text-center mb-12">
+          <h2 id="projects-title" className="font-headline text-3xl md:text-4xl font-bold">Mes projets</h2>
           <p className="text-lg text-muted-foreground mt-2">Quelques exemples de mon travail.</p>
-        </div>
+        </header>
         <div className="grid md:grid-cols-2 gap-8">
           {projects.map((project) => (
             <ProjectCard key={project.slug} project={project} />
@@ -138,11 +138,11 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section id="tarifs" className="scroll-mt-20">
-        <div className="text-center mb-12">
-          <h2 className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
+      <section id="tarifs" className="scroll-mt-20" aria-labelledby="tarifs-title">
+        <header className="text-center mb-12">
+          <h2 id="tarifs-title" className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
           <p className="text-lg text-muted-foreground mt-2">Des offres claires et adaptées à vos besoins.</p>
-        </div>
+        </header>
         <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
             {pricingPlans.map((plan) => (
                 <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg' : ''}`}>
@@ -152,16 +152,16 @@ export default function Home() {
                         <p className="text-3xl font-bold text-primary pt-4">{plan.price}</p>
                     </CardHeader>
                     <CardContent className="flex flex-col flex-grow">
-                        <ul className="space-y-3 mb-6 flex-grow">
+                        <ul className="space-y-3 mb-6 flex-grow" aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
                             {plan.features.map((feature) => (
                                 <li key={feature} className="flex items-start">
-                                    <CheckCircle2 className="h-5 w-5 text-accent mr-2 mt-0.5 shrink-0" />
+                                    <CheckCircle2 className="h-5 w-5 text-accent mr-2 mt-0.5 shrink-0" aria-hidden="true" />
                                     <span>{feature}</span>
                                 </li>
                             ))}
                         </ul>
                         <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured ? 'default' : 'outline'}>
-                            <Link href="#contact">{plan.cta}</Link>
+                            <Link href="#contact" aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
                         </Button>
                     </CardContent>
                 </Card>
@@ -170,9 +170,9 @@ export default function Home() {
       </section>
 
        {/* About Section */}
-      <section id="a-propos" className="max-w-4xl mx-auto scroll-mt-20">
+      <section id="a-propos" className="max-w-4xl mx-auto scroll-mt-20" aria-labelledby="about-title">
         <header className="text-center mb-12">
-          <h2 className="font-headline text-3xl md:text-4xl font-bold text-primary">À propos de moi</h2>
+          <h2 id="about-title" className="font-headline text-3xl md:text-4xl font-bold text-primary">À propos de moi</h2>
           <p className="mt-4 text-lg text-muted-foreground">Mon parcours, ma vision et ma passion pour le web.</p>
         </header>
 
@@ -208,8 +208,8 @@ export default function Home() {
             </div>
             <div className="pt-4">
               <Button asChild size="lg">
-                  <Link href="/CV_Matthéo.pdf" target="_blank">
-                      <Download className="mr-2 h-5 w-5" />
+                  <Link href="/CV_Matthéo.pdf" target="_blank" rel="noopener noreferrer" aria-label="Télécharger mon CV au format PDF">
+                      <Download className="mr-2 h-5 w-5" aria-hidden="true" />
                       Télécharger mon CV
                   </Link>
               </Button>
@@ -219,27 +219,27 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="max-w-4xl mx-auto scroll-mt-20">
+      <section id="contact" className="max-w-4xl mx-auto scroll-mt-20" aria-labelledby="contact-title">
         <header className="text-center mb-12">
-          <h2 className="font-headline text-3xl md:text-4xl font-bold text-primary">Contactez-moi</h2>
+          <h2 id="contact-title" className="font-headline text-3xl md:text-4xl font-bold text-primary">Contactez-moi</h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Une question, un projet ? N'hésitez pas à me contacter. Je vous répondrai dans les plus brefs délais.
           </p>
         </header>
         
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          <div>
+          <div role="region" aria-labelledby="form-title">
             <ContactForm />
           </div>
-          <div className="space-y-6">
-            <h3 className="font-headline text-2xl font-bold">Autres moyens de contact</h3>
+          <div className="space-y-6" role="region" aria-labelledby="other-contact-title">
+            <h3 id="other-contact-title" className="font-headline text-2xl font-bold">Autres moyens de contact</h3>
             <p className="text-muted-foreground">
               Si vous préférez, vous pouvez aussi me joindre directement par email ou via WhatsApp.
             </p>
             <div className="space-y-4">
               <Button asChild variant="outline" className="w-full justify-start text-left h-auto py-3">
-                <Link href="mailto:contact@mattheo.fr">
-                  <Mail className="mr-4 h-6 w-6 text-primary" />
+                <Link href="mailto:contact@mattheo.fr" aria-label="Envoyer un email à contact@mattheo.fr">
+                  <Mail className="mr-4 h-6 w-6 text-primary" aria-hidden="true" />
                   <div>
                     <div className="font-semibold">Email</div>
                     <div className="text-muted-foreground">contact@mattheo.fr</div>
@@ -247,8 +247,8 @@ export default function Home() {
                 </Link>
               </Button>
               <Button asChild variant="outline" className="w-full justify-start text-left h-auto py-3">
-                <Link href="https://wa.me/33612345678" target="_blank">
-                  <MessageCircle className="mr-4 h-6 w-6 text-accent" />
+                <Link href="https://wa.me/33612345678" target="_blank" rel="noopener noreferrer" aria-label="Discuter sur WhatsApp">
+                  <MessageCircle className="mr-4 h-6 w-6 text-accent" aria-hidden="true" />
                   <div>
                     <div className="font-semibold">WhatsApp</div>
                     <div className="text-muted-foreground">Discutons en direct</div>
