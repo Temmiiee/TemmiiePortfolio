@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { CodeXml, Gauge, Palette, Accessibility, CheckCircle2, FileText, Search, Bot, Feather, Rocket, PencilRuler } from "lucide-react";
+import { CodeXml, Gauge, Palette, Accessibility, CheckCircle2, FileText, Search, Bot, Feather, Rocket, PencilRuler, Server, LifeBuoy } from "lucide-react";
 import Link from "next/link";
 import { ProjectCard } from "@/components/ProjectCard";
 import { projects } from "@/lib/projects";
@@ -68,6 +68,7 @@ const pricingPlans = [
     ],
     cta: "Choisir cette offre",
     featured: false,
+    isNew: false,
   },
   {
     title: "Site Multi-pages Professionnel",
@@ -82,6 +83,7 @@ const pricingPlans = [
     ],
     cta: "Choisir cette offre",
     featured: true,
+    isNew: false,
   },
   {
     title: "Solution Sur-Mesure",
@@ -96,6 +98,22 @@ const pricingPlans = [
     ],
     cta: "Demander un devis",
     featured: false,
+    isNew: false,
+  },
+   {
+    title: "Maintenance & Hébergement",
+    price: "49€ / mois",
+    description: "Gardez votre site performant, sécurisé et à jour sans vous soucier de la technique.",
+    features: [
+      "Hébergement web haute performance",
+      "Mises à jour techniques et de sécurité",
+      "Sauvegardes régulières du site",
+      "Support technique par email",
+      "Rapport de performance mensuel",
+    ],
+    cta: "Souscrire maintenant",
+    featured: false,
+    isNew: true,
   },
 ];
 
@@ -189,16 +207,32 @@ export default function Home() {
           <h2 id="tarifs-title" className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
           <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>
         </header>
-        <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
             {pricingPlans.map((plan) => (
-                <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg' : ''}`}>
+                <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg' : ''} ${plan.isNew ? 'lg:col-span-2' : ''}`}>
                     <CardHeader>
-                        <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
-                        <CardDescription>{plan.description}</CardDescription>
-                        <p className="text-3xl font-bold text-primary pt-4">{plan.price}</p>
+                        <div className="flex justify-between items-start">
+                           <div className="flex-1">
+                                <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
+                                <CardDescription>{plan.description}</CardDescription>
+                           </div>
+                           {plan.isNew && (
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2 text-primary">
+                                       <Server className="h-6 w-6"/>
+                                        <span className="font-semibold">Hébergement</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-accent">
+                                        <LifeBuoy className="h-6 w-6"/>
+                                        <span className="font-semibold">Support</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <p className={`text-3xl font-bold text-primary pt-4 ${plan.isNew ? 'text-center' : ''}`}>{plan.price}</p>
                     </CardHeader>
                     <CardContent className="flex flex-col flex-grow">
-                        <ul className="space-y-3 mb-6 flex-grow" aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
+                        <ul className={`space-y-3 mb-6 flex-grow ${plan.isNew ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3' : ''}`} aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
                             {plan.features.map((feature) => (
                                 <li key={feature} className="flex items-start">
                                     <CheckCircle2 className="h-5 w-5 text-accent mr-2 mt-0.5 shrink-0" aria-hidden="true" />
@@ -206,7 +240,7 @@ export default function Home() {
                                 </li>
                             ))}
                         </ul>
-                        <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured ? 'default' : 'outline'}>
+                        <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured || plan.isNew ? 'default' : 'outline'}>
                             <Link href="#contact" aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
                         </Button>
                     </CardContent>

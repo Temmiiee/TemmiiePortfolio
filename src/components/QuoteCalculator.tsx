@@ -59,7 +59,7 @@ const pricingModel = {
     acc[feature.id] = feature.price;
     return acc;
   }, {} as Record<string, number>),
-  maintenance: 350,
+  maintenance: 49,
 };
 
 
@@ -75,10 +75,10 @@ export function QuoteCalculator() {
 
   const watchedValues = form.watch();
 
-  const { base: basePrice, total: totalPrice } = useMemo(() => {
+  const { base: basePrice, total: totalPrice, maintenanceCost } = useMemo(() => {
     const parsedData = formSchema.safeParse(watchedValues);
     if (!parsedData.success) {
-      return { base: null, total: null };
+      return { base: null, total: null, maintenanceCost: 0 };
     }
     const finalData = parsedData.data;
 
@@ -97,11 +97,9 @@ export function QuoteCalculator() {
       });
     }
 
-    if (finalData.maintenance) {
-        featurePrice += pricingModel.maintenance;
-    }
+    const maintenance = finalData.maintenance ? pricingModel.maintenance : 0;
     
-    return { base, total: base + featurePrice };
+    return { base, total: base + featurePrice, maintenanceCost: maintenance };
   }, [watchedValues, formSchema]);
 
   return (
@@ -242,10 +240,10 @@ export function QuoteCalculator() {
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base font-semibold">
-                      4. Pack Lancement (Optionnel)
+                      4. Maintenance & Hébergement (Optionnel)
                     </FormLabel>
                     <FormDescription>
-                      Inclure l'hébergement pour 1 an et un forfait de maintenance de 3h.
+                      Souscrire à l'offre de maintenance mensuelle pour la tranquillité d'esprit.
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -314,6 +312,9 @@ export function QuoteCalculator() {
             {totalPrice !== null ? (
                 <>
                 <p className="text-4xl font-bold text-primary">{totalPrice} € <span className="text-lg font-normal text-muted-foreground">HT</span></p>
+                {maintenanceCost > 0 && (
+                     <p className="text-xl font-semibold text-primary mt-2">+ {maintenanceCost} € / mois</p>
+                )}
                 <p className="text-muted-foreground mt-2 max-w-md mx-auto">
                     Cette estimation est à titre indicatif. Elle évolue en fonction de vos choix.
                 </p>
