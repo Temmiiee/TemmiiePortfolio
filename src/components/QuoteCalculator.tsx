@@ -75,10 +75,10 @@ export function QuoteCalculator() {
 
   const watchedValues = form.watch();
 
-  const { base: basePrice, total: totalPrice, maintenanceCost } = useMemo(() => {
+  const { total: totalPrice, maintenanceCost } = useMemo(() => {
     const parsedData = formSchema.safeParse(watchedValues);
     if (!parsedData.success) {
-      return { base: null, total: null, maintenanceCost: 0 };
+      return { total: null, maintenanceCost: 0 };
     }
     const finalData = parsedData.data;
 
@@ -99,8 +99,8 @@ export function QuoteCalculator() {
 
     const maintenance = finalData.maintenance ? pricingModel.maintenance : 0;
     
-    return { base, total: base + featurePrice, maintenanceCost: maintenance };
-  }, [watchedValues, formSchema]);
+    return { total: base + featurePrice, maintenanceCost: maintenance };
+  }, [watchedValues]);
 
   return (
     <div className="space-y-8">
@@ -330,3 +330,5 @@ export function QuoteCalculator() {
     </div>
   );
 }
+
+    
