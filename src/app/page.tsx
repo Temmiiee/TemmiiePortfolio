@@ -74,7 +74,7 @@ const pricingPlans = [
         cta: "Demander un devis",
         featured: false,
     },
-]
+];
 
 
 export default function Home() {
