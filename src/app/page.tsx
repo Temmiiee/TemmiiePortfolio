@@ -171,15 +171,17 @@ export default function Home() {
               <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
           </header>
           <div className="relative">
-              <div className="hidden md:block absolute left-1/2 top-10 bottom-10 w-0.5 bg-border -translate-x-1/2" aria-hidden="true"></div>
-              <div className="space-y-12 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-16">
-                  {processSteps.map((step, index) => (
-                      <div key={step.title} className={`md:flex md:gap-6 items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse md:text-right'}`}>
-                          <div className={`relative flex-shrink-0 w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto md:mx-0`}>
-                              <step.icon className="w-10 h-10" />
+              <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-border -translate-y-1/2" aria-hidden="true"></div>
+              <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
+                  {processSteps.map((step) => (
+                      <div key={step.title} className="flex flex-col items-center text-center">
+                          <div className="relative z-10 w-24 h-24 rounded-full bg-background border-4 border-primary flex items-center justify-center">
+                              <div className="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                                <step.icon className="w-10 h-10" />
+                              </div>
                           </div>
-                          <div className={`text-center md:text-left mt-4 md:mt-0`}>
-                              <h3 className="font-headline text-2xl font-bold">{step.title}</h3>
+                          <div className="mt-4">
+                              <h3 className="font-headline text-xl font-bold">{step.title}</h3>
                               <p className="text-muted-foreground mt-2">{step.description}</p>
                           </div>
                       </div>
@@ -207,32 +209,16 @@ export default function Home() {
           <h2 id="tarifs-title" className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
           <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>
         </header>
-        <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            {pricingPlans.map((plan) => (
-                <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg' : ''} ${plan.isNew ? 'lg:col-span-2' : ''}`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+            {pricingPlans.filter(p => !p.isNew).map((plan) => (
+                <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg' : ''}`}>
                     <CardHeader>
-                        <div className="flex justify-between items-start">
-                           <div className="flex-1">
-                                <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
-                                <CardDescription>{plan.description}</CardDescription>
-                           </div>
-                           {plan.isNew && (
-                                <div className="flex items-center gap-4">
-                                    <div className="flex items-center gap-2 text-primary">
-                                       <Server className="h-6 w-6"/>
-                                        <span className="font-semibold">Hébergement</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-accent">
-                                        <LifeBuoy className="h-6 w-6"/>
-                                        <span className="font-semibold">Support</span>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                        <p className={`text-3xl font-bold text-primary pt-4 ${plan.isNew ? 'text-center' : ''}`}>{plan.price}</p>
+                        <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
+                        <CardDescription>{plan.description}</CardDescription>
+                        <p className="text-3xl font-bold text-primary pt-4">{plan.price}</p>
                     </CardHeader>
                     <CardContent className="flex flex-col flex-grow">
-                        <ul className={`space-y-3 mb-6 flex-grow ${plan.isNew ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3' : ''}`} aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
+                        <ul className="space-y-3 mb-6 flex-grow" aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
                             {plan.features.map((feature) => (
                                 <li key={feature} className="flex items-start">
                                     <CheckCircle2 className="h-5 w-5 text-accent mr-2 mt-0.5 shrink-0" aria-hidden="true" />
@@ -240,18 +226,46 @@ export default function Home() {
                                 </li>
                             ))}
                         </ul>
-                        <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured || plan.isNew ? 'default' : 'outline'}>
-                            <Link href="#contact" aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
+                        <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured ? 'default' : 'outline'}>
+                            <Link href="/devis" aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
                         </Button>
                     </CardContent>
                 </Card>
             ))}
         </div>
+        <div className="mt-8">
+             {pricingPlans.filter(p => p.isNew).map((plan) => (
+                <Card key={plan.title} className="lg:col-span-3">
+                     <CardContent className="p-6">
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                           <div className="flex-1 text-center md:text-left">
+                                <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
+                                <CardDescription className="mt-1">{plan.description}</CardDescription>
+                           </div>
+                           <div className="flex items-center gap-6">
+                                <div className="flex items-center gap-2 text-primary">
+                                   <Server className="h-6 w-6"/>
+                                    <span className="font-semibold">Hébergement</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-accent">
+                                    <LifeBuoy className="h-6 w-6"/>
+                                    <span className="font-semibold">Support</span>
+                                </div>
+                            </div>
+                           <p className="text-3xl font-bold text-primary">{plan.price}</p>
+                           <Button asChild size="lg" className="w-full md:w-auto mt-4 md:mt-0">
+                                <Link href="/devis" aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+             ))}
+        </div>
         <div className="text-center mt-12">
-            <Button asChild size="lg">
+            <Button asChild size="lg" variant="secondary">
                 <Link href="/devis" aria-label="Accéder au calculateur de devis">
                     <FileText className="mr-2 h-5 w-5" />
-                    Estimer mon devis
+                    Personnaliser mon devis
                 </Link>
             </Button>
         </div>
