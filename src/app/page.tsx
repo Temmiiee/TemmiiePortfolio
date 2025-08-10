@@ -174,11 +174,11 @@ export default function Home() {
               <div className="hidden md:block absolute left-1/2 top-10 bottom-10 w-0.5 bg-border -translate-x-1/2" aria-hidden="true"></div>
               <div className="space-y-12 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-16">
                   {processSteps.map((step, index) => (
-                      <div key={step.title} className={`md:flex md:gap-6 items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                      <div key={step.title} className={`md:flex md:gap-6 items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse md:text-right'}`}>
                           <div className={`relative flex-shrink-0 w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto md:mx-0`}>
                               <step.icon className="w-10 h-10" />
                           </div>
-                          <div className={`text-center md:text-left mt-4 md:mt-0 ${index % 2 === 0 ? '' : 'md:text-right'}`}>
+                          <div className={`text-center md:text-left mt-4 md:mt-0`}>
                               <h3 className="font-headline text-2xl font-bold">{step.title}</h3>
                               <p className="text-muted-foreground mt-2">{step.description}</p>
                           </div>
