@@ -44,7 +44,6 @@ const featureOptions = [
   { id: "newsletter", label: "Système d'inscription à la newsletter", price: 150 },
   { id: "multi-langue", label: "Configuration pour un site multilingue", price: 450 },
   { id: "analytics", label: "Intégration et configuration d'analytics", price: 80 },
-  { id: "booking", label: "Système de réservation simple", price: 500 },
 ];
 
 const pricingModel = {
