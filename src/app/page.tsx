@@ -71,19 +71,19 @@ const pricingPlans = [
     link: "/devis?siteType=vitrine&designType=template",
   },
   {
-    title: "Site Multi-pages Professionnel",
-    price: "À partir de 1150€",
-    description: "Une solution complète pour les entreprises souhaitant détailler leurs services et leur activité.",
+    title: "Application Web",
+    price: "À partir de 2500€",
+    description: "Une solution complète pour les projets complexes nécessitant des fonctionnalités sur mesure (SaaS, plateforme...).",
     features: [
-      "Nombre de pages illimité",
-      "Design personnalisé (de zéro ou selon votre charte graphique)",
-      "Développement de fonctionnalités spécifiques",
-      "Optimisation pour le référencement",
-      "Formation pour gérer votre contenu",
+      "Espace utilisateur (connexion, etc.)",
+      "Fonctionnalités sur-mesure",
+      "Base de données",
+      "Déploiement et maintenance",
+      "Accompagnement dédié",
     ],
     cta: "Choisir cette offre",
     featured: true,
-    link: "/devis?siteType=vitrine&designType=custom",
+    link: "/devis?siteType=webapp",
   },
   {
     title: "Solution Sur-Mesure",
@@ -194,7 +194,7 @@ export default function Home() {
         </header>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
             {pricingPlans.map((plan) => (
-                <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg' : ''}`}>
+                <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg lg:col-span-1' : 'lg:col-span-1'}`}>
                     <CardHeader>
                         <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
                         <CardDescription>{plan.description}</CardDescription>
