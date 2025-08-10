@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { CodeXml, Gauge, Palette, Accessibility, CheckCircle2, FileText } from "lucide-react";
+import { CodeXml, Gauge, Palette, Accessibility, CheckCircle2, FileText, Search, Bot, Feather, Rocket, PencilRuler } from "lucide-react";
 import Link from "next/link";
 import { ProjectCard } from "@/components/ProjectCard";
 import { projects } from "@/lib/projects";
 import Image from "next/image";
 import { Download, Mail, MessageCircle } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
+import { ProjectIdeaGenerator } from "@/components/ProjectIdeaGenerator";
 
 const services = [
   {
@@ -29,6 +30,29 @@ const services = [
     title: "Accessibilité numérique (RGAA)",
     description: "Garantir que votre site est utilisable par tous, y compris les personnes en situation de handicap.",
   },
+];
+
+const processSteps = [
+    {
+        icon: Search,
+        title: "1. Découverte",
+        description: "Nous discutons de vos objectifs, de votre cible et de vos besoins pour définir les contours de votre projet.",
+    },
+    {
+        icon: PencilRuler,
+        title: "2. Maquettage & Design",
+        description: "Je conçois une maquette visuelle et un design sur-mesure qui reflètent votre identité de marque.",
+    },
+    {
+        icon: CodeXml,
+        title: "3. Développement",
+        description: "Je transforme le design validé en un site web fonctionnel, performant et accessible.",
+    },
+    {
+        icon: Rocket,
+        title: "4. Déploiement",
+        description: "Je m'occupe de la mise en ligne de votre site sur votre hébergement et assure son bon fonctionnement.",
+    },
 ];
 
 const pricingPlans = [
@@ -122,6 +146,30 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Process Section */}
+      <section id="processus" className="scroll-mt-20" aria-labelledby="process-title">
+          <header className="text-center mb-12">
+              <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
+              <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
+          </header>
+          <div className="relative">
+              <div className="hidden md:block absolute left-1/2 top-10 bottom-10 w-0.5 bg-border -translate-x-1/2" aria-hidden="true"></div>
+              <div className="space-y-12 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-16">
+                  {processSteps.map((step, index) => (
+                      <div key={step.title} className={`md:flex md:gap-6 items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                          <div className={`relative flex-shrink-0 w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto md:mx-0`}>
+                              <step.icon className="w-10 h-10" />
+                          </div>
+                          <div className={`text-center md:text-left mt-4 md:mt-0 ${index % 2 === 0 ? '' : 'md:text-right'}`}>
+                              <h3 className="font-headline text-2xl font-bold">{step.title}</h3>
+                              <p className="text-muted-foreground mt-2">{step.description}</p>
+                          </div>
+                      </div>
+                  ))}
+              </div>
+          </div>
+      </section>
       
       {/* Projects Section */}
       <section id="projets" className="scroll-mt-20" aria-labelledby="projects-title">
@@ -135,6 +183,20 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+        {/* AI Project Idea Generator Section */}
+        <section id="ai-generator" className="scroll-mt-20" aria-labelledby="ai-generator-title">
+            <header className="text-center mb-12">
+                <h2 id="ai-generator-title" className="font-headline text-3xl md:text-4xl font-bold">
+                    <Bot className="inline-block h-10 w-10 mr-2 text-primary" />
+                    En Manque d'Inspiration ?
+                </h2>
+                <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Décrivez votre activité ou votre idée, et laissez l'IA vous suggérer un concept de site web !</p>
+            </header>
+            <div className="max-w-2xl mx-auto">
+                <ProjectIdeaGenerator />
+            </div>
+        </section>
 
       {/* Pricing Section */}
       <section id="tarifs" className="scroll-mt-20" aria-labelledby="tarifs-title">

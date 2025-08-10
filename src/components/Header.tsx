@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { href: "#accueil", label: "Accueil" },
   { href: "#services", label: "Services" },
+  { href: "#processus", label: "Processus" },
   { href: "#projets", label: "Projets" },
   { href: "#tarifs", label: "Tarifs" },
   { href: "#a-propos", label: "À propos" },
@@ -21,11 +22,11 @@ export function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
   const [isSheetOpen, setSheetOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState("#accueil");
+  const [activeLink, setActiveLink] = useState(isHomePage ? "#accueil" : "");
 
   useEffect(() => {
     if (!isHomePage) {
-      setActiveLink("");
+      setActiveLink(pathname);
       return;
     }
 
@@ -41,15 +42,28 @@ export function Header() {
         }
       }
     };
+    
+    // Set initial active link on load
+    handleScroll();
 
     document.addEventListener("scroll", handleScroll);
     return () => document.removeEventListener("scroll", handleScroll);
-  }, [isHomePage]);
+  }, [isHomePage, pathname]);
 
 
   const NavLink = ({ href, label, className }: { href: string, label: string, className?: string }) => {
-    const isActive = activeLink === href;
+    // For homepage, use hash links. For other pages, navigate to homepage first.
     const finalHref = isHomePage ? href : `/${href}`;
+    const isActive = activeLink === href || activeLink === finalHref;
+    
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      setSheetOpen(false);
+      if (isHomePage && href.startsWith('#')) {
+        e.preventDefault();
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+        setActiveLink(href);
+      }
+    };
 
     return (
       <Link
@@ -59,7 +73,8 @@ export function Header() {
           isActive ? "text-primary font-semibold" : "text-foreground/60",
           className
         )}
-        onClick={() => setSheetOpen(false)}
+        onClick={handleClick}
+        aria-current={isActive ? "page" : undefined}
       >
         {label}
       </Link>
@@ -99,7 +114,7 @@ export function Header() {
                 </SheetHeader>
                 <nav className="flex flex-col gap-6 pt-10">
                   {navLinks.map((link) => (
-                    <NavLink key={link.href} {...link} />
+                    <NavLink key={link.href} {...link} className="text-2xl" />
                   ))}
                 </nav>
               </SheetContent>
