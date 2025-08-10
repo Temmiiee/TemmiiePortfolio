@@ -68,7 +68,6 @@ const pricingPlans = [
     ],
     cta: "Choisir cette offre",
     featured: false,
-    isNew: false,
     link: "/devis?siteType=vitrine&designType=template",
   },
   {
@@ -84,7 +83,6 @@ const pricingPlans = [
     ],
     cta: "Choisir cette offre",
     featured: true,
-    isNew: false,
     link: "/devis?siteType=vitrine&designType=custom",
   },
   {
@@ -100,24 +98,7 @@ const pricingPlans = [
     ],
     cta: "Demander un devis",
     featured: false,
-    isNew: false,
     link: "/devis",
-  },
-   {
-    title: "Maintenance & Hébergement",
-    price: "49€ / mois",
-    description: "Gardez votre site performant, sécurisé et à jour sans vous soucier de la technique.",
-    features: [
-      "Hébergement web haute performance",
-      "Mises à jour techniques et de sécurité",
-      "Sauvegardes régulières du site",
-      "Support technique par email",
-      "Rapport de performance mensuel",
-    ],
-    cta: "Souscrire maintenant",
-    featured: false,
-    isNew: true,
-    link: "/devis?maintenance=true",
   },
 ];
 
@@ -212,7 +193,7 @@ export default function Home() {
           <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>
         </header>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
-            {pricingPlans.filter(p => !p.isNew).map((plan) => (
+            {pricingPlans.map((plan) => (
                 <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg' : ''}`}>
                     <CardHeader>
                         <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
@@ -234,34 +215,6 @@ export default function Home() {
                     </CardContent>
                 </Card>
             ))}
-        </div>
-        <div className="mt-8">
-             {pricingPlans.filter(p => p.isNew).map((plan) => (
-                <Card key={plan.title} className="lg:col-span-3">
-                     <CardContent className="p-6">
-                        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                           <div className="flex-1 text-center md:text-left">
-                                <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
-                                <CardDescription className="mt-1">{plan.description}</CardDescription>
-                           </div>
-                           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-                                <div className="flex items-center gap-2 text-primary">
-                                   <Server className="h-6 w-6"/>
-                                    <span className="font-semibold">Hébergement</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-accent">
-                                    <LifeBuoy className="h-6 w-6"/>
-                                    <span className="font-semibold">Support</span>
-                                </div>
-                            </div>
-                           <p className="text-3xl font-bold text-primary">{plan.price}</p>
-                           <Button asChild size="lg" className="w-full md:w-auto mt-4 md:mt-0">
-                                <Link href={plan.link} aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-             ))}
         </div>
         <div className="text-center mt-12">
             <Button asChild size="lg" variant="secondary">
