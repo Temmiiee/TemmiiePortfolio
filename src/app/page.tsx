@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { CodeXml, Gauge, Palette, Accessibility, CheckCircle2, FileText, Search, Rocket, PencilRuler, Server, LifeBuoy } from "lucide-react";
@@ -167,27 +168,31 @@ export default function Home() {
       {/* Process Section */}
       <section id="processus" className="scroll-mt-20" aria-labelledby="process-title">
         <header className="text-center mb-12">
-          <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
-          <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
+            <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
+            <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
         </header>
-        <div className="container max-w-5xl mx-auto">
-          <div className="relative wrap overflow-hidden p-10 h-full">
-            <div className="absolute top-0 bottom-0 left-1/2 w-1 bg-border rounded-full" aria-hidden="true"></div>
-            {processSteps.map((step, index) => (
-              <div key={step.title} className={`mb-8 flex justify-between items-center w-full ${index % 2 === 0 ? 'flex-row-reverse' : ''}`}>
-                <div className="order-1 w-5/12"></div>
-                
-                <div className="z-20 flex items-center order-1 bg-primary shadow-xl w-12 h-12 rounded-full">
-                  <step.icon className="mx-auto text-primary-foreground h-6 w-6"/>
-                </div>
+        <div className="relative container mx-auto px-6">
+            <div className="absolute top-0 h-full w-1 bg-border left-6 md:left-1/2 md:-translate-x-1/2" aria-hidden="true"></div>
+            <div className="space-y-12">
+                {processSteps.map((step, index) => (
+                    <div key={step.title} className="relative md:grid md:grid-cols-2 md:gap-x-16 items-start">
+                        {/* Dot */}
+                        <div className="absolute left-6 top-0 transform -translate-x-1/2 md:left-1/2 h-8 flex items-center">
+                           <div className="z-10 flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full">
+                                <step.icon className="text-primary-foreground h-6 w-6"/>
+                           </div>
+                        </div>
 
-                <div className={`order-1 w-5/12 px-6 py-4 rounded-lg shadow-xl ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
-                  <h3 className="font-bold text-primary font-headline text-xl">{step.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-2">{step.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+                        {/* Content */}
+                        <div className={`pl-16 md:pl-0 md:text-left ${index % 2 === 0 ? 'md:order-1 md:col-start-2' : 'md:order-2 md:col-start-1 md:text-right'}`}>
+                            <div className="bg-card p-6 rounded-lg shadow-lg border">
+                                <h3 className="font-bold text-primary font-headline text-xl mb-2">{step.title}</h3>
+                                <p className="text-muted-foreground">{step.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
       </section>
       
@@ -337,3 +342,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
