@@ -178,26 +178,25 @@ const ProcessSection = () => {
                 </header>
 
                 <div className="relative">
-                    <div className="absolute left-6 md:left-1/2 w-0.5 h-full bg-border -translate-x-1/2" aria-hidden="true"></div>
+                    <div className="absolute left-6 w-0.5 h-full bg-border md:left-1/2 md:-translate-x-1/2" aria-hidden="true"></div>
                     
-                    <div className="space-y-12 md:space-y-0">
+                    <div className="space-y-12">
                         {processSteps.map((step, index) => (
-                            <div key={step.title} className="relative md:grid md:grid-cols-2 md:gap-x-16 md:items-center">
+                             <div key={step.title} className="relative flex items-start md:grid md:grid-cols-2 md:gap-x-12 md:items-center">
                                 <div className={cn(
-                                    "flex items-start md:items-center",
-                                    index % 2 === 0 ? "md:col-start-2" : "md:col-start-1 md:row-start-1 md:justify-end"
+                                    "relative flex-shrink-0 z-10 flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full",
+                                    "md:order-2",
+                                    index % 2 === 0 ? "md:col-start-1" : "md:col-start-2"
                                 )}>
-                                    <div className="flex-shrink-0 z-10 flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full">
-                                        <step.icon className="text-primary-foreground h-6 w-6"/>
-                                    </div>
-                                    <div className={cn(
-                                        "ml-6 md:ml-0 w-full",
-                                        index % 2 === 0 ? "md:pl-16" : "md:pr-16 md:text-right"
-                                    )}>
-                                        <div className="bg-card p-6 rounded-lg shadow-lg border">
-                                            <h3 className="font-bold text-primary font-headline text-xl mb-2">{step.title}</h3>
-                                            <p className="text-muted-foreground">{step.description}</p>
-                                        </div>
+                                    <step.icon className="text-primary-foreground h-6 w-6"/>
+                                </div>
+                                <div className={cn(
+                                    "ml-6 md:ml-0",
+                                    index % 2 === 0 ? "md:col-start-2 md:row-start-1" : "md:col-start-1 md:row-start-1 md:text-right"
+                                )}>
+                                    <div className="bg-card p-6 rounded-lg shadow-lg border">
+                                        <h3 className="font-bold text-primary font-headline text-xl mb-2">{step.title}</h3>
+                                        <p className="text-muted-foreground">{step.description}</p>
                                     </div>
                                 </div>
                             </div>
@@ -280,29 +279,31 @@ export default function Home() {
             <h2 id="tarifs-title" className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
             <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>
             </header>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 items-start">
-                {pricingPlans.map((plan, index) => (
-                    <Card key={plan.title} className={cn("flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in border-2", plan.featured ? 'border-primary shadow-lg' : 'border-border')} style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'backwards' }}>
-                        <CardHeader className={cn("p-6", plan.headerClass)}>
-                            <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
-                            <p className="text-3xl font-bold pt-4">{plan.price}</p>
-                            <CardDescription className={cn(plan.featured ? "text-primary-foreground/80" : "text-muted-foreground")}>{plan.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex flex-col flex-grow p-6">
-                            <ul className="space-y-3 mb-6" aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
-                                {plan.features.map((feature) => (
-                                    <li key={feature} className="flex items-start">
-                                        <CheckCircle2 className="h-5 w-5 text-accent mr-2.5 mt-0.5 shrink-0" aria-hidden="true" />
-                                        <span>{feature}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                            <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured ? 'secondary' : 'default'}>
-                                <Link href={plan.link} aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
-                            </Button>
-                        </CardContent>
-                    </Card>
-                ))}
+            <div className="max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    {pricingPlans.map((plan, index) => (
+                        <Card key={plan.title} className={cn("flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in border-2", plan.featured ? 'border-primary shadow-lg' : 'border-border')} style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'backwards' }}>
+                            <CardHeader className={cn("p-6", plan.headerClass)}>
+                                <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
+                                <p className="text-3xl font-bold pt-4">{plan.price}</p>
+                                <CardDescription className={cn(plan.featured ? "text-primary-foreground/80" : "text-muted-foreground")}>{plan.description}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex flex-col flex-grow p-6">
+                                <ul className="space-y-3 mb-6" aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
+                                    {plan.features.map((feature) => (
+                                        <li key={feature} className="flex items-start">
+                                            <CheckCircle2 className="h-5 w-5 text-accent mr-2.5 mt-0.5 shrink-0" aria-hidden="true" />
+                                            <span>{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured ? 'secondary' : 'default'}>
+                                    <Link href={plan.link} aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
             </div>
             <div className="text-center mt-12">
                 <Button asChild size="lg" variant="secondary">
