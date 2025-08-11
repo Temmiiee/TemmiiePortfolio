@@ -171,22 +171,35 @@ export default function Home() {
             <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
             <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
         </header>
-        <div className="relative container mx-auto px-6">
-            <div className="absolute top-0 h-full w-1 bg-border left-6 md:left-1/2 md:-translate-x-1/2" aria-hidden="true"></div>
-            <div className="space-y-12">
+        <div className="relative">
+            {/* The vertical line */}
+            <div className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-border" aria-hidden="true"></div>
+            
+            <div className="md:space-y-0 space-y-12">
                 {processSteps.map((step, index) => (
-                    <div key={step.title} className="relative md:grid md:grid-cols-2 md:gap-x-16 items-start">
-                        {/* Dot */}
-                        <div className="absolute left-6 top-0 transform -translate-x-1/2 md:left-1/2 h-8 flex items-center">
-                           <div className="z-10 flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full">
-                                <step.icon className="text-primary-foreground h-6 w-6"/>
-                           </div>
+                    <div key={step.title} className="relative md:grid md:grid-cols-2 md:gap-x-16 md:items-center">
+                        {/* Mobile view: line and icon */}
+                        <div className="md:hidden flex items-start gap-4 mb-4">
+                            <div className="relative pt-1.5">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-border" aria-hidden="true"></div>
+                                <div className="z-10 flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full">
+                                    <step.icon className="text-primary-foreground h-6 w-6"/>
+                                </div>
+                            </div>
+                            <div className="pt-2">
+                                <h3 className="font-bold text-primary font-headline text-xl">{step.title}</h3>
+                            </div>
                         </div>
 
-                        {/* Content */}
-                        <div className={`pl-16 md:pl-0 md:text-left ${index % 2 === 0 ? 'md:order-1 md:col-start-2' : 'md:order-2 md:col-start-1 md:text-right'}`}>
+                        {/* Desktop view: icon */}
+                        <div className="hidden md:flex absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-10 items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full">
+                            <step.icon className="text-primary-foreground h-6 w-6"/>
+                        </div>
+
+                        {/* Content Card */}
+                        <div className={`md:block ${index % 2 === 0 ? 'md:col-start-2' : 'md:col-start-1 md:text-right'}`}>
                             <div className="bg-card p-6 rounded-lg shadow-lg border">
-                                <h3 className="font-bold text-primary font-headline text-xl mb-2">{step.title}</h3>
+                                <h3 className="hidden md:block font-bold text-primary font-headline text-xl mb-2">{step.title}</h3>
                                 <p className="text-muted-foreground">{step.description}</p>
                             </div>
                         </div>
@@ -210,44 +223,44 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section id="tarifs" className="scroll-mt-20" aria-labelledby="tarifs-title">
-        <header className="text-center mb-12">
-          <h2 id="tarifs-title" className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
-          <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>
-        </header>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
-            {pricingPlans.map((plan) => (
-                <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg' : ''}`}>
-                    <CardHeader>
-                        <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
-                        <CardDescription>{plan.description}</CardDescription>
-                        <p className="text-3xl font-bold text-primary pt-4">{plan.price}</p>
-                    </CardHeader>
-                    <CardContent className="flex flex-col flex-grow">
-                        <ul className="space-y-3 mb-6 flex-grow" aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
-                            {plan.features.map((feature) => (
-                                <li key={feature} className="flex items-start">
-                                    <CheckCircle2 className="h-5 w-5 text-accent mr-2 mt-0.5 shrink-0" aria-hidden="true" />
-                                    <span>{feature}</span>
-                                </li>
-                            ))}
-                        </ul>
-                        <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured ? 'default' : 'outline'}>
-                            <Link href={plan.link} aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
-                        </Button>
-                    </CardContent>
-                </Card>
-            ))}
-        </div>
-        <div className="text-center mt-12">
-            <Button asChild size="lg" variant="secondary">
-                <Link href="/devis" aria-label="Accéder au calculateur de devis">
-                    <FileText className="mr-2 h-5 w-5" />
-                    Personnaliser mon devis
-                </Link>
-            </Button>
-        </div>
-      </section>
+        <section id="tarifs" className="scroll-mt-20" aria-labelledby="tarifs-title">
+            <header className="text-center mb-12">
+            <h2 id="tarifs-title" className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
+            <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>
+            </header>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {pricingPlans.map((plan) => (
+                    <Card key={plan.title} className={`flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${plan.featured ? 'border-primary border-2 shadow-lg' : 'border'}`}>
+                        <CardHeader className={`p-6 ${plan.featured ? 'bg-primary text-primary-foreground' : 'bg-muted/30'}`}>
+                            <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
+                            <p className={`text-3xl font-bold pt-4 ${plan.featured ? 'text-white' : 'text-primary'}`}>{plan.price}</p>
+                            <CardDescription className={`${plan.featured ? 'text-primary-foreground/80' : ''}`}>{plan.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-col flex-grow p-6">
+                            <ul className="space-y-3 mb-6 flex-grow" aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
+                                {plan.features.map((feature) => (
+                                    <li key={feature} className="flex items-start">
+                                        <CheckCircle2 className="h-5 w-5 text-accent mr-2.5 mt-0.5 shrink-0" aria-hidden="true" />
+                                        <span>{feature}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured ? 'secondary' : 'default'}>
+                                <Link href={plan.link} aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+            <div className="text-center mt-12">
+                <Button asChild size="lg" variant="secondary">
+                    <Link href="/devis" aria-label="Accéder au calculateur de devis">
+                        <FileText className="mr-2 h-5 w-5" />
+                        Personnaliser mon devis
+                    </Link>
+                </Button>
+            </div>
+        </section>
 
        {/* About Section */}
       <section id="a-propos" className="max-w-4xl mx-auto scroll-mt-20" aria-labelledby="about-title">
