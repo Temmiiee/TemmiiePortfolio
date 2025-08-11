@@ -170,29 +170,20 @@ export default function Home() {
           <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
           <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
         </header>
-        <div className="relative max-w-3xl mx-auto px-4">
-          <div className="absolute left-1/2 h-full w-0.5 bg-border -translate-x-1/2" aria-hidden="true"></div>
-          
-          <div className="relative space-y-12">
+        <div className="container max-w-5xl mx-auto">
+          <div className="relative wrap overflow-hidden p-10 h-full">
+            <div className="absolute top-0 bottom-0 left-1/2 w-1 bg-border rounded-full" aria-hidden="true"></div>
             {processSteps.map((step, index) => (
-              <div key={step.title} className="relative flex items-center">
-                <div className={`flex items-center w-full ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8' : 'pl-8'}`}>
-                    <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <CardHeader className="flex flex-row items-center gap-4">
-                        <div className="bg-primary/10 text-primary rounded-full p-3 w-fit" aria-hidden="true">
-                            <step.icon className="w-6 h-6" />
-                        </div>
-                        <CardTitle className="font-headline text-xl m-0">{step.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">{step.description}</p>
-                      </CardContent>
-                    </Card>
-                  </div>
+              <div key={step.title} className={`mb-8 flex justify-between items-center w-full ${index % 2 === 0 ? 'flex-row-reverse' : ''}`}>
+                <div className="order-1 w-5/12"></div>
+                
+                <div className="z-20 flex items-center order-1 bg-primary shadow-xl w-12 h-12 rounded-full">
+                  <step.icon className="mx-auto text-primary-foreground h-6 w-6"/>
                 </div>
-                <div className="absolute left-1/2 -translate-x-1/2 bg-background p-1 rounded-full border-4 border-primary">
-                    <div className="w-4 h-4 rounded-full bg-primary"></div>
+
+                <div className={`order-1 w-5/12 px-6 py-4 rounded-lg shadow-xl ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
+                  <h3 className="font-bold text-primary font-headline text-xl">{step.title}</h3>
+                  <p className="text-sm text-muted-foreground mt-2">{step.description}</p>
                 </div>
               </div>
             ))}
@@ -221,7 +212,7 @@ export default function Home() {
         </header>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
             {pricingPlans.map((plan) => (
-                <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg md:col-span-2 lg:col-span-1' : ''}`}>
+                <Card key={plan.title} className={`flex flex-col ${plan.featured ? 'border-primary border-2 shadow-lg' : ''}`}>
                     <CardHeader>
                         <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
                         <CardDescription>{plan.description}</CardDescription>
