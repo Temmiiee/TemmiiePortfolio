@@ -314,14 +314,6 @@ export default function Home() {
                   ))}
               </div>
           </div>
-          <div className="text-center mt-12">
-              <Button asChild size="lg" variant="secondary">
-                  <Link href="/devis" aria-label="Accéder au calculateur de devis">
-                      <FileText className="mr-2 h-5 w-5" />
-                      Personnaliser mon devis
-                  </Link>
-              </Button>
-          </div>
       </section>
 
        {/* About Section */}
