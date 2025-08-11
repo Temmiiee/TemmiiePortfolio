@@ -1,5 +1,7 @@
 
 
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { CodeXml, Gauge, Palette, Accessibility, CheckCircle2, FileText, Search, Rocket, PencilRuler, Server, LifeBuoy } from "lucide-react";
@@ -9,6 +11,8 @@ import { projects } from "@/lib/projects";
 import Image from "next/image";
 import { Download, Mail, MessageCircle } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
+import React, { useRef, useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 const services = [
   {
@@ -119,6 +123,91 @@ const pricingPlans = [
   },
 ];
 
+const ProcessSection = () => {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+    useEffect(() => {
+        setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+        
+        const section = sectionRef.current;
+        if (!section || isTouchDevice) return;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            const rect = section.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            section.style.setProperty('--x', `${x}px`);
+            section.style.setProperty('--y', `${y}px`);
+        };
+
+        section.addEventListener('mousemove', handleMouseMove);
+
+        return () => {
+            section.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, [isTouchDevice]);
+    
+    // For touch devices, set a default position
+    useEffect(() => {
+        if (isTouchDevice && sectionRef.current) {
+            const rect = sectionRef.current.getBoundingClientRect();
+            sectionRef.current.style.setProperty('--x', `${rect.width / 2}px`);
+            sectionRef.current.style.setProperty('--y', `100px`);
+        }
+    }, [isTouchDevice]);
+
+
+    return (
+        <section
+            id="processus"
+            ref={sectionRef}
+            className={cn(
+                "scroll-mt-20 py-16 md:py-24 rounded-2xl interactive-bg",
+                { "touch-active": isTouchDevice }
+            )}
+            aria-labelledby="process-title"
+        >
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <header className="text-center mb-12 md:mb-16">
+                    <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
+                    <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
+                </header>
+
+                <div className="relative">
+                    <div className="absolute left-6 md:left-1/2 w-0.5 h-full bg-border -translate-x-1/2" aria-hidden="true"></div>
+                    
+                    <div className="space-y-12 md:space-y-0">
+                        {processSteps.map((step, index) => (
+                            <div key={step.title} className="relative md:grid md:grid-cols-2 md:gap-x-16 md:items-center">
+                                <div className={cn(
+                                    "flex items-center",
+                                    index % 2 === 0 ? "md:col-start-2" : "md:col-start-1 md:row-start-1 md:justify-end"
+                                )}>
+                                    <div className="flex-shrink-0 relative">
+                                        <div className="absolute md:left-1/2 md:-translate-x-1/2 z-10 flex-shrink-0 flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full">
+                                            <step.icon className="text-primary-foreground h-6 w-6"/>
+                                        </div>
+                                        <div className="ml-8 md:ml-0 pl-6 md:pl-0">
+                                            <div className={cn(
+                                                "bg-card p-6 rounded-lg shadow-lg border w-full",
+                                                index % 2 === 1 && "md:text-right"
+                                            )}>
+                                                <h3 className="font-bold text-primary font-headline text-xl mb-2">{step.title}</h3>
+                                                <p className="text-muted-foreground">{step.description}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
+    )
+}
+
 export default function Home() {
   return (
     <div className="space-y-16 md:space-y-24">
@@ -144,14 +233,14 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="scroll-mt-20 animate-fade-in" aria-labelledby="services-title">
+      <section id="services" className="scroll-mt-20" aria-labelledby="services-title">
         <header className="text-center mb-12">
           <h2 id="services-title" className="font-headline text-3xl md:text-4xl font-bold">Mes services</h2>
           <p className="text-lg text-muted-foreground mt-2">Ce que je peux faire pour vous.</p>
         </header>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.map((service) => (
-            <Card key={service.title} className="text-center hover:shadow-lg transition-shadow duration-300 hover:-translate-y-1">
+          {services.map((service, index) => (
+            <Card key={service.title} className="text-center hover:shadow-lg transition-shadow duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'backwards' }}>
               <CardHeader>
                 <div className="mx-auto bg-primary/10 text-primary rounded-full p-4 w-fit mb-4" aria-hidden="true">
                   <service.icon className="w-8 h-8" />
@@ -165,37 +254,9 @@ export default function Home() {
           ))}
         </div>
       </section>
-
+      
       {/* Process Section */}
-      <section id="processus" className="scroll-mt-20 animate-fade-in" aria-labelledby="process-title">
-        <header className="text-center mb-12">
-            <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
-            <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
-        </header>
-        <div className="relative">
-            {/* The vertical line for both mobile and desktop */}
-            <div className="absolute top-0 md:left-1/2 md:-translate-x-1/2 left-6 -translate-x-1/2 w-0.5 h-full bg-border" aria-hidden="true"></div>
-            
-            <div className="space-y-12">
-                {processSteps.map((step, index) => (
-                    <div key={step.title} className="relative flex md:grid md:grid-cols-2 md:gap-x-16 items-start md:items-center">
-                       {/* Icon for both mobile and desktop */}
-                        <div className="z-10 flex-shrink-0 flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full md:absolute md:top-1/2 md:-translate-y-1/2 md:left-1/2 md:-translate-x-1/2">
-                            <step.icon className="text-primary-foreground h-6 w-6"/>
-                        </div>
-
-                        {/* Content Card */}
-                        <div className={`w-full ml-8 md:ml-0 ${index % 2 === 0 ? 'md:col-start-2' : 'md:col-start-1 md:text-right'}`}>
-                            <div className="bg-card p-6 rounded-lg shadow-lg border">
-                                <h3 className="font-bold text-primary font-headline text-xl mb-2">{step.title}</h3>
-                                <p className="text-muted-foreground">{step.description}</p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-      </section>
+      <ProcessSection />
       
       {/* Projects Section */}
       <section id="projets" className="scroll-mt-20 animate-fade-in" aria-labelledby="projects-title">

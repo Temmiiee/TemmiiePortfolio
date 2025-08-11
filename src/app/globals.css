@@ -86,6 +86,43 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+@layer utilities {
+  .interactive-bg {
+    position: relative;
+    background-color: hsl(var(--secondary));
+    overflow: hidden;
+  }
+  .interactive-bg::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: radial-gradient(
+      circle at var(--x) var(--y),
+      hsl(var(--primary) / 0.15),
+      transparent 25%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  /* On non-touch devices, effect is hover-based */
+  @media (hover: hover) and (pointer: fine) {
+    .interactive-bg:hover::before {
+      opacity: 1;
+    }
+  }
+
+  /* On touch devices, effect is always on (no hover) */
+  @media (hover: none) {
+    .interactive-bg.touch-active::before {
+      opacity: 1;
+    }
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
