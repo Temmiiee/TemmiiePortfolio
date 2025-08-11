@@ -166,26 +166,38 @@ export default function Home() {
 
       {/* Process Section */}
       <section id="processus" className="scroll-mt-20" aria-labelledby="process-title">
-          <header className="text-center mb-12">
-              <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
-              <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
-          </header>
-          <div className="relative">
-              <div className="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-border" aria-hidden="true"></div>
-              <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {processSteps.map((step, index) => (
-                      <div key={step.title} className="flex flex-col items-center text-center p-4">
-                          <div className="relative z-10 w-24 h-24 rounded-full bg-background border-4 border-primary flex items-center justify-center mb-4">
-                              <div className="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-                                <step.icon className="w-10 h-10" />
-                              </div>
-                          </div>
-                          <h3 className="font-headline text-xl font-bold">{step.title}</h3>
-                          <p className="text-muted-foreground mt-2">{step.description}</p>
-                      </div>
-                  ))}
+        <header className="text-center mb-12">
+          <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
+          <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
+        </header>
+        <div className="relative max-w-3xl mx-auto px-4">
+          <div className="absolute left-1/2 h-full w-0.5 bg-border -translate-x-1/2" aria-hidden="true"></div>
+          
+          <div className="relative space-y-12">
+            {processSteps.map((step, index) => (
+              <div key={step.title} className="relative flex items-center">
+                <div className={`flex items-center w-full ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
+                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8' : 'pl-8'}`}>
+                    <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+                      <CardHeader className="flex flex-row items-center gap-4">
+                        <div className="bg-primary/10 text-primary rounded-full p-3 w-fit" aria-hidden="true">
+                            <step.icon className="w-6 h-6" />
+                        </div>
+                        <CardTitle className="font-headline text-xl m-0">{step.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground">{step.description}</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+                <div className="absolute left-1/2 -translate-x-1/2 bg-background p-1 rounded-full border-4 border-primary">
+                    <div className="w-4 h-4 rounded-full bg-primary"></div>
+                </div>
               </div>
+            ))}
           </div>
+        </div>
       </section>
       
       {/* Projects Section */}
