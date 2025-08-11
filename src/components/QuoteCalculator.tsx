@@ -30,6 +30,7 @@ const formSchema = z.object({
   designType: z.enum(["template", "custom"], {
       required_error: "Veuillez sélectionner un type de design.",
   }),
+  wordpress: z.boolean().default(false).optional(),
   features: z.array(z.string()).optional(),
   maintenance: z.boolean().default(false).optional(),
   projectDescription: z.string().optional(),
@@ -75,6 +76,7 @@ export function QuoteCalculator() {
     defaultValues: {
       siteType: siteTypeParam === 'vitrine' || siteTypeParam === 'ecommerce' || siteTypeParam === 'webapp' ? siteTypeParam : undefined,
       designType: designTypeParam === 'template' || designTypeParam === 'custom' ? designTypeParam : undefined,
+      wordpress: false,
       features: [],
       maintenance: maintenanceParam === 'true',
       projectDescription: "",
@@ -85,6 +87,7 @@ export function QuoteCalculator() {
     form.reset({
         siteType: siteTypeParam === 'vitrine' || siteTypeParam === 'ecommerce' || siteTypeParam === 'webapp' ? siteTypeParam : undefined,
         designType: designTypeParam === 'template' || designTypeParam === 'custom' ? designTypeParam : undefined,
+        wordpress: false,
         features: [],
         maintenance: maintenanceParam === 'true',
         projectDescription: "",
@@ -144,6 +147,10 @@ export function QuoteCalculator() {
 
     if (data.projectDescription) {
       body += `Description du projet :\n${data.projectDescription}\n\n`;
+    }
+
+    if (data.wordpress) {
+        body += `Technologie souhaitée : WordPress\n\n`;
     }
 
     body += `Détails de l'estimation :\n`;
@@ -254,6 +261,29 @@ export function QuoteCalculator() {
               </FormItem>
             )}
           />
+
+            <FormField
+              control={form.control}
+              name="wordpress"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base font-semibold">
+                      Technologie : WordPress
+                    </FormLabel>
+                    <FormDescription>
+                      Cochez cette case si vous souhaitez que le site soit développé sur WordPress. N'impacte pas le devis.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
           
           <FormField
@@ -400,5 +430,3 @@ export function QuoteCalculator() {
     </div>
   );
 }
-
-    
