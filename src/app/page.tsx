@@ -129,15 +129,20 @@ const pricingPlans = [
 ];
 
 
-const AnimatedSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+const AnimatedSection = ({ children, className, id, ...props }: { children: React.ReactNode, className?: string, id: string, "aria-labelledby": string }) => {
     const { ref, isIntersecting } = useIntersectionObserver({ threshold: 0.1 });
 
     return (
-        <section ref={ref} className={cn(
-            className, 
-            "transition-opacity duration-700 ease-out", 
-            isIntersecting ? "opacity-100" : "opacity-0"
-        )}>
+        <section 
+            id={id}
+            ref={ref} 
+            className={cn(
+                className, 
+                "transition-opacity duration-700 ease-out scroll-mt-20", 
+                isIntersecting ? "opacity-100" : "opacity-0"
+            )}
+            {...props}
+        >
             {children}
         </section>
     );
@@ -170,7 +175,10 @@ const ProcessSection = () => {
 
 
     useEffect(() => {
-        setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+        // This check is to prevent errors during server-side rendering
+        if (typeof window !== 'undefined') {
+            setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+        }
     }, []);
     
     useEffect(() => {
@@ -287,7 +295,7 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <AnimatedSection id="services" className="scroll-mt-20" aria-labelledby="services-title">
+      <AnimatedSection id="services" aria-labelledby="services-title">
         <header className="text-center mb-12">
           <h2 id="services-title" className="font-headline text-3xl md:text-4xl font-bold">Mes services</h2>
           <p className="text-lg text-muted-foreground mt-2">Ce que je peux faire pour vous.</p>
@@ -315,7 +323,7 @@ export default function Home() {
       <ProcessSection />
       
       {/* Projects Section */}
-      <AnimatedSection id="projets" className="scroll-mt-20" aria-labelledby="projects-title">
+      <AnimatedSection id="projets" aria-labelledby="projects-title">
         <header className="text-center mb-12">
           <h2 id="projects-title" className="font-headline text-3xl md:text-4xl font-bold">Mes projets</h2>
           <p className="text-lg text-muted-foreground mt-2">Quelques exemples de mon travail.</p>
@@ -330,7 +338,7 @@ export default function Home() {
       </AnimatedSection>
 
       {/* Pricing Section */}
-      <AnimatedSection id="tarifs" className="scroll-mt-20" aria-labelledby="tarifs-title">
+      <AnimatedSection id="tarifs" aria-labelledby="tarifs-title">
           <header className="text-center mb-12">
           <h2 id="tarifs-title" className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
           <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>

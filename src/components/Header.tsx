@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -20,52 +21,59 @@ const navLinks = [
 
 export function Header() {
   const pathname = usePathname();
-  const isHomePage = pathname === '/';
   const [isSheetOpen, setSheetOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState(isHomePage ? "#accueil" : "");
+  const [activeLink, setActiveLink] = useState("#accueil");
 
   useEffect(() => {
-    if (!isHomePage) {
-      setActiveLink(pathname);
-      return;
-    }
-
     const handleScroll = () => {
-      let currentSection = '';
-      
-      navLinks.forEach(link => {
-        const section = document.querySelector(link.href);
-        if (section) {
-          const sectionTop = (section as HTMLElement).offsetTop;
-          // Use a buffer of 160px for the header height and some margin
-          if (window.scrollY >= sectionTop - 160) {
-            currentSection = link.href;
+      if (pathname === '/') {
+        let currentSection = '#accueil';
+        
+        navLinks.forEach(link => {
+          const section = document.querySelector(link.href);
+          if (section) {
+            const rect = section.getBoundingClientRect();
+             // A section is considered active if its top is near the top of the viewport
+            if (rect.top <= 150 && rect.bottom >= 150) {
+              currentSection = link.href;
+            }
           }
-        }
-      });
-
-      if (currentSection) {
+        });
         setActiveLink(currentSection);
+      } else {
+         setActiveLink(pathname);
       }
     };
     
-    document.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll);
     handleScroll(); // Set initial state on load
 
-    return () => document.removeEventListener("scroll", handleScroll);
-  }, [isHomePage, pathname]);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathname]);
+  
+  // Update active link based on hash change (when user clicks a link)
+  useEffect(() => {
+    const handleHashChange = () => {
+        if (window.location.hash) {
+            setActiveLink(window.location.hash);
+        } else if (pathname === '/') {
+            setActiveLink('#accueil');
+        } else {
+            setActiveLink(pathname);
+        }
+    };
+    window.addEventListener('hashchange', handleHashChange, false);
+    handleHashChange();
+    return () => {
+        window.removeEventListener('hashchange', handleHashChange, false);
+    };
+  }, [pathname]);
 
-  const handleLogoClick = () => {
-    setSheetOpen(false);
-    if (isHomePage) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setActiveLink("#accueil");
-    }
-  };
 
   const NavLink = ({ href, label, className }: { href: string, label: string, className?: string }) => {
-    const finalHref = isHomePage ? href : `/${href}`;
-    const isActive = activeLink === href || activeLink === finalHref;
+    // Always prefix with / to navigate to the homepage sections from other pages
+    const finalHref = href.startsWith("#") ? `/${href}` : href;
+    const isActive = activeLink === href;
 
     return (
       <Link
@@ -77,13 +85,25 @@ export function Header() {
         )}
         onClick={() => {
             setSheetOpen(false);
-            setActiveLink(href);
+            // No need to manually set active link here, hashchange listener will do it
         }}
         aria-current={isActive ? "page" : undefined}
       >
         {label}
       </Link>
     );
+  };
+
+  const handleLogoClick = () => {
+    setSheetOpen(false);
+    if (pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setActiveLink("#accueil");
+    } else {
+      // If on another page, just navigate to home
+      // The Link component will handle this, but we ensure state is updated
+      setActiveLink("#accueil");
+    }
   };
 
   return (
