@@ -19,8 +19,9 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    allowedDevOrigins: ["**"],
-  }
+    // allowedDevOrigins should be at the top level, not in experimental
+  },
+  allowedDevOrigins: ["**"],
 };
 
 export default nextConfig;
