@@ -29,9 +29,9 @@ export const projects: Project[] = [
       { name: "PHP", icon: CodeXml },
       { name: "JavaScript", icon: CodeXml },
     ],
-    imageUrl: "https://placehold.co/1200x800.png",
+    imageUrl: "/images/projects/kit-design-istex.jpg",
     dataAiHint: "design system",
-    liveLink: "#",
+    liveLink: "https://design.istex.fr/",
   },
   {
     slug: "tdm-factory",
@@ -43,9 +43,9 @@ export const projects: Project[] = [
       { name: "Node.js", icon: Cpu },
       { name: "Text Mining APIs", icon: Database },
     ],
-    imageUrl: "https://placehold.co/1200x800.png",
+    imageUrl: "/images/projects/tdm-factory.jpg", // Add project screenshot to public/images/projects/
     dataAiHint: "data analysis",
-    liveLink: "#",
-    repoLink: "#",
+    liveLink: "https://tdm-factory.istex.fr", // Replace with actual project URL
+    repoLink: "https://github.com/istex/tdm-factory", // Replace with actual repository URL
   },
 ];

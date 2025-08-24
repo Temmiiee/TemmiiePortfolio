@@ -130,7 +130,7 @@ const pricingPlans = [
 
 
 const AnimatedSection = ({ children, className, id, ...props }: { children: React.ReactNode, className?: string, id: string, "aria-labelledby": string }) => {
-    const { ref, isIntersecting } = useIntersectionObserver({ threshold: 0.1 });
+    const { ref, isIntersecting } = useIntersectionObserver({ threshold: 0.2, rootMargin: '-80px 0px -80px 0px' });
 
     return (
         <section 
@@ -148,19 +148,29 @@ const AnimatedSection = ({ children, className, id, ...props }: { children: Reac
     );
 };
 
-const AnimatedDiv = ({ children, className, animation = "fade-in-up", delay = 0 }: { children: React.ReactNode, className?: string, animation?: string, delay?: number }) => {
-    const { ref, isIntersecting } = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+const AnimatedDiv = ({ children, className, animation = "animate-fade-in-up", delay = 0, ...props }: { children: React.ReactNode, className?: string, animation?: string, delay?: number } & React.HTMLAttributes<HTMLDivElement>) => {
+    const { ref, isIntersecting } = useIntersectionObserver({ threshold: 0.2, rootMargin: '-50px 0px -50px 0px', triggerOnce: true });
+
+    // Determine initial transform based on animation type
+    const getInitialTransform = (animationType: string) => {
+        if (animationType.includes('fade-in-up')) return 'translateY(50px)';
+        if (animationType.includes('fade-in-down')) return 'translateY(-50px)';
+        if (animationType.includes('fade-in-left')) return 'translateX(-50px)';
+        if (animationType.includes('fade-in-right')) return 'translateX(50px)';
+        return 'translateY(50px)';
+    };
 
     return (
-        <div 
-            ref={ref} 
-            style={{transitionDelay: `${delay}ms`}} 
-            className={cn(
-                className, 
-                "transition-all duration-700 ease-out", 
-                isIntersecting ? "opacity-100 translate-y-0 translate-x-0" : "opacity-0", 
-                animation
-            )}
+        <div
+            ref={ref as React.RefObject<HTMLDivElement>}
+            style={{
+                transitionDelay: `${delay}ms`,
+                opacity: isIntersecting ? 1 : 0,
+                transform: isIntersecting ? 'translate(0, 0)' : getInitialTransform(animation),
+                transition: 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            }}
+            className={cn(className)}
+            {...props}
         >
             {children}
         </div>
@@ -169,7 +179,7 @@ const AnimatedDiv = ({ children, className, animation = "fade-in-up", delay = 0 
 
 
 const ProcessSection = () => {
-    const { ref: sectionRef, isIntersecting } = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+    const { ref: sectionRef, isIntersecting } = useIntersectionObserver({ threshold: 0.2, rootMargin: '-80px 0px -80px 0px', triggerOnce: true });
     const [isTouchDevice, setIsTouchDevice] = useState(false);
     const interactiveBgRef = useRef<HTMLDivElement>(null);
 
@@ -191,6 +201,9 @@ const ProcessSection = () => {
             const y = e.clientY - rect.top;
             section.style.setProperty('--x', `${x}px`);
             section.style.setProperty('--y', `${y}px`);
+
+            // Debug: log pour vérifier que les variables sont bien définies
+            console.log(`Mouse position: x=${x}px, y=${y}px`);
         };
 
         section.addEventListener('mousemove', handleMouseMove);
@@ -220,46 +233,82 @@ const ProcessSection = () => {
             )}
             aria-labelledby="process-title"
         >
-            <div ref={interactiveBgRef} className="py-16 md:py-24 rounded-2xl interactive-bg">
+            <div ref={interactiveBgRef} className="py-12 md:py-16 lg:py-20 rounded-2xl interactive-bg">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <header className="text-center mb-12 md:mb-16">
                         <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold">Mon Processus de Travail</h2>
-                        <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
+                        <p className="text-lg text-foreground/80 mt-2 max-w-2xl mx-auto">Une approche structurée pour garantir la réussite de votre projet.</p>
                     </header>
 
-                    <div className="relative">
+                    <div className="relative max-w-5xl mx-auto">
                         {/* Vertical line for all screens */}
-                        <div className="absolute left-6 md:left-1/2 w-0.5 h-full bg-border -translate-x-1/2" aria-hidden="true"></div>
-                        
-                        <div className="space-y-12">
+                        <div className="absolute left-6 md:left-1/2 top-0 w-0.5 h-full bg-border md:-translate-x-1/2" aria-hidden="true"></div>
+
+                        <div className="space-y-16">
                             {processSteps.map((step, index) => (
-                                <div key={step.title} className="relative flex items-start md:grid md:grid-cols-2 md:gap-x-12 md:items-center">
-                                    {/* Icon container */}
-                                    <div className={cn(
-                                        "flex-shrink-0",
-                                        "md:order-1",
-                                        index % 2 === 0 ? "md:col-start-1" : "md:col-start-2",
-                                        "flex justify-center"
-                                    )}>
-                                        <div className="relative z-10 flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full">
-                                            <step.icon className="text-primary-foreground h-6 w-6"/>
+                                <div key={step.title} className="relative">
+                                    {/* Mobile layout */}
+                                    <div className="flex items-center md:hidden">
+                                        {/* Icon */}
+                                        <div className="absolute left-0 flex items-center justify-center w-12 h-12 z-10">
+                                            <div className="flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full">
+                                                <step.icon className="text-primary-foreground h-6 w-6"/>
+                                            </div>
                                         </div>
+                                        {/* Card */}
+                                        <AnimatedDiv
+                                            animation="animate-fade-in-up"
+                                            delay={index * 150}
+                                            className="ml-16 flex-1">
+                                            <div className="bg-card p-6 rounded-lg shadow-lg border w-full">
+                                                <h3 className="font-bold text-primary font-headline text-xl mb-3">{step.title}</h3>
+                                                <p className="text-foreground/85 leading-relaxed">{step.description}</p>
+                                            </div>
+                                        </AnimatedDiv>
                                     </div>
-                                    
-                                    {/* Card */}
-                                    <AnimatedDiv
-                                        animation={index % 2 === 0 ? "animate-fade-in-right" : "animate-fade-in-left"}
-                                        delay={index * 150}
-                                        className={cn(
-                                            "ml-6 md:ml-0",
-                                            "w-full",
-                                            index % 2 === 0 ? "md:col-start-2" : "md:col-start-1 md:row-start-1 md:text-right"
-                                        )}>
-                                        <div className="bg-card p-6 rounded-lg shadow-lg border w-full">
-                                            <h3 className="font-bold text-primary font-headline text-xl mb-2">{step.title}</h3>
-                                            <p className="text-muted-foreground">{step.description}</p>
+
+                                    {/* Desktop layout */}
+                                    <div className="hidden md:grid md:grid-cols-2 md:gap-x-16 md:items-center">
+                                        {/* Icon - always centered */}
+                                        <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center w-12 h-12 z-10">
+                                            <div className="flex items-center justify-center bg-primary shadow-xl w-12 h-12 rounded-full">
+                                                <step.icon className="text-primary-foreground h-6 w-6"/>
+                                            </div>
                                         </div>
-                                    </AnimatedDiv>
+
+                                        {/* Card - alternating sides */}
+                                        {index % 2 === 0 ? (
+                                            <>
+                                                {/* Left side card */}
+                                                <AnimatedDiv
+                                                    animation="animate-fade-in-up"
+                                                    delay={index * 150}
+                                                    className="pr-8">
+                                                    <div className="bg-card p-6 rounded-lg shadow-lg border w-full text-right">
+                                                        <h3 className="font-bold text-primary font-headline text-xl mb-3">{step.title}</h3>
+                                                        <p className="text-foreground/85 leading-relaxed">{step.description}</p>
+                                                    </div>
+                                                </AnimatedDiv>
+                                                {/* Empty right side */}
+                                                <div></div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                {/* Empty left side */}
+                                                <div></div>
+                                                {/* Right side card */}
+                                                <AnimatedDiv
+                                                    animation="animate-fade-in-up"
+                                                    delay={index * 150}
+                                                    className="pl-8">
+                                                    <div className="bg-card p-6 rounded-lg shadow-lg border w-full">
+                                                        <h3 className="font-bold text-primary font-headline text-xl mb-3">{step.title}</h3>
+                                                        <p className="text-foreground/85 leading-relaxed">{step.description}</p>
+                                                    </div>
+                                                </AnimatedDiv>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -272,37 +321,47 @@ const ProcessSection = () => {
 
 export default function Home() {
   return (
-    <div className="space-y-16 md:space-y-24">
+    <div className="space-y-4 md:space-y-6">
       {/* Hero Section */}
-      <section id="accueil" className="text-center py-12 md:py-16 scroll-mt-20" aria-labelledby="hero-title">
-        <h1 id="hero-title" className="font-headline text-4xl sm:text-5xl md:text-6xl font-bold text-primary mb-4 animate-fade-in-down">
-          Matthéo Termine
-        </h1>
-        <p className="font-headline text-xl md:text-2xl text-foreground/80 mb-6 max-w-3xl mx-auto" role="doc-subtitle">
-          Intégrateur Web Freelance
-        </p>
-        <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto mb-8">
-          Je réalise des sites web modernes, accessibles (normes RGAA), rapides et optimisés SEO.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild size="lg">
-            <Link href="#projets" aria-label="Voir mes projets">Mes projets</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline">
-            <Link href="#contact" aria-label="Me contacter">Me contacter</Link>
-          </Button>
-        </div>
+      <section id="accueil" className="text-center py-12 md:py-16 lg:py-20 min-h-[80vh] flex flex-col justify-center scroll-mt-20" aria-labelledby="hero-title">
+        <AnimatedDiv animation="animate-fade-in-up" delay={0}>
+          <h1 id="hero-title" className="font-headline text-4xl sm:text-5xl md:text-6xl font-bold text-primary mb-4">
+            Matthéo Termine
+          </h1>
+        </AnimatedDiv>
+        <AnimatedDiv animation="animate-fade-in-up" delay={200}>
+          <p className="font-headline text-xl md:text-2xl text-foreground/80 mb-6 max-w-3xl mx-auto" role="doc-subtitle">
+            Intégrateur Web Freelance
+          </p>
+        </AnimatedDiv>
+        <AnimatedDiv animation="animate-fade-in-up" delay={400}>
+          <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto mb-8">
+            Je réalise des sites web modernes, accessibles (normes RGAA), rapides et optimisés SEO.
+          </p>
+        </AnimatedDiv>
+        <AnimatedDiv animation="animate-fade-in-up" delay={600}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg">
+              <Link href="#projets" aria-label="Voir mes projets">Mes projets</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="#contact" aria-label="Me contacter">Me contacter</Link>
+            </Button>
+          </div>
+        </AnimatedDiv>
       </section>
 
       {/* Services Section */}
-      <AnimatedSection id="services" aria-labelledby="services-title">
-        <header className="text-center mb-12">
-          <h2 id="services-title" className="font-headline text-3xl md:text-4xl font-bold">Mes services</h2>
-          <p className="text-lg text-muted-foreground mt-2">Ce que je peux faire pour vous.</p>
-        </header>
+      <AnimatedSection id="services" className="py-12 md:py-16 lg:py-20 min-h-[85vh] flex flex-col justify-center" aria-labelledby="services-title">
+        <AnimatedDiv animation="animate-fade-in-up" delay={0}>
+          <header className="text-center mb-16">
+            <h2 id="services-title" className="font-headline text-3xl md:text-4xl font-bold">Mes services</h2>
+            <p className="text-lg text-foreground/80 mt-2">Ce que je peux faire pour vous.</p>
+          </header>
+        </AnimatedDiv>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, index) => (
-             <AnimatedDiv key={service.title} delay={index * 150} animation="animate-fade-in-up">
+             <AnimatedDiv key={service.title} delay={300 + (index * 300)} animation="animate-fade-in-up">
                 <Card className="text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-105 h-full">
                 <CardHeader>
                     <div className="mx-auto bg-primary/10 text-primary rounded-full p-4 w-fit mb-4" aria-hidden="true">
@@ -311,7 +370,7 @@ export default function Home() {
                     <CardTitle className="font-headline text-xl">{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-muted-foreground">{service.description}</p>
+                    <p className="text-foreground/80">{service.description}</p>
                 </CardContent>
                 </Card>
             </AnimatedDiv>
@@ -326,7 +385,7 @@ export default function Home() {
       <AnimatedSection id="projets" aria-labelledby="projects-title">
         <header className="text-center mb-12">
           <h2 id="projects-title" className="font-headline text-3xl md:text-4xl font-bold">Mes projets</h2>
-          <p className="text-lg text-muted-foreground mt-2">Quelques exemples de mon travail.</p>
+          <p className="text-lg text-foreground/80 mt-2">Quelques exemples de mon travail.</p>
         </header>
         <div className="grid md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
@@ -341,16 +400,37 @@ export default function Home() {
       <AnimatedSection id="tarifs" aria-labelledby="tarifs-title">
           <header className="text-center mb-12">
           <h2 id="tarifs-title" className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
-          <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>
+          <p className="text-lg text-foreground/80 mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>
           </header>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {pricingPlans.map((plan, index) => (
                   <AnimatedDiv key={plan.title} delay={index * 150} animation="animate-fade-in-up">
                     <Card className={cn("flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-105 h-full", plan.featured ? 'border-primary shadow-lg' : 'border-border')}>
                         <CardHeader className={cn("p-6", plan.headerClass)}>
-                            <CardTitle className="font-headline text-2xl">{plan.title}</CardTitle>
-                            <p className="text-3xl font-bold pt-4">{plan.price}</p>
-                            <CardDescription className={cn(plan.headerClass.includes('text-primary-foreground') || plan.headerClass.includes('text-background') ? "text-inherit/80" : "text-muted-foreground")}>{plan.description}</CardDescription>
+                            <CardTitle className={cn(
+                              "font-headline text-2xl",
+                              plan.headerClass.includes('bg-primary') ||
+                              plan.headerClass.includes('bg-accent') ||
+                              plan.headerClass.includes('bg-foreground')
+                                ? "text-white drop-shadow-sm"
+                                : "text-foreground"
+                            )}>{plan.title}</CardTitle>
+                            <p className={cn(
+                              "text-3xl font-bold pt-4",
+                              plan.headerClass.includes('bg-primary') ||
+                              plan.headerClass.includes('bg-accent') ||
+                              plan.headerClass.includes('bg-foreground')
+                                ? "text-white drop-shadow-sm"
+                                : "text-foreground"
+                            )}>{plan.price}</p>
+                            <CardDescription className={cn(
+                              // Fonds sombres (primary, accent, foreground) -> texte blanc avec ombre
+                              plan.headerClass.includes('bg-primary') ||
+                              plan.headerClass.includes('bg-accent') ||
+                              plan.headerClass.includes('bg-foreground')
+                                ? "text-on-dark-bg"
+                                : "text-contrast-aa" // Fond clair (secondary) -> texte très sombre pour contraste AA
+                            )}>{plan.description}</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col flex-grow p-6">
                             <ul className="space-y-3 mb-6" aria-label={`Fonctionnalités incluses dans l'offre ${plan.title}`}>
@@ -361,7 +441,7 @@ export default function Home() {
                                     </li>
                                 ))}
                             </ul>
-                            <Button asChild size="lg" className="w-full mt-auto" variant={plan.featured ? 'secondary' : 'default'}>
+                            <Button asChild size="lg" className="w-full mt-auto" variant="default">
                                 <Link href={plan.link} aria-label={`${plan.cta} pour l'offre ${plan.title}`}>{plan.cta}</Link>
                             </Button>
                         </CardContent>
@@ -372,92 +452,126 @@ export default function Home() {
       </AnimatedSection>
 
        {/* About Section */}
-      <section id="a-propos" className="max-w-4xl mx-auto scroll-mt-20" aria-labelledby="about-title">
-        <header className="text-center mb-12">
-          <h2 id="about-title" className="font-headline text-3xl md:text-4xl font-bold text-primary">À propos de moi</h2>
-        </header>
+      <section id="a-propos" className="py-12 md:py-16 lg:py-20 scroll-mt-20" aria-labelledby="about-title">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <header className="text-center mb-12 md:mb-16">
+            <h2 id="about-title" className="font-headline text-3xl md:text-4xl font-bold text-primary mb-4">À propos de moi</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary to-accent mx-auto"></div>
+          </header>
 
-        <div className="grid md:grid-cols-3 gap-8 md:gap-12 items-center">
-          <AnimatedDiv animation="animate-fade-in-right" className="md:col-span-1 flex justify-center">
-            <div className="relative w-48 h-48 md:w-64 md:h-64">
-                <Image
-                    src="https://placehold.co/400x400.png"
-                    alt="Photo de Matthéo Termine"
-                    width={400}
-                    height={400}
-                    data-ai-hint="professional portrait"
-                    className="rounded-full object-cover w-full h-full border-4 border-primary shadow-lg"
-                    priority
-                />
-            </div>
-          </AnimatedDiv>
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+            {/* Photo */}
+            <AnimatedDiv animation="animate-fade-in-right" className="flex justify-center lg:justify-end">
+              <div className="relative">
+                <div className="w-72 h-72 lg:w-80 lg:h-80 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full blur-2xl"></div>
+                  <Image
+                      src="/images/mattheo-termine-photo.png"
+                      alt="Photo de Matthéo Termine"
+                      width={400}
+                      height={400}
+                      data-ai-hint="professional portrait"
+                      className="relative rounded-full object-cover w-full h-full border-4 border-white shadow-2xl"
+                      priority
+                  />
+                </div>
+              </div>
+            </AnimatedDiv>
 
-          <AnimatedDiv animation="animate-fade-in-left" className="md:col-span-2 space-y-6 text-foreground/90">
-            <h3 className="font-headline text-3xl font-bold text-foreground">
-              Passionné par la création d'expériences web performantes et inclusives.
-            </h3>
-            <div className="space-y-4 text-lg">
-              <p>
-                Je transforme des idées créatives en sites web fonctionnels, que ce soit en écrivant du code sur-mesure ou en personnalisant des solutions WordPress. Mon objectif est de construire des plateformes qui répondent aux besoins de mes clients et qui offrent une expérience utilisateur fluide.
-              </p>
-              <p>
-                Je crois fermement en un web ouvert et accessible. C'est pourquoi j'accorde une importance capitale au respect des standards, à la performance et aux normes d'accessibilité (RGAA). Un bon site, selon moi, est un site rapide, facile à utiliser et qui ne laisse personne de côté.
-              </p>
-              <p>
-                Constamment en veille technologique, j'aime explorer de nouveaux outils et de nouvelles méthodes pour améliorer la qualité de mon travail et proposer des solutions toujours plus innovantes.
-              </p>
-            </div>
-            <div className="pt-4">
-              <Button asChild size="lg">
-                  <Link href="/CV_Matthéo.pdf" target="_blank" rel="noopener noreferrer" aria-label="Télécharger mon CV au format PDF">
-                      <Download className="mr-2 h-5 w-5" aria-hidden="true" />
-                      Télécharger mon CV
-                  </Link>
-              </Button>
-            </div>
-          </AnimatedDiv>
+            {/* Content */}
+            <AnimatedDiv animation="animate-fade-in-left" className="space-y-8 lg:space-y-10">
+              <div className="text-center lg:text-left">
+                <h3 className="font-headline text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground leading-tight max-w-2xl mx-auto lg:mx-0">
+                  Passionné par la création d'expériences web performantes et inclusives.
+                </h3>
+              </div>
+
+              <div className="space-y-6 text-lg leading-relaxed text-foreground max-w-2xl mx-auto lg:mx-0">
+                <p className="text-center lg:text-left">
+                  Je transforme des idées créatives en sites web fonctionnels, que ce soit en écrivant du code sur-mesure ou en personnalisant des solutions WordPress. Mon objectif est de construire des plateformes qui répondent aux besoins de mes clients et qui offrent une expérience utilisateur fluide.
+                </p>
+                <p className="text-center lg:text-left">
+                  Je crois fermement en un web ouvert et accessible. C'est pourquoi j'accorde une importance capitale au respect des standards, à la performance et aux normes d'accessibilité (RGAA). Un bon site, selon moi, est un site rapide, facile à utiliser et qui ne laisse personne de côté.
+                </p>
+                <p className="text-center lg:text-left">
+                  Constamment en veille technologique, j'aime explorer de nouveaux outils et de nouvelles méthodes pour améliorer la qualité de mon travail et proposer des solutions toujours plus innovantes.
+                </p>
+              </div>
+
+              <div className="pt-8 flex justify-center lg:justify-start">
+                <Button asChild size="lg" className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <Link href="/CV_Mattheo_Termine.pdf" target="_blank" rel="noopener noreferrer" aria-label="Télécharger mon CV au format PDF">
+                        <Download className="mr-2 h-5 w-5" aria-hidden="true" />
+                        Télécharger mon CV
+                    </Link>
+                </Button>
+              </div>
+            </AnimatedDiv>
+          </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="max-w-4xl mx-auto scroll-mt-20" aria-labelledby="contact-title">
-        <header className="text-center mb-12">
-          <h2 id="contact-title" className="font-headline text-3xl md:text-4xl font-bold text-primary">Contactez-moi</h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Une question, un projet ? N'hésitez pas à me contacter. Je vous répondrai dans les plus brefs délais.
-          </p>
-        </header>
-        
-        <div className="grid md:grid-cols-2 gap-12 items-start">
-          <AnimatedDiv animation="animate-fade-in-right" role="region" aria-labelledby="form-title">
-            <ContactForm />
-          </AnimatedDiv>
-          <AnimatedDiv animation="animate-fade-in-left" className="space-y-6" role="region" aria-labelledby="other-contact-title">
-            <h3 id="other-contact-title" className="font-headline text-2xl font-bold">Autres moyens de contact</h3>
-            <p className="text-muted-foreground">
-              Si vous préférez, vous pouvez aussi me joindre directement par email ou via WhatsApp.
+      <section id="contact" className="py-12 md:py-16 lg:py-20 scroll-mt-20" aria-labelledby="contact-title">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <header className="text-center mb-12 md:mb-16">
+            <h2 id="contact-title" className="font-headline text-3xl md:text-4xl font-bold text-primary mb-4">Contactez-moi</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary to-accent mx-auto mb-6"></div>
+            <p className="text-lg text-foreground/80 max-w-2xl mx-auto leading-relaxed">
+              Une question, un projet ? N'hésitez pas à me contacter. Je vous répondrai dans les plus brefs délais.
             </p>
-            <div className="space-y-4">
-              <Button asChild variant="outline" className="w-full justify-start text-left h-auto py-3">
-                <Link href="mailto:contact@mattheo-termine.fr" aria-label="Envoyer un email à contact@mattheo-termine.fr">
-                  <Mail className="mr-4 h-6 w-6 text-primary" aria-hidden="true" />
-                  <div>
-                    <div className="font-semibold">Email</div>
-                    <div className="text-muted-foreground">contact@mattheo-termine.fr</div>
+          </header>
+
+          <div className="grid lg:grid-cols-3 gap-12 lg:gap-16">
+            {/* Contact Form */}
+            <AnimatedDiv animation="animate-fade-in-up" className="lg:col-span-2" role="region" aria-labelledby="form-title">
+              <div className="max-w-2xl mx-auto lg:mx-0">
+                <ContactForm />
+              </div>
+            </AnimatedDiv>
+
+            {/* Contact Info */}
+            <AnimatedDiv animation="animate-fade-in-up" delay={150} className="lg:col-span-1" role="region" aria-labelledby="other-contact-title">
+              <div className="space-y-8">
+                <div className="text-center lg:text-left">
+                  <h3 id="other-contact-title" className="font-headline text-2xl font-bold mb-4">Autres moyens de contact</h3>
+                  <p className="text-foreground/80 leading-relaxed">
+                    Si vous préférez, vous pouvez aussi me joindre directement par email ou via WhatsApp.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <Button asChild variant="outline" className="w-full justify-start text-left h-auto py-4 hover:bg-primary/5 hover:border-primary/30 hover:shadow-md transition-all duration-200 border-border/50">
+                    <Link href="mailto:contact@mattheo-termine.fr" aria-label="Envoyer un email à contact@mattheo-termine.fr">
+                      <Mail className="mr-4 h-6 w-6 text-primary flex-shrink-0" aria-hidden="true" />
+                      <div>
+                        <div className="font-semibold text-base text-foreground">Email</div>
+                        <div className="text-foreground/70 text-sm">contact@mattheo-termine.fr</div>
+                      </div>
+                    </Link>
+                  </Button>
+
+                  <Button asChild variant="outline" className="w-full justify-start text-left h-auto py-4 hover:bg-accent/5 hover:border-accent/30 hover:shadow-md transition-all duration-200 border-border/50">
+                    <Link href="https://wa.me/33XXXXXXXXX" target="_blank" rel="noopener noreferrer" aria-label="Discuter sur WhatsApp">
+                      <MessageCircle className="mr-4 h-6 w-6 text-accent flex-shrink-0" aria-hidden="true" />
+                      <div>
+                        <div className="font-semibold text-base text-foreground">WhatsApp</div>
+                        <div className="text-foreground/70 text-sm">Discutons en direct</div>
+                      </div>
+                    </Link>
+                  </Button>
+                </div>
+
+                {/* Additional info */}
+                <div className="pt-6 border-t border-border/50">
+                  <div className="text-center lg:text-left">
+                    <p className="text-sm text-foreground/70 mb-2">Temps de réponse moyen</p>
+                    <p className="font-semibold text-primary">Moins de 24h</p>
                   </div>
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full justify-start text-left h-auto py-3">
-                <Link href="https://wa.me/33612345678" target="_blank" rel="noopener noreferrer" aria-label="Discuter sur WhatsApp">
-                  <MessageCircle className="mr-4 h-6 w-6 text-accent" aria-hidden="true" />
-                  <div>
-                    <div className="font-semibold">WhatsApp</div>
-                    <div className="text-muted-foreground">Discutons en direct</div>
-                  </div>
-                </Link>
-              </Button>
-            </div>
-          </AnimatedDiv>
+                </div>
+              </div>
+            </AnimatedDiv>
+          </div>
         </div>
       </section>
     </div>

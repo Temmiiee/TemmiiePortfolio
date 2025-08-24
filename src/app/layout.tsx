@@ -24,6 +24,10 @@ export const metadata: Metadata = {
     template: '%s | Matthéo Termine – Intégrateur Web Freelance',
   },
   description: 'Portfolio de Matthéo Termine, intégrateur web freelance. Création de sites web modernes, accessibles (normes RGAA), rapides et optimisés SEO.',
+  icons: {
+    icon: '/icon',
+    apple: '/apple-icon',
+  },
   openGraph: {
     title: 'Intégrateur Web Freelance – Matthéo Termine',
     description: 'Portfolio de Matthéo Termine, intégrateur web freelance. Création de sites web modernes, accessibles (normes RGAA), rapides et optimisés SEO.',

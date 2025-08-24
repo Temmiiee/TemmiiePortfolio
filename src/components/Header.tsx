@@ -128,20 +128,54 @@ export function Header() {
           <div className="md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
+                <Button variant="ghost" size="icon" className="relative">
+                  <div className={cn(
+                    "transition-transform duration-300",
+                    isSheetOpen ? "rotate-90" : "rotate-0"
+                  )}>
+                    <Menu className="h-6 w-6" />
+                  </div>
                   <span className="sr-only">Ouvrir le menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right">
+              <SheetContent side="right" className="w-80 sm:w-96">
                 <SheetHeader>
                   <SheetTitle className="sr-only">Menu principal</SheetTitle>
                 </SheetHeader>
-                <nav className="flex flex-col gap-6 pt-10">
-                  {navLinks.map((link) => (
-                    <NavLink key={link.href} {...link} className="text-2xl" />
-                  ))}
-                </nav>
+                <div className="flex flex-col h-full">
+                  {/* Logo section in mobile menu */}
+                  <div className="flex items-center gap-3 py-6 border-b border-border/50">
+                    <Code2 className="h-8 w-8 text-primary" />
+                    <span className="font-headline font-bold text-xl text-primary">
+                      Matthéo Termine
+                    </span>
+                  </div>
+
+                  {/* Navigation */}
+                  <nav className="flex flex-col gap-2 pt-8 flex-1">
+                    {navLinks.map((link, index) => (
+                      <div
+                        key={link.href}
+                        className={cn(
+                          "animate-stagger-fade-in",
+                          `menu-item-${index + 1}`
+                        )}
+                      >
+                        <NavLink
+                          {...link}
+                          className="text-xl py-3 px-4 rounded-lg hover:bg-primary/5 transition-all duration-200 block border-l-4 border-transparent hover:border-primary/20"
+                        />
+                      </div>
+                    ))}
+                  </nav>
+
+                  {/* Footer section */}
+                  <div className="pt-6 border-t border-border/50 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Intégrateur Web Freelance
+                    </p>
+                  </div>
+                </div>
               </SheetContent>
             </Sheet>
           </div>

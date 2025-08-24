@@ -138,38 +138,32 @@ export function QuoteCalculator() {
   }, [watchedValues]);
 
   const onSubmit = (data: FormValues) => {
-    const subject = `Proposition de devis pour un ${data.siteType}`;
-    
-    let body = `Bonjour,\n\nVoici une proposition de devis basée sur votre demande.\n\n`;
-    body += `----------------------------------------\n`;
-    body += `RÉCAPITULATIF DE LA DEMANDE\n`;
-    body += `----------------------------------------\n\n`;
+    // Préparer les données du devis
+    const devisData = {
+      siteType: data.siteType,
+      designType: data.designType,
+      pages: data.pages,
+      features: data.features || [],
+      timeline: data.timeline,
+      budget: `${totalPrice}€ HT`,
+      projectDescription: data.projectDescription,
+      wordpress: data.wordpress,
+      clientInfo: {
+        name: data.name,
+        email: data.email,
+        company: data.company,
+        phone: data.phone,
+      },
+      total: totalPrice,
+      maintenanceCost: maintenanceCost,
+      details: details
+    };
 
-    if (data.projectDescription) {
-      body += `Description du projet :\n${data.projectDescription}\n\n`;
-    }
+    // Sauvegarder les données dans localStorage pour la page de validation
+    localStorage.setItem('devisData', JSON.stringify(devisData));
 
-    if (data.wordpress) {
-        body += `Technologie souhaitée : WordPress\n\n`;
-    }
-
-    body += `Détails de l'estimation :\n`;
-    Object.entries(details).forEach(([key, value]) => {
-      if (key.toLowerCase().includes('maintenance')) return;
-      body += `- ${key}: ${value} €\n`;
-    });
-
-    body += `\n----------------------------------------\n`;
-    body += `TOTAL (HT) : ${totalPrice} €\n`;
-     if (maintenanceCost > 0) {
-      body += `Maintenance & Hébergement : ${maintenanceCost} € / mois\n`;
-    }
-    body += `----------------------------------------\n\n`;
-    body += `Ce devis est une estimation et peut être affiné après discussion.\n\n`;
-    body += `Cordialement,\nMatthéo Termine`;
-
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
+    // Rediriger vers la page de validation
+    window.location.href = '/devis/validation';
   };
 
   return (
@@ -417,7 +411,7 @@ export function QuoteCalculator() {
                             Cette estimation est à titre indicatif. Elle évolue en fonction de vos choix.
                         </p>
                         <Button type="submit" size="lg" className="mt-6">
-                            Proposer le projet
+                            Valider le devis
                         </Button>
                         </>
                     ) : (

@@ -28,7 +28,7 @@ h1, h2, h3, h4, h5, h6 {
     --secondary-foreground: 222 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
-    --muted-foreground: 216 12% 42%;
+    --muted-foreground: 216 12% 35%; /* Improved contrast ratio */
 
     --accent: 174 100% 29%; /* #009688 */
     --accent-foreground: 0 0% 100%;
@@ -91,6 +91,8 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
     background-color: hsl(var(--secondary));
     overflow: hidden;
+    --x: 50%;
+    --y: 50%;
   }
   .interactive-bg::before {
     content: '';
@@ -100,16 +102,21 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     top: 0;
     background: radial-gradient(
-      circle at var(--x) var(--y),
+      600px circle at var(--x) var(--y),
       hsl(var(--primary) / 0.15),
-      transparent 25%
+      hsl(var(--accent) / 0.05) 40%,
+      transparent 70%
     );
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
   }
   
   /* On non-touch devices, effect is hover-based */
   @media (hover: hover) and (pointer: fine) {
+    .interactive-bg::before {
+      opacity: 0.7;
+    }
     .interactive-bg:hover::before {
       opacity: 1;
     }
@@ -118,7 +125,7 @@ h1, h2, h3, h4, h5, h6 {
   /* On touch devices, effect is always on (no hover) */
   @media (hover: none) {
     .interactive-bg.touch-active::before {
-      opacity: 1;
+      opacity: 0.8;
     }
   }
 
@@ -126,14 +133,40 @@ h1, h2, h3, h4, h5, h6 {
   .animate-fade-in-down {
       animation: fade-in-down 0.5s ease-out forwards;
   }
+
+  /* Initial states for animations */
   .animate-fade-in-up {
+      opacity: 0;
       transform: translateY(20px);
+      transition: all 0.6s ease-out;
   }
+
   .animate-fade-in-left {
-      transform: translateX(20px);
-  }
-  .animate-fade-in-right {
+      opacity: 0;
       transform: translateX(-20px);
+      transition: all 0.6s ease-out;
+  }
+
+  .animate-fade-in-right {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: all 0.6s ease-out;
+  }
+
+  /* Active states when visible */
+  .animate-fade-in-up.opacity-100 {
+      opacity: 1;
+      transform: translateY(0);
+  }
+
+  .animate-fade-in-left.opacity-100 {
+      opacity: 1;
+      transform: translateX(0);
+  }
+
+  .animate-fade-in-right.opacity-100 {
+      opacity: 1;
+      transform: translateX(0);
   }
 }
 
@@ -146,6 +179,20 @@ h1, h2, h3, h4, h5, h6 {
   }
   *:focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Enhanced focus styles for better accessibility */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Ensure sufficient contrast for interactive elements */
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
   }
 
   .skip-link {
@@ -185,4 +232,142 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(0);
   }
 }
-    
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-from-right {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-to-right {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes stagger-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-fade-in-left {
+  animation: fade-in-left 0.6s ease-out forwards;
+}
+
+.animate-fade-in-right {
+  animation: fade-in-right 0.6s ease-out forwards;
+}
+
+.animate-slide-in-from-right {
+  animation: slide-in-from-right 0.3s ease-out forwards;
+}
+
+.animate-slide-out-to-right {
+  animation: slide-out-to-right 0.3s ease-in forwards;
+}
+
+.animate-stagger-fade-in {
+  animation: stagger-fade-in 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* Staggered animation delays for menu items */
+.menu-item-1 { animation-delay: 0.1s; }
+.menu-item-2 { animation-delay: 0.15s; }
+.menu-item-3 { animation-delay: 0.2s; }
+.menu-item-4 { animation-delay: 0.25s; }
+.menu-item-5 { animation-delay: 0.3s; }
+.menu-item-6 { animation-delay: 0.35s; }
+.menu-item-7 { animation-delay: 0.4s; }
+
+/* Enhanced text contrast for overlays */
+.text-contrast-enhanced {
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 2px 6px rgba(0, 0, 0, 0.6),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.bg-overlay-strong {
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.3) 100%),
+    rgba(0, 0, 0, 0.4);
+}
+
+/* High contrast text for different backgrounds */
+.text-on-dark-bg {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.text-on-light-bg {
+  color: rgba(15, 23, 42, 0.85); /* slate-900 with opacity for better contrast */
+}
+
+/* Ensure minimum contrast ratios for RGAA compliance */
+.text-contrast-aa {
+  /* For normal text: minimum 4.5:1 contrast ratio */
+  color: hsl(222, 84%, 5%); /* Very dark blue-black */
+}
+
+.text-contrast-aa-large {
+  /* For large text: minimum 3:1 contrast ratio */
+  color: hsl(222, 47%, 11%); /* Dark blue-gray */
+}
