@@ -3,12 +3,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { CodeXml, Gauge, Palette, Accessibility, CheckCircle2, FileText, Search, Rocket, PencilRuler, Server, LifeBuoy } from "lucide-react";
+import { CodeXml, Gauge, Palette, Accessibility, CheckCircle2, FileText, Search, Rocket, PencilRuler, Server, LifeBuoy, Download, Mail, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { ProjectCard } from "@/components/ProjectCard";
 import { projects } from "@/lib/projects";
 import Image from "next/image";
-import { Download, Mail, MessageCircle } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
 import React, { useRef, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";

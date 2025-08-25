@@ -1,6 +1,7 @@
 import { QuoteCalculator } from "@/components/QuoteCalculator";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { type Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
     title: 'Obtenez un devis pour votre site web',
@@ -22,7 +23,9 @@ export default function DevisPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <QuoteCalculator />
+                    <Suspense fallback={<div>Chargement...</div>}>
+                        <QuoteCalculator />
+                    </Suspense>
                 </CardContent>
             </Card>
         </div>
