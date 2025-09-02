@@ -15,19 +15,74 @@ import { NextRequest, NextResponse } from 'next/server';
 // });
 
 export async function POST(request: NextRequest) {
+    // Enregistrement du devis dans devis.json (après définition des variables)
+    const fs = require('fs');
+    const path = require('path');
+    const devisFilePath = path.join(process.cwd(), 'src', 'app', 'api', 'devis.json');
+    let devisList = [];
+    try {
+      devisList = JSON.parse(fs.readFileSync(devisFilePath, 'utf-8'));
+    } catch (e) {
+      devisList = [];
+    }
+    devisList.push({
+      devisNumber: devisNumber,
+      devisData: devisData,
+      status: 'en_attente',
+      date: today,
+      pdf: null // PDF non stocké pour l'instant
+    });
+    fs.writeFileSync(devisFilePath, JSON.stringify(devisList, null, 2));
   try {
-    const { devisData, devisNumber, signatureLink } = await request.json();
+    // Récupérer le FormData (PDF + devisData + devisNumber)
+    const formData = await request.formData();
+    const devisNumber = formData.get('devisNumber');
+    const devisDataRaw = formData.get('devisData');
+    // PDF non utilisé ici, mais récupérable :
+    // const pdfFile = formData.get('pdf');
 
-    if (!devisData || !devisNumber) {
+    if (!devisDataRaw || !devisNumber) {
       return NextResponse.json(
         { error: 'Données manquantes' },
         { status: 400 }
       );
     }
 
+    // Parse devisData
+    let devisData;
+    try {
+      devisData = JSON.parse(devisDataRaw as string);
+    } catch (err) {
+      return NextResponse.json(
+        { error: 'Données devis invalides' },
+        { status: 400 }
+      );
+    }
+
     const today = new Date().toLocaleDateString('fr-FR');
 
-    // Template HTML pour l'email
+    // Enregistrement du devis dans devis.json
+    {
+      const fs = require('fs');
+      const path = require('path');
+      const devisFilePath = path.join(process.cwd(), 'src', 'app', 'api', 'devis.json');
+      let devisList = [];
+      try {
+        devisList = JSON.parse(fs.readFileSync(devisFilePath, 'utf-8'));
+      } catch (e) {
+        devisList = [];
+      }
+      devisList.push({
+        devisNumber: devisNumber,
+        devisData: devisData,
+        status: 'en_attente',
+        date: today,
+        pdf: null // PDF non stocké pour l'instant
+      });
+      fs.writeFileSync(devisFilePath, JSON.stringify(devisList, null, 2));
+    }
+
+    // Template HTML pour l'email (sans signature)
     const htmlTemplate = `
       <!DOCTYPE html>
       <html>
@@ -72,10 +127,6 @@ export async function POST(request: NextRequest) {
               <div class="features">
                 <p><strong>Type de site:</strong> ${devisData.siteType}</p>
                 <p><strong>Type de design:</strong> ${devisData.designType}</p>
-                <p><strong>Nombre de pages:</strong> ${devisData.pages}</p>
-                <p><strong>Budget estimé:</strong> ${devisData.budget}</p>
-                <p><strong>Délai souhaité:</strong> ${devisData.timeline}</p>
-                
                 ${devisData.features && devisData.features.length > 0 ? `
                   <p><strong>Fonctionnalités demandées:</strong></p>
                   <ul>
@@ -86,7 +137,7 @@ export async function POST(request: NextRequest) {
             </div>
 
             <div class="total">
-              Estimation: ${devisData.budget}
+              Estimation: ${devisData.total} €
             </div>
           </div>
 
@@ -102,16 +153,16 @@ export async function POST(request: NextRequest) {
     // Email pour vous (le prestataire)
     const mailOptionsToProvider = {
       from: process.env.SMTP_FROM || 'noreply@mattheo-termine.fr',
-      to: process.env.CONTACT_EMAIL || 'contact@mattheo-termine.fr',
+      to: 'mattheotermine104@gmail.com',
       subject: `Nouveau Devis #${devisNumber} - ${devisData.clientInfo.name}`,
       html: htmlTemplate,
     };
 
-    // Email de confirmation pour le client
+    // Email de confirmation pour le client (sans signature)
     const mailOptionsToClient = {
       from: process.env.SMTP_FROM || 'noreply@mattheo-termine.fr',
       to: devisData.clientInfo.email,
-      subject: `Votre devis #${devisNumber} est prêt à signer !`,
+      subject: `Votre demande de projet #${devisNumber} a bien été reçue !`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -130,52 +181,26 @@ export async function POST(request: NextRequest) {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🎉 Votre Devis est Prêt !</h1>
+              <h1>Votre demande de projet est bien reçue !</h1>
               <p>Bonjour ${devisData.clientInfo.name}</p>
             </div>
 
             <div class="content">
-              <p>Excellente nouvelle ! Votre devis personnalisé est maintenant prêt.</p>
-
+              <p>Merci pour votre demande. Votre projet va être analysé par le prestataire.</p>
               <div class="highlight">
-                <strong>Devis #${devisNumber} - ${devisData.budget}</strong>
+                <strong>Numéro de demande : ${devisNumber}</strong>
               </div>
-
-              <p><strong>Récapitulatif de votre projet:</strong></p>
+              <p>Vous recevrez une réponse personnalisée après analyse.</p>
+              <p><strong>Résumé de votre projet :</strong></p>
               <ul>
                 <li>Type de projet: ${devisData.siteType}</li>
-                <li>Budget: ${devisData.budget}</li>
+                <li>Budget estimé: ${devisData.total} €</li>
                 <li>Prestations incluses: ${devisData.features ? devisData.features.slice(0, 3).join(', ') + '...' : 'Détails dans le devis'}</li>
               </ul>
-
-              <div style="background: #3F51B5; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
-                <h3 style="margin: 0 0 15px 0;">✍️ Signature Électronique</h3>
-                <p style="margin: 0 0 15px 0;">Vous pouvez maintenant signer votre devis en ligne !</p>
-                <a href="${signatureLink}" style="display: inline-block; background: white; color: #3F51B5; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                  📝 Signer le Devis Maintenant
-                </a>
-              </div>
-
-              <p><strong>Avantages de la signature électronique :</strong></p>
-              <ul>
-                <li>✅ Signature immédiate, pas d'impression nécessaire</li>
-                <li>✅ Valeur juridique identique à une signature manuscrite</li>
-                <li>✅ Démarrage plus rapide de votre projet</li>
-                <li>✅ Suivi automatique et notifications</li>
-              </ul>
-
-              <p><strong>Après signature :</strong></p>
-              <ol>
-                <li>Validation de votre projet sous 24h</li>
-                <li>Facturation de l'acompte (30%)</li>
-                <li>Démarrage immédiat du développement</li>
-              </ol>
-
+              <p>Ce document n'est pas un devis contractuel. Vous recevrez un devis officiel à signer si le projet est accepté.</p>
               <p>Des questions ? Répondez simplement à cet email !</p>
-
               <p>Cordialement,<br>Matthéo Termine<br>Intégrateur Web Freelance</p>
             </div>
-
             <div class="footer">
               <p>contact@mattheo-termine.fr | www.mattheo-termine.fr</p>
             </div>

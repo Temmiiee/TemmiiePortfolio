@@ -39,16 +39,28 @@ export default function DevisSignaturePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Charger les données du devis
-    loadDevisData();
-  }, [params.id]);
-
-  const loadDevisData = async () => {
-    try {
-      // En production, ceci ferait un appel API
-      // Pour les tests, on simule avec localStorage ou données statiques
-      const mockDevis: DevisData = {
-        id: params.id as string,
+    if (!params || typeof params.id !== 'string') return;
+    // Charger les données du devis depuis localStorage si disponible
+    const localDevis = localStorage.getItem('devisData');
+    if (localDevis) {
+      const parsed = JSON.parse(localDevis);
+      setDevisData({
+        id: params.id,
+        devisNumber: localStorage.getItem('lastDevisNumber') || String(params.id),
+        clientInfo: parsed.clientInfo,
+        siteType: parsed.siteType,
+        designType: parsed.designType,
+        budget: `${parsed.total}€ HT`,
+        features: parsed.features || [],
+        total: parsed.total,
+        maintenanceCost: parsed.maintenance ? 49 : 0,
+        createdAt: new Date().toISOString(),
+        status: 'pending',
+      });
+    } else {
+      // Fallback mock
+      setDevisData({
+        id: String(params.id),
         devisNumber: '2025-0124-001',
         clientInfo: {
           name: 'Jean Dupont',
@@ -70,14 +82,9 @@ export default function DevisSignaturePage() {
         maintenanceCost: 45,
         createdAt: new Date().toISOString(),
         status: 'pending'
-      };
-
-      setDevisData(mockDevis);
-    } catch (error) {
-      setError('Erreur lors du chargement du devis');
-      console.error('Erreur:', error);
+      });
     }
-  };
+  }, [params]);
 
   const handleSignDevis = async () => {
     if (!signature || !acceptedTerms || !devisData) {
@@ -89,6 +96,10 @@ export default function DevisSignaturePage() {
     setError(null);
 
     try {
+      // Stocker la signature dans localStorage pour la page de confirmation
+      localStorage.setItem('devisSignature', signature);
+      localStorage.setItem('devisSignedAt', new Date().toISOString());
+
       // Envoyer la signature
       const response = await fetch('/api/sign-devis', {
         method: 'POST',

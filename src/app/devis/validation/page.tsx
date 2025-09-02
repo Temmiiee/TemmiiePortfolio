@@ -14,10 +14,8 @@ import html2canvas from 'html2canvas';
 interface DevisData {
   siteType: string;
   designType: string;
-  pages: number;
   features: string[];
-  timeline: string;
-  budget: string;
+  maintenance?: boolean;
   clientInfo: {
     name: string;
     email: string;
@@ -54,40 +52,17 @@ function DevisValidationContent() {
 
   const handleDownloadPDF = async () => {
     if (!devisRef.current || !devisData) return;
-
     try {
-      // Créer un canvas à partir du contenu HTML
-      const canvas = await html2canvas(devisRef.current, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-      });
-
-      // Créer le PDF
-      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 295; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-
-      let position = 0;
-
-      // Ajouter la première page
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      // Ajouter des pages supplémentaires si nécessaire
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      // Télécharger le PDF
+      await pdf.html(devisRef.current, {
+        margin: [10, 10, 10, 10],
+        autoPaging: true,
+        html2canvas: {
+          scale: 1.5,
+          useCORS: true,
+          backgroundColor: '#fff',
+        },
+      });
       pdf.save(`Devis_${devisNumber}_${devisData.clientInfo.name.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {
       console.error('Erreur lors de la génération du PDF:', error);
@@ -97,28 +72,30 @@ function DevisValidationContent() {
 
   const handleSubmitDevis = async () => {
     if (!devisData) return;
-
     setIsSubmitting(true);
-
     try {
-      // Sauvegarder le numéro de devis pour la page de confirmation
-      localStorage.setItem('lastDevisNumber', devisNumber);
-
-      // Envoyer le devis par email avec lien de signature
+      // Générer le PDF du devis
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      await pdf.html(devisRef.current, {
+        margin: [10, 10, 10, 10],
+        autoPaging: true,
+        html2canvas: {
+          scale: 1.5,
+          useCORS: true,
+          backgroundColor: '#fff',
+        },
+      });
+      const pdfBlob = pdf.output('blob');
+      // Envoyer le PDF par email au prestataire
+      const formData = new FormData();
+      formData.append('pdf', pdfBlob, `Devis_${devisNumber}_${devisData.clientInfo.name.replace(/\s+/g, '_')}.pdf`);
+      formData.append('devisData', JSON.stringify(devisData));
+      formData.append('devisNumber', devisNumber);
       const response = await fetch('/api/send-devis', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          devisData,
-          devisNumber,
-          signatureLink: `${window.location.origin}/devis/signature/${devisNumber}`,
-        }),
+        body: formData,
       });
-
       if (response.ok) {
-        // Rediriger vers une page de confirmation
         router.push('/devis/confirmation');
       } else {
         throw new Error('Erreur lors de l\'envoi du devis');
@@ -145,7 +122,7 @@ function DevisValidationContent() {
   const today = new Date().toLocaleDateString('fr-FR');
 
   return (
-    <div className="min-h-screen bg-background py-12">
+    <div className="min-h-screen bg-white py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -155,37 +132,35 @@ function DevisValidationContent() {
               Retour au calculateur
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold text-center mb-2">Validation du Devis</h1>
-          <p className="text-center text-foreground/80">
-            Vérifiez les détails de votre projet avant envoi
+          <h1 className="text-3xl font-bold text-center mb-2 text-black">Demande de projet</h1>
+          <p className="text-center text-gray-700">
+            Vérifiez les détails de votre demande avant envoi.<br />
+            Ce document est une pré-étude indicative et non un devis contractuel.
           </p>
         </div>
 
         {/* Devis Document */}
-        <Card ref={devisRef} className="mb-8 shadow-lg">
-          <CardHeader className="bg-primary text-primary-foreground">
-            <div className="flex justify-between items-start">
-              <div>
-                <CardTitle className="text-2xl font-bold">DEVIS</CardTitle>
-                <div className="mt-4 space-y-1 text-primary-foreground/90">
-                  <p className="font-semibold">Prestataire :</p>
-                  <p>Matthéo Termine</p>
-                  <p>Intégrateur Web Freelance</p>
-                  <p>Email: contact@mattheo-termine.fr</p>
-                  <p>SIRET: XXXXXXXXX</p>
-                </div>
-              </div>
-              <div className="text-right text-primary-foreground/90">
-                <p><strong>Numéro de devis:</strong> {devisNumber}</p>
-                <p><strong>Date:</strong> {today}</p>
+        <div ref={devisRef} className="mb-8 border border-black bg-white p-0 print:p-0">
+          <div className="border-b border-black p-8 pb-4 flex justify-between items-start bg-white">
+            <div>
+              <h2 className="text-2xl font-bold text-black">DEVIS</h2>
+              <div className="mt-4 space-y-1 text-black">
+                <p className="font-semibold">Prestataire :</p>
+                <p> Matthéo Termine</p>
+                <p>Intégrateur Web Freelance</p>
+                <p>Email: contact@mattheo-termine.fr</p>
+                <p>SIRET: XXXXXXXXX</p>
               </div>
             </div>
-          </CardHeader>
-          
-          <CardContent className="p-8">
-            {/* Client Info */}
+            <div className="text-right text-black">
+              <p><strong>Numéro de devis:</strong> {devisNumber}</p>
+              <p><strong>Date:</strong> {today}</p>
+            </div>
+          </div>
+          <div className="p-8 bg-white text-black">
+            {/* Informations client */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-primary">Client :</h3>
+              <h3 className="text-lg font-semibold mb-4 text-black">Client</h3>
               <div className="space-y-1">
                 <p><strong>Nom :</strong> {devisData.clientInfo.name}</p>
                 {devisData.clientInfo.company && (
@@ -197,82 +172,77 @@ function DevisValidationContent() {
                 )}
               </div>
             </div>
-
             <Separator className="my-6" />
-
-            {/* Project Details */}
+            {/* Récapitulatif du projet */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-primary">
-                Objet : Création d'un {devisData.siteType} + maintenance & hébergement
-              </h3>
-              
-              <div className="space-y-6">
-                {/* Phase 1 */}
-                <div>
-                  <h4 className="font-semibold text-accent mb-3">
-                    Phase 1 – Création du {devisData.siteType} (Forfait: {devisData.budget})
-                  </h4>
-                  <ul className="space-y-2 ml-4">
-                    <li>• Analyse et configuration du CMS (WordPress ou custom)</li>
-                    <li>• Mise en place d'un thème/modèle adapté (design: {devisData.designType})</li>
-                    <li>• Intégration des contenus fournis (textes, images, logo)</li>
-                    <li>• Optimisation responsive (mobile et tablette)</li>
-                    <li>• Mise en place minimale RGPD (mentions légales, politique cookies de base)</li>
-                    <li>• Formation rapide à la gestion du contenu</li>
-                    {devisData.features.map((feature, index) => (
-                      <li key={index}>• {feature}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Phase 2 */}
-                <div>
-                  <h4 className="font-semibold text-accent mb-3">
-                    Phase 2 – Maintenance & Hébergement (45€ HT / mois)
-                  </h4>
-                  <ul className="space-y-2 ml-4">
-                    <li>• Hébergement web (espace serveur, base de données, certificat SSL inclus)</li>
-                    <li>• Maintenance technique (mises à jour CMS, plugins, sécurité)</li>
-                    <li>• Sauvegardes régulières</li>
-                    <li>• Assistance technique de base (corrections mineures, monitoring)</li>
-                  </ul>
-                </div>
+              <h3 className="text-lg font-semibold mb-4 text-black">Résumé du projet</h3>
+              <div className="space-y-2">
+                <p><strong>Type de site :</strong> {devisData.siteType === 'vitrine' ? 'Site vitrine' : devisData.siteType === 'ecommerce' ? 'E-commerce' : 'Application web'}</p>
+                <p><strong>Design :</strong> {devisData.designType === 'custom' ? 'Sur-mesure' : 'Basé sur un template'}</p>
+                <p><strong>Technologie :</strong> {devisData.technology === 'no-preference' ? 'Pas de préférence' : devisData.technology}</p>
+                {devisData.features && devisData.features.length > 0 && (
+                  <p><strong>Fonctionnalités :</strong> {devisData.features.join(', ')}</p>
+                )}
+                {devisData.projectDescription && (
+                  <p><strong>Description :</strong> {devisData.projectDescription}</p>
+                )}
+                {devisData.maintenance && (
+                  <p><strong>Maintenance & Hébergement :</strong> Oui (49€ HT / mois)</p>
+                )}
               </div>
             </div>
-
             <Separator className="my-6" />
-
-            {/* Financial Conditions */}
+            {/* Détail des prestations */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-primary">Conditions financières</h3>
+              <h3 className="text-lg font-semibold mb-4 text-black">Prestations incluses</h3>
+              <ul className="space-y-2 ml-4 text-black list-disc">
+                <li>Analyse et configuration technique adaptée au projet</li>
+                <li>Mise en place du design ({devisData.designType === 'custom' ? 'sur-mesure' : 'template adapté'})</li>
+                <li>Intégration des contenus fournis par le client (textes, images, logo)</li>
+                <li>Optimisation responsive (mobile et tablette)</li>
+                <li>Mise en conformité RGPD (base)</li>
+                {devisData.features && devisData.features.length > 0 && devisData.features.map((feature, index) => (
+                  <li key={index}>{feature}</li>
+                ))}
+                {devisData.maintenance && (
+                  <li>Maintenance technique, hébergement, sauvegardes et assistance</li>
+                )}
+              </ul>
+            </div>
+            <Separator className="my-6" />
+            {/* Conditions financières */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 text-black">Conditions financières</h3>
               <div className="space-y-2">
-                <p><strong>Coût de création (une seule fois) :</strong> {devisData.budget}</p>
-                <p><strong>Maintenance + Hébergement :</strong> 45€ HT / mois (facturation mensuelle ou annuelle)</p>
+                <p><strong>Total HT :</strong> {devisData.total} €</p>
+                {devisData.maintenance && (
+                  <p><strong>Maintenance & Hébergement :</strong> 49€ HT / mois</p>
+                )}
                 <div className="mt-4">
                   <p><strong>Modalités de paiement :</strong></p>
-                  <ul className="ml-4 space-y-1">
-                    <li>• 30% à la signature du devis</li>
-                    <li>• 70% à la livraison du site</li>
-                    <li>• Maintenance : facturation mensuelle ou annuelle</li>
+                  <ul className="ml-4 space-y-1 text-black list-disc">
+                    <li>30% à la signature du devis</li>
+                    <li>70% à la livraison du site</li>
+                    {devisData.maintenance && (
+                      <li>Maintenance : facturation mensuelle ou annuelle</li>
+                    )}
                   </ul>
                 </div>
               </div>
             </div>
-
             <Separator className="my-6" />
-
-            {/* Validity and Signature */}
+            {/* Mention non contractuel et instructions */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-primary">Validité et signature</h3>
-              <p className="mb-4">Devis valable 30 jours à compter de la date d'émission.</p>
-              <p className="mb-6">Bon pour accord :</p>
-              <div className="border-2 border-dashed border-border p-4 bg-muted/30 rounded-lg">
-                <p className="text-sm text-muted-foreground mb-2">Signature et cachet du client :</p>
-                <div className="h-20"></div>
+              <h3 className="text-lg font-semibold mb-4 text-black">Projet de devis</h3>
+              <p className="mb-4 font-bold text-red-600">Document non contractuel tant qu’il n’est pas validé par le prestataire.</p>
+              <p className="mb-4">Ce document est une pré-étude indicative générée automatiquement selon votre demande. Il ne constitue pas un devis légal ni un engagement du prestataire.</p>
+              <p className="mb-4">Après analyse, le prestataire pourra vous envoyer un devis officiel à signer si le projet est accepté.</p>
+              <div className="border-2 border-dashed border-black p-4 bg-white rounded-lg">
+                <p className="text-sm text-black mb-2">Vous serez recontacté par email après validation du projet.</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -295,7 +265,7 @@ function DevisValidationContent() {
             ) : (
               <>
                 <Send className="mr-2 h-5 w-5" />
-                Proposer le projet
+                Envoyer la demande de projet
               </>
             )}
           </Button>
@@ -303,7 +273,8 @@ function DevisValidationContent() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-foreground/70">
-            En cliquant sur "Proposer le projet", ce devis sera envoyé à Matthéo Termine qui vous recontactera rapidement.
+            En cliquant sur "Envoyer la demande de projet", votre pré-étude sera transmise à Matthéo Termine.<br />
+            Vous recevrez une réponse personnalisée après analyse.
           </p>
         </div>
       </div>

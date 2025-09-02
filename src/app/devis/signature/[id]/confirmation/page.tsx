@@ -9,7 +9,14 @@ import Link from 'next/link';
 
 export default function SignatureConfirmationPage() {
   const params = useParams();
-  const [devisId] = useState(params.id as string);
+  const devisId = params && typeof params.id === 'string' ? params.id : '';
+  const [signature, setSignature] = useState<string | null>(null);
+  const [signedAt, setSignedAt] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSignature(localStorage.getItem('devisSignature'));
+    setSignedAt(localStorage.getItem('devisSignedAt'));
+  }, []);
 
   return (
     <div className="min-h-screen bg-background py-12">
@@ -24,6 +31,17 @@ export default function SignatureConfirmationPage() {
           <p className="text-lg text-foreground/80">
             Votre signature électronique a été enregistrée
           </p>
+          {signature && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-2">Votre signature :</h3>
+              <div className="border border-green-400 bg-white rounded-lg p-4 inline-block">
+                <img src={signature} alt="Signature électronique" style={{maxWidth:'300px',maxHeight:'120px'}} />
+              </div>
+              {signedAt && (
+                <p className="text-sm text-gray-500 mt-2">Signé le : {new Date(signedAt).toLocaleString('fr-FR')}</p>
+              )}
+            </div>
+          )}
         </div>
 
         <Card className="mb-8">
@@ -39,7 +57,7 @@ export default function SignatureConfirmationPage() {
                 Signé électroniquement
               </div>
               <p className="text-sm text-gray-500 mt-2">
-                {new Date().toLocaleString('fr-FR')}
+                {signedAt ? new Date(signedAt).toLocaleString('fr-FR') : new Date().toLocaleString('fr-FR')}
               </p>
             </div>
 

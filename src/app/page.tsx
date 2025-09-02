@@ -61,15 +61,15 @@ const processSteps = [
 
 const pricingPlans = [
   {
-    title: "Site Vitrine Essentiel",
+    title: "Site Vitrine Classique",
     price: "À partir de 550€",
-    description: "Idéal pour démarrer avec un site professionnel (WordPress ou code sur-mesure).",
+    description: "Site vitrine avec design basé sur un template personnalisé. Idéal pour présenter vos services et informations simplement, quelle que soit la structure du site.",
     features: [
-      "Jusqu'à 3 pages",
-      "Design moderne et responsive",
+      "Design moderne et responsive (template personnalisé)",
       "Formulaire de contact fonctionnel",
-      "Optimisation pour le référencement",
+      "Optimisation SEO de base",
       "Mise en ligne sur votre hébergement",
+      "Accompagnement pour la prise en main du site",
     ],
     cta: "Choisir cette offre",
     featured: false,
@@ -77,14 +77,14 @@ const pricingPlans = [
     headerClass: "bg-secondary text-secondary-foreground"
   },
   {
-    title: "Site Multi-pages Professionnel",
+    title: "Site Sur-Mesure / Landing Page",
     price: "À partir de 1150€",
-    description: "Un site complet (WordPress ou code sur-mesure) pour une présence affirmée.",
+    description: "Site sur-mesure ou landing page avec design unique, adapté à la complexité et aux besoins spécifiques de votre projet (structure, fonctionnalités, animations, etc.).",
     features: [
-      "Jusqu'à 5 pages",
       "Design 100% sur-mesure",
+      "Animations et sections personnalisées",
       "Intégration de contenu (textes, images)",
-      "Formation à la gestion du site",
+      "Optimisation SEO avancée",
       "Support prioritaire",
     ],
     cta: "Choisir cette offre",
@@ -100,7 +100,8 @@ const pricingPlans = [
       "Espace utilisateur (connexion, etc.)",
       "Fonctionnalités sur-mesure",
       "Base de données",
-      "Déploiement et maintenance",
+      "Déploiement sur votre hébergement",
+      "Maintenance mensuelle en option",
       "Accompagnement dédié",
     ],
     cta: "Choisir cette offre",

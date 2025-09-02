@@ -30,7 +30,7 @@ const formSchema = z.object({
   designType: z.enum(["template", "custom"], {
       required_error: "Veuillez sélectionner un type de design.",
   }),
-  wordpress: z.boolean().default(false).optional(),
+  // Suppression du champ wordpress
   features: z.array(z.string()).optional(),
   maintenance: z.boolean().default(false).optional(),
   projectDescription: z.string().optional(),
@@ -39,10 +39,10 @@ const formSchema = z.object({
   email: z.string().email('Veuillez indiquer un email valide.').min(1, 'Veuillez indiquer votre email.'),
   phone: z.string().optional(),
   company: z.string().optional().default(''),
-  technology: z.enum(["react", "vue", "nextjs", "twig", "no-preference"], {
+  technology: z.enum(["react", "vue", "nextjs", "twig", "wordpress", "no-preference"], {
     required_error: "Veuillez sélectionner une technologie.",
   }),
-  pages: z.number().min(1, { message: "Veuillez indiquer le nombre de pages estimé." }),
+  // Champ pages supprimé
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -77,103 +77,101 @@ const pricingModel = {
 
 
 export function QuoteCalculator() {
+  // Hooks pour la zone de dépôt de fichiers
+  const [isDragActive, setIsDragActive] = useState(false);
+  const [fileNames, setFileNames] = useState<string[]>([]);
   const searchParams = useSearchParams();
   const params = useMemo(() => ({
-    siteType: searchParams.get('siteType'),
-    pages: searchParams.get('pages'),
-    designType: searchParams.get('designType'),
-    features: searchParams.get('features')?.split(',') || [],
-    maintenance: searchParams.get('maintenance'),
-    technology: searchParams.get('technology'),
+    siteType: searchParams?.get('siteType'),
+    designType: searchParams?.get('designType'),
+    features: searchParams?.get('features')?.split(',') || [],
+    maintenance: searchParams?.get('maintenance'),
+    technology: searchParams?.get('technology'),
   }), [searchParams]);
 
-  const defaultValues = useMemo(() => ({
-    siteType: params.siteType === 'vitrine' || params.siteType === 'ecommerce' || params.siteType === 'webapp' ? params.siteType : undefined,
-    designType: params.designType === 'template' || params.designType === 'custom' ? params.designType : undefined,
-    wordpress: false,
-    features: params.features,
+  const defaultValues: FormValues = {
+    siteType:
+      params.siteType === 'vitrine' ||
+      params.siteType === 'ecommerce' ||
+      params.siteType === 'webapp'
+        ? params.siteType as FormValues['siteType']
+        : 'vitrine',
+    designType:
+      params.designType === 'template' ||
+      params.designType === 'custom'
+        ? params.designType as FormValues['designType']
+        : 'template',
+    features: Array.isArray(params.features) ? params.features : [],
     maintenance: params.maintenance === 'true',
     name: "",
     email: "",
     company: "",
     phone: "",
-    technology: params.technology === 'react' || params.technology === 'vue' || params.technology === 'nextjs' || params.technology === 'twig' || params.technology === 'no-preference' ? params.technology : undefined,
+    technology:
+      params.technology === 'react' ||
+      params.technology === 'vue' ||
+      params.technology === 'nextjs' ||
+      params.technology === 'twig' ||
+      params.technology === 'wordpress' ||
+      params.technology === 'no-preference'
+        ? params.technology as FormValues['technology']
+        : 'no-preference',
     projectDescription: "",
-    pages: params.pages ? parseInt(params.pages) : 1,
-  }), [params]);
+    files: undefined,
+  };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
-  useEffect(() => {
-    form.reset(defaultValues);
-  }, [defaultValues, form]);
-
-
   const watchedValues = form.watch();
 
   const { total: totalPrice, maintenanceCost, details } = useMemo(() => {
-    const parsedData = formSchema.safeParse(watchedValues);
-    if (!parsedData.success) {
-      return { total: null, maintenanceCost: 0, details: {} };
-    }
-    const finalData = parsedData.data;
-
+    // Calcul du prix même si les coordonnées ne sont pas renseignées
     let base = 0;
     const details: Record<string, number> = {};
-    
-    if (finalData.siteType) {
-      const price = pricingModel.siteType[finalData.siteType];
+    const siteType = watchedValues.siteType || 'vitrine';
+    const designType = watchedValues.designType || 'template';
+    if (siteType) {
+      const price = pricingModel.siteType[siteType];
       base += price;
-      details[`Site ${finalData.siteType}`] = price;
+      details[`Site ${siteType}`] = price;
     }
-    if(finalData.designType) {
-        const price = pricingModel.designType[finalData.designType];
-        base += price;
-        details[`Design ${finalData.designType}`] = price;
+    if (designType) {
+      const price = pricingModel.designType[designType];
+      base += price;
+      details[`Design ${designType}`] = price;
     }
-
     let featurePrice = 0;
-    if (finalData.features) {
-      finalData.features.forEach((featureId) => {
-        if (featureId === 'ecommerce-variations' && finalData.siteType !== 'ecommerce') return; // Exclude ecommerce-variations if siteType is not ecommerce
-         const feature = featureOptions.find(f => f.id === featureId);
+    if (watchedValues.features) {
+      watchedValues.features.forEach((featureId) => {
+        if (featureId === 'ecommerce-variations' && siteType !== 'ecommerce') return;
+        const feature = featureOptions.find(f => f.id === featureId);
         if (feature) {
           featurePrice += feature.price;
           details[feature.label] = feature.price;
         }
       });
     }
-
-    const maintenance = finalData.maintenance ? pricingModel.maintenance : 0;
+    const maintenance = watchedValues.maintenance ? pricingModel.maintenance : 0;
     if (maintenance > 0) {
       details["Maintenance & Hébergement"] = maintenance;
     }
-    
-    // Multiply base price by the number of pages (minimum 1)
-    const numberOfPages = finalData.pages && finalData.pages > 0 ? finalData.pages : 1;
-    base *= numberOfPages;
-    if (numberOfPages > 1) {
-        details["Nombre de pages"] = base; // Show the total price for pages in details
-    } else if (finalData.siteType) details[`Site ${finalData.siteType}`] = base; // If only one page, keep the original site type price in details
-
     return { total: base + featurePrice, maintenanceCost: maintenance, details };
   }, [watchedValues]);
 
   const onSubmit = (data: FormValues) => {
-    // Préparer les données du devis
+    // Génération des données du devis parfaitement personnalisées
     const devisData = {
-      name: data.name,
-      email: data.email,
-      company: data.company,
-      phone: data.phone,
       siteType: data.siteType,
-      pages: data.pages,
-      features: data.features || [],
+      designType: data.designType,
+      features: (data.features || []).map(f => {
+        const found = featureOptions.find(opt => opt.id === f);
+        return found ? found.label : f;
+      }),
+      maintenance: data.maintenance,
       technology: data.technology,
-      wordpress: data.wordpress,
       clientInfo: {
         name: data.name,
         email: data.email,
@@ -182,15 +180,9 @@ export function QuoteCalculator() {
       },
       projectDescription: data.projectDescription,
       total: totalPrice,
-      maintenanceCost: maintenanceCost,
       details: details
     };
-    
-    // TODO: Calculate final price based on pages and other factors here
-    // Sauvegarder les données dans localStorage pour la page de validation
     localStorage.setItem('devisData', JSON.stringify(devisData));
-
-    // Rediriger vers la page de validation
     window.location.href = '/devis/validation';
   };
 
@@ -247,36 +239,14 @@ export function QuoteCalculator() {
             )}
           />
 
-           <FormField
-              control={form.control}
-              name="wordpress"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center space-x-3">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      id="wordpress-checkbox"
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel htmlFor="wordpress-checkbox" className="font-normal">
-                      Je souhaite que le site soit développé sur WordPress.
-                    </FormLabel>
-                    <FormDescription>
-                      Cette information est à titre indicatif et n'impacte pas le devis.
-                    </FormDescription>
-                  </div>
-                </FormItem>
-              )}
-            />
+           {/* Suppression du champ WordPress */}
 
            <FormField
             control={form.control}
             name="designType"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel className="text-lg font-semibold">2. Quelle est la complexité du design ?</FormLabel>
+                <FormLabel className="text-lg font-semibold">2. Quel type de design souhaitez-vous ?</FormLabel>
                  <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -288,8 +258,8 @@ export function QuoteCalculator() {
                         <RadioGroupItem value="template" />
                       </FormControl>
                       <FormLabel className="font-normal w-full">
-                        <span className="font-bold block">Basé sur un modèle</span>
-                        <span className="text-sm text-muted-foreground">Adaptation d'un design existant (plus rapide).</span>
+                        <span className="font-bold block">Design basé sur un template</span>
+                        <span className="text-sm text-muted-foreground">Idéal pour les sites multipages classiques, rapide et économique. Adaptation d'un design existant avec personnalisation légère.</span>
                       </FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 has-[:checked]:border-primary">
@@ -297,8 +267,8 @@ export function QuoteCalculator() {
                         <RadioGroupItem value="custom" />
                       </FormControl>
                       <FormLabel className="font-normal w-full">
-                        <span className="font-bold block">Design Sur Mesure</span>
-                        <span className="text-sm text-muted-foreground">Création d'un design unique à partir de zéro.</span>
+                        <span className="font-bold block">Design sur mesure</span>
+                        <span className="text-sm text-muted-foreground">Recommandé pour les sites one page, landing pages ou projets complexes. Création d'un design unique, adapté à vos besoins spécifiques.</span>
                       </FormLabel>
                     </FormItem>
                   </RadioGroup>
@@ -388,27 +358,7 @@ export function QuoteCalculator() {
             />
 
 
-          <FormField
-            control={form.control}
-            name="pages"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-lg font-semibold">5. Nombre de pages estimé (minimum 1)</FormLabel>
-                <FormDescription>
-                  Indiquez le nombre approximatif de pages que vous souhaitez pour votre site.
-                </FormDescription>
-                <FormControl>
-                  <Input
-                    type="number"
-                    {...field} // Spread field props first
-                    onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value))}
-                    min="1"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Champ Nombre de pages estimé supprimé */}
 
           <FormField
             control={form.control}
@@ -433,13 +383,17 @@ export function QuoteCalculator() {
                       <FormControl><RadioGroupItem value="vue" /></FormControl>
                       <FormLabel className="font-normal w-full">Vue</FormLabel>
                     </FormItem>
-                     <FormItem className="flex items-center space-x-3 space-y-0 border rounded-md p-4 has-[:checked]:border-primary">
+                    <FormItem className="flex items-center space-x-3 space-y-0 border rounded-md p-4 has-[:checked]:border-primary">
                       <FormControl><RadioGroupItem value="nextjs" /></FormControl>
                       <FormLabel className="font-normal w-full">Next.js</FormLabel>
                     </FormItem>
-                     <FormItem className="flex items-center space-x-3 space-y-0 border rounded-md p-4 has-[:checked]:border-primary">
+                    <FormItem className="flex items-center space-x-3 space-y-0 border rounded-md p-4 has-[:checked]:border-primary">
                       <FormControl><RadioGroupItem value="twig" /></FormControl>
                       <FormLabel className="font-normal w-full">Twig</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-3 space-y-0 border rounded-md p-4 has-[:checked]:border-primary">
+                      <FormControl><RadioGroupItem value="wordpress" /></FormControl>
+                      <FormLabel className="font-normal w-full">WordPress</FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0 border rounded-md p-4 has-[:checked]:border-primary">
                       <FormControl><RadioGroupItem value="no-preference" /></FormControl>
@@ -546,40 +500,86 @@ export function QuoteCalculator() {
             <FormField
                 control={form.control}
                 name="files"
-                render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Charte graphique, logo, ou inspirations</FormLabel>
-                     <FormDescription>
-                        Vous pouvez téléverser jusqu'à 3 fichiers (images, PDF...).
-                    </FormDescription>
-                    <FormControl>
-                    <Input type="file" multiple {...field} />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-                )}
+                render={({ field }) => {
+                  const handleDrop = (e: React.DragEvent<HTMLInputElement>) => {
+                    e.preventDefault();
+                    setIsDragActive(false);
+                    const files = Array.from(e.dataTransfer.files);
+                    field.onChange(files);
+                    setFileNames(files.map(f => f.name));
+                  };
+                  const handleDragOver = (e: React.DragEvent<HTMLInputElement>) => {
+                    e.preventDefault();
+                    setIsDragActive(true);
+                  };
+                  const handleDragLeave = () => setIsDragActive(false);
+                  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                    const files = Array.from(e.target.files ?? []);
+                    field.onChange(files);
+                    setFileNames(files.map(f => f.name));
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Charte graphique, logo, inspirations ou archive ZIP</FormLabel>
+                      <FormDescription>
+                        Vous pouvez téléverser jusqu'à 3 fichiers (images, PDF, ZIP...). Formats acceptés : jpg, jpeg, png, gif, pdf, zip.
+                      </FormDescription>
+                      <FormControl>
+                        <div
+                          className={`transition-all duration-300 border-2 rounded-lg flex flex-col items-center justify-center py-8 px-4 cursor-pointer bg-gray-50 relative ${isDragActive ? 'border-primary bg-blue-50 shadow-lg' : 'border-dashed border-gray-300'}`}
+                          onDragOver={handleDragOver}
+                          onDragLeave={handleDragLeave}
+                          onDrop={handleDrop}
+                          tabIndex={0}
+                        >
+                          <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" className={`mb-2 ${isDragActive ? 'text-primary animate-bounce' : 'text-gray-400'}`}> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" /> </svg>
+                          <span className={`text-base ${isDragActive ? 'text-primary' : 'text-gray-600'}`}>Glissez-déposez vos fichiers ici ou cliquez pour sélectionner</span>
+                          <Input
+                            type="file"
+                            multiple
+                            accept=".jpg,.jpeg,.png,.gif,.pdf,.zip"
+                            onChange={handleChange}
+                            value={undefined}
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            style={{zIndex:2}}
+                          />
+                          {fileNames.length > 0 && (
+                            <div className="mt-4 w-full">
+                              <ul className="text-sm text-gray-700">
+                                {fileNames.map((name, idx) => (
+                                  <li key={idx} className="flex items-center gap-2">
+                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                    {name}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
             />
 
             <div className="mt-8 py-6">
                 <h3 className="text-2xl font-bold font-headline text-center">Estimation du devis</h3>
-                <div className="mt-4 bg-secondary p-6 rounded-lg text-center">
-                    {totalPrice !== null && (watchedValues.siteType && watchedValues.designType) ? (
-                        <>
-                        <p className="text-4xl font-bold text-primary">{totalPrice} € <span className="text-lg font-normal text-muted-foreground">HT</span></p>
-                        {maintenanceCost > 0 && (
-                            <p className="text-xl font-semibold text-primary mt-2">+ {maintenanceCost} € / mois</p>
-                        )}
-                        <p className="text-muted-foreground mt-2 max-w-md mx-auto">
-                            Cette estimation est à titre indicatif. Elle évolue en fonction de vos choix.
-                        </p>
-                        <Button type="submit" size="lg" className="mt-6">
-                            Valider le devis
-                        </Button>
-                        </>
-                    ) : (
-                        <p className="text-lg text-muted-foreground px-4">Veuillez remplir les options ci-dessus pour obtenir une estimation.</p>
-                    )}
-                </div>
+        <div className="mt-4 bg-secondary p-6 rounded-lg text-center">
+          <>
+            <p className="text-4xl font-bold text-primary">{totalPrice !== null ? totalPrice : 0} € <span className="text-lg font-normal text-muted-foreground">HT</span></p>
+            {maintenanceCost > 0 && (
+              <p className="text-xl font-semibold text-primary mt-2">+ {maintenanceCost} € / mois</p>
+            )}
+            <p className="text-muted-foreground mt-2 max-w-md mx-auto">
+              Cette estimation est à titre indicatif. Elle évolue en fonction de vos choix.
+            </p>
+            <Button type="submit" size="lg" className="mt-6">
+              Valider le devis
+            </Button>
+          </>
+        </div>
               </div>
         </form>
       </Form>
