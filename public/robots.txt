@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://your-domain.com/sitemap.xml
+Sitemap: https://mattheo-termine.fr/sitemap.xml
 
 # Block sensitive pages
 Disallow: /admin/

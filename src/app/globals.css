@@ -66,7 +66,7 @@ h1, h2, h3, h4, h5, h6 {
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215.4 16.3% 56.9%;
+    --muted-foreground: 215.4 16.3% 65%; /* Improved contrast ratio for dark mode */
 
     --accent: 258 89% 76%; /* #b866ff */
     --accent-foreground: 0 0% 100%;
@@ -179,17 +179,18 @@ h1, h2, h3, h4, h5, h6 {
     background: linear-gradient(to bottom, #0a0a1a 0%, #0f0f23 30%, #1a1a2e 60%, #0d1117 100%);
     min-height: 100vh;
   }
+  /* Enhanced focus styles for better accessibility - unified approach */
   *:focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
   }
 
-  /* Enhanced focus styles for better accessibility */
   button:focus-visible,
   a:focus-visible,
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
     @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+    box-shadow: 0 0 0 4px hsla(258, 89%, 66%, 0.2);
   }
 
   /* Ensure sufficient contrast for interactive elements */
@@ -395,26 +396,9 @@ h1, h2, h3, h4, h5, h6 {
   color: hsl(222, 47%, 11%); /* Dark blue-gray */
 }
 
-/* Enhanced focus indicators for better visibility */
-*:focus-visible {
-  outline: 2px solid hsl(258, 89%, 66%) !important;
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Ensure interactive elements have sufficient contrast */
+/* Ensure interactive elements have sufficient contrast and smooth transitions */
 button, a, input, textarea, select {
   transition: all 0.2s ease;
-}
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid hsl(258, 89%, 66%) !important;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px hsla(258, 89%, 66%, 0.2);
 }
 
 /* High contrast mode support */

@@ -128,7 +128,7 @@ const pricingPlans = [
   },
 ];
 
-const AnimatedSection = ({ children, className, id, ...props }: { children: React.ReactNode, className?: string, id: string, "aria-labelledby": string }) => {
+const AnimatedSection = ({ children, className, id, ...props }: { children: React.ReactNode, className?: string, id: string, "aria-labelledby"?: string }) => {
   const { ref, isIntersecting } = useIntersectionObserver({ threshold: 0.2, rootMargin: '-80px 0px -80px 0px' });
 
   return (
@@ -835,12 +835,12 @@ const ProcessSection = () => {
           <div className="relative max-w-5xl mx-auto">
             <div className="absolute left-6 md:left-1/2 top-0 w-0.5 h-full bg-gradient-to-b from-primary/30 via-primary/50 to-primary/30 md:-translate-x-1/2" aria-hidden="true"></div>
 
-            <div className="space-y-16">
+            <div className="space-y-16" role="list" aria-label="Étapes du processus de travail">
               {processSteps.map((step, index) => (
-                <div key={step.title} className="relative group">
+                <div key={step.title} className="relative group" role="listitem">
                   <div className="flex items-center md:hidden">
                     <div className="absolute left-0 flex items-center justify-center w-12 h-12 z-10">
-                      <div className="flex items-center justify-center bg-primary shadow-lg w-12 h-12 rounded-full transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl">
+                      <div className="flex items-center justify-center bg-primary shadow-lg w-12 h-12 rounded-full transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl" aria-hidden="true">
                         <step.icon className="text-primary-foreground h-6 w-6"/>
                       </div>
                     </div>
@@ -861,8 +861,8 @@ const ProcessSection = () => {
 
                   <div className="hidden md:grid md:grid-cols-2 md:gap-x-16 md:items-center">
                     <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center w-12 h-12 z-10">
-                      <div className="flex items-center justify-center bg-primary shadow-lg w-12 h-12 rounded-full transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl">
-                        <step.icon className="text-primary-foreground h-6 w-6"/>
+                      <div className="flex items-center justify-center bg-primary shadow-lg w-12 h-12 rounded-full transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl" aria-hidden="true">
+                        <step.icon className="text-primary-foreground h-6 w-6" aria-label={`Icône pour l'étape ${step.title}`}/>
                       </div>
                     </div>
 
@@ -921,6 +921,8 @@ const HeroSection = () => {
       ref={containerRef}
       className="w-full h-screen min-h-screen flex flex-col justify-center items-center scroll-mt-0 relative overflow-hidden"
       aria-labelledby="hero-title"
+      aria-describedby="hero-description"
+      role="banner"
       style={{
         margin: 0,
         padding: 0,
@@ -938,22 +940,22 @@ const HeroSection = () => {
           </h1>
         </AnimatedDiv>
         <AnimatedDiv animation="animate-fade-in-up" delay={200}>
-          <p className="font-headline text-xl md:text-2xl text-white/90 mb-6 max-w-3xl mx-auto drop-shadow-md" role="doc-subtitle" style={{ pointerEvents: 'none' }}>
+          <p id="hero-description" className="font-headline text-xl md:text-2xl text-white/90 mb-6 max-w-3xl mx-auto drop-shadow-md" role="doc-subtitle" style={{ pointerEvents: 'none' }}>
             Intégrateur Web Freelance
           </p>
         </AnimatedDiv>
         <AnimatedDiv animation="animate-fade-in-up" delay={400}>
-          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-8 drop-shadow-md" style={{ pointerEvents: 'none' }}>
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-8 drop-shadow-md text-center" style={{ pointerEvents: 'none' }}>
             Je réalise des sites web modernes, accessibles (normes RGAA), rapides et optimisés SEO.
           </p>
         </AnimatedDiv>
         <AnimatedDiv animation="animate-fade-in-up" delay={600}>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center" style={{ pointerEvents: 'auto' }}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center" style={{ pointerEvents: 'auto' }} role="group" aria-label="Actions principales">
             <Button asChild size="lg" className="shadow-lg">
-              <Link href="#projets" aria-label="Voir mes projets">Mes projets</Link>
+              <Link href="#projets" aria-label="Découvrir mes projets">Mes projets</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="shadow-lg bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20">
-              <Link href="#contact" aria-label="Me contacter">Me contacter</Link>
+              <Link href="#contact" aria-label="Me contacter pour un projet">Me contacter</Link>
             </Button>
           </div>
         </AnimatedDiv>
@@ -976,10 +978,10 @@ export default function Home() {
             <p className="text-lg text-muted-foreground mt-2">Ce que je peux faire pour vous.</p>
           </header>
         </AnimatedDiv>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8" role="list" aria-label="Liste des services proposés">
           {services.map((service, index) => (
              <AnimatedDiv key={service.title} delay={300 + (index * 300)} animation="animate-fade-in-up">
-                <Card className="text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-105 h-full">
+                <Card className="text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-105 h-full" role="listitem">
                 <CardHeader>
                     <div className="mx-auto bg-primary/10 text-primary rounded-full p-4 w-fit mb-4" aria-hidden="true">
                     <service.icon className="w-8 h-8" />
@@ -1002,10 +1004,12 @@ export default function Home() {
           <h2 id="projects-title" className="font-headline text-3xl md:text-4xl font-bold">Mes projets</h2>
           <p className="text-lg text-muted-foreground mt-2">Quelques exemples de mon travail.</p>
         </header>
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8" role="list" aria-label="Liste des projets réalisés">
           {projects.map((project, index) => (
             <AnimatedDiv key={project.slug} delay={index * 150} animation="animate-fade-in-up">
-              <ProjectCard project={project} />
+              <div role="listitem">
+                <ProjectCard project={project} />
+              </div>
             </AnimatedDiv>
           ))}
         </div>
@@ -1016,10 +1020,10 @@ export default function Home() {
           <h2 id="tarifs-title" className="font-headline text-3xl md:text-4xl font-bold">Mes Tarifs</h2>
           <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">Des offres claires et adaptées à vos besoins. Pour une estimation plus précise, utilisez le calculateur de devis.</p>
           </header>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto" role="list" aria-label="Liste des offres tarifaires">
               {pricingPlans.map((plan, index) => (
                   <AnimatedDiv key={plan.title} delay={index * 150} animation="animate-fade-in-up">
-                    <Card className={cn("flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-105 h-full", plan.featured ? 'border-primary shadow-lg' : 'border-border')}>
+                    <Card className={cn("flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-105 h-full", plan.featured ? 'border-primary shadow-lg' : 'border-border')} role="listitem">
                         <CardHeader className={cn("p-6", plan.headerClass)}>
                             <CardTitle className={cn(
                               "font-headline text-2xl",
@@ -1036,7 +1040,7 @@ export default function Home() {
                               plan.headerClass.includes('bg-foreground')
                                 ? "text-white drop-shadow-sm"
                                 : "text-foreground"
-                            )}>{plan.price}</p>
+                            )} aria-label={`Prix: ${plan.price}`}>{plan.price}</p>
                             <CardDescription className={cn(
                               plan.headerClass.includes('bg-primary') ||
                               plan.headerClass.includes('bg-accent') ||

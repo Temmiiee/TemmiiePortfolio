@@ -4,11 +4,15 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Matthéo Termine - Intégrateur Web Freelance',
     short_name: 'Matthéo Termine',
-    description: 'Portfolio de Matthéo Termine, intégrateur web freelance spécialisé dans la création de sites web modernes, accessibles et performants.',
+    description: 'Portfolio de Matthéo Termine, intégrateur web freelance spécialisé en accessibilité RGAA, SEO et développement web moderne.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ECEFF1',
-    theme_color: '#3F51B5',
+    background_color: '#0a0a1a',
+    theme_color: '#a259ff',
+    orientation: 'portrait-primary',
+    lang: 'fr',
+    scope: '/',
+    categories: ['business', 'portfolio', 'professional'],
     icons: [
       {
         src: '/icon',

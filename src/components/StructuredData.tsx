@@ -7,8 +7,8 @@ export function StructuredData() {
     "name": "Matthéo Termine",
     "jobTitle": "Intégrateur Web Freelance",
     "description": "Spécialiste en création de sites web modernes, accessibles et optimisés SEO",
-    "url": "https://your-domain.com",
-    "image": "https://your-domain.com/og-image.jpg",
+    "url": "https://mattheo-termine.fr",
+    "image": "https://mattheo-termine.fr/og-image.svg",
     "sameAs": [
       "https://github.com/Temmiiee",
       "https://linkedin.com/in/mattheo-termine" // Replace with actual LinkedIn
@@ -32,7 +32,10 @@ export function StructuredData() {
       "React",
       "Accessibilité RGAA",
       "SEO",
-      "Intégration Web"
+      "Intégration Web",
+      "WordPress",
+      "TypeScript",
+      "Tailwind CSS"
     ],
     "makesOffer": {
       "@type": "Offer",
@@ -53,6 +56,7 @@ export function StructuredData() {
     "@type": "ProfessionalService",
     "name": "Matthéo Termine - Intégrateur Web",
     "description": "Services de développement web freelance, création de sites modernes et accessibles",
+    "url": "https://mattheo-termine.fr",
     "provider": {
       "@type": "Person",
       "name": "Matthéo Termine"
