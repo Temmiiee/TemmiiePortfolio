@@ -39,7 +39,7 @@ export default function AccessibilityDeclaration() {
 
                     <h2>Contenus non accessibles</h2>
                     <p>
-                        L'ensemble des contenus et des fonctionnalités du site sont accessibles.
+                        L&apos;ensemble des contenus et des fonctionnalités du site sont accessibles.
                     </p>
                     
                     {/* 
@@ -66,7 +66,7 @@ export default function AccessibilityDeclaration() {
 
                     <h2>Environnement de test</h2>
                     <h3>Agents utilisateurs, technologies d’assistance et outils utilisés pour vérifier l’accessibilité</h3>
-                    <p>Les vérifications de conformité ont été réalisées avec les combinaisons de navigateurs et de lecteurs d'écran suivantes :</p>
+                    <p>Les vérifications de conformité ont été réalisées avec les combinaisons de navigateurs et de lecteurs d&apos;écran suivantes :</p>
                     <ul>
                         <li>Firefox avec NVDA</li>
                         <li>Google Chrome avec JAWS</li>
@@ -75,8 +75,8 @@ export default function AccessibilityDeclaration() {
 
                     <h3>Pages du site ayant fait l’objet de la vérification de conformité</h3>
                     <ul>
-                        <li>Page d'accueil</li>
-                        <li>Déclaration d'accessibilité</li>
+                        <li>Page d&apos;accueil</li>
+                        <li>Déclaration d&apos;accessibilité</li>
                     </ul>
 
                     <h2>Retour d’information et contact</h2>

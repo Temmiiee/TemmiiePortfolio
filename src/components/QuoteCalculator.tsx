@@ -48,7 +48,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const featureOptions = [
-  { id: "blog", label: "Intégration d'un blog / système d'actualités", price: 300 },
+  { id: "blog", label: "Intégration d&apos;un blog / système d'actualités", price: 300 },
   { id: "gallery", label: "Galerie d'images / Portfolio avancé", price: 250 },
   { id: "newsletter", label: "Système d'inscription à la newsletter", price: 150 },
   { id: "multi-langue", label: "Configuration pour un site multilingue", price: 450 },
@@ -259,7 +259,7 @@ export function QuoteCalculator() {
                       </FormControl>
                       <FormLabel className="font-normal w-full">
                         <span className="font-bold block">Design basé sur un template</span>
-                        <span className="text-sm text-muted-foreground">Idéal pour les sites multipages classiques, rapide et économique. Adaptation d'un design existant avec personnalisation légère.</span>
+                        <span className="text-sm text-muted-foreground">Idéal pour les sites multipages classiques, rapide et économique. Adaptation d&apos;un design existant avec personnalisation légère.</span>
                       </FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 has-[:checked]:border-primary">
@@ -268,7 +268,7 @@ export function QuoteCalculator() {
                       </FormControl>
                       <FormLabel className="font-normal w-full">
                         <span className="font-bold block">Design sur mesure</span>
-                        <span className="text-sm text-muted-foreground">Recommandé pour les sites one page, landing pages ou projets complexes. Création d'un design unique, adapté à vos besoins spécifiques.</span>
+                        <span className="text-sm text-muted-foreground">Recommandé pour les sites one page, landing pages ou projets complexes. Création d&apos;un design unique, adapté à vos besoins spécifiques.</span>
                       </FormLabel>
                     </FormItem>
                   </RadioGroup>
@@ -328,7 +328,7 @@ export function QuoteCalculator() {
                 .filter(item => !(item.key === 'ecommerce-variations' && watchedValues.siteType !== 'ecommerce'))}
                 </div>
                  {watchedValues.siteType !== 'ecommerce' && watchedValues.features?.includes('ecommerce-variations') && (
-                    <p className="text-sm text-red-500 mt-2">La fonctionnalité "Variations de produits" n'est pertinente que pour un site E-commerce et a été retirée de l'estimation.</p>)}
+                    <p className="text-sm text-red-500 mt-2">La fonctionnalité "Variations de produits" n&apos;est pertinente que pour un site E-commerce et a été retirée de l'estimation.</p>)}
                 <FormMessage />
               </FormItem>
             )}

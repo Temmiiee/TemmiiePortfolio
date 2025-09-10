@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 export async function POST(request: NextRequest) {
   try {
     const { devisId, signature, clientInfo, signedAt } = await request.json();
@@ -33,7 +31,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Template HTML pour l'email de notification au prestataire
-    const htmlTemplateProvider = `
+    // const htmlTemplateProvider = `
       <!DOCTYPE html>
       <html>
       <head>
@@ -103,7 +101,7 @@ export async function POST(request: NextRequest) {
     `;
 
     // Template HTML pour l'email de confirmation au client
-    const htmlTemplateClient = `
+    // const htmlTemplateClient = `
       <!DOCTYPE html>
       <html>
       <head>

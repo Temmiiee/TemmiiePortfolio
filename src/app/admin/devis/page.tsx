@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, XCircle, Clock, Eye, Mail, Phone } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface SignedDevis {
   id: string;
@@ -223,11 +224,13 @@ export default function AdminDevisPage() {
                     <div>
                       <h4 className="font-semibold mb-3">Signature Électronique</h4>
                       <div className="border border-gray-200 rounded-lg p-4 bg-white">
-                        <img 
+                        <Image 
                           src={devis.signature} 
                           alt="Signature du client"
                           className="max-w-full h-auto border border-gray-300 rounded"
                           style={{ maxHeight: '100px' }}
+                          width={200}
+                          height={100}
                         />
                         <p className="text-xs text-gray-500 mt-2">
                           Signée le {new Date(devis.signedAt).toLocaleString('fr-FR')}

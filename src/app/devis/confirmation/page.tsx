@@ -5,10 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle2, Home, Mail, Clock } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 export default function DevisConfirmationPage() {
-  const router = useRouter();
   const [devisNumber, setDevisNumber] = useState('');
 
   useEffect(() => {

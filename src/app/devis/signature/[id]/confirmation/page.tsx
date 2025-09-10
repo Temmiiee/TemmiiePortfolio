@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle2, Clock, Mail, Home, FileText } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function SignatureConfirmationPage() {
   const params = useParams();
@@ -35,7 +36,13 @@ export default function SignatureConfirmationPage() {
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-2">Votre signature :</h3>
               <div className="border border-green-400 bg-white rounded-lg p-4 inline-block">
-                <img src={signature} alt="Signature électronique" style={{maxWidth:'300px',maxHeight:'120px'}} />
+                <Image 
+                  src={signature} 
+                  alt="Signature électronique" 
+                  style={{maxWidth:'300px',maxHeight:'120px'}} 
+                  width={300}
+                  height={120}
+                />
               </div>
               {signedAt && (
                 <p className="text-sm text-gray-500 mt-2">Signé le : {new Date(signedAt).toLocaleString('fr-FR')}</p>
@@ -87,7 +94,7 @@ export default function SignatureConfirmationPage() {
                 <div>
                   <h3 className="font-semibold text-foreground">Valeur juridique</h3>
                   <p className="text-sm text-foreground/70">
-                    Votre signature électronique a la même valeur qu'une signature manuscrite.
+                    Votre signature électronique a la même valeur qu&apos;une signature manuscrite.
                   </p>
                 </div>
               </div>

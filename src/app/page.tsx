@@ -676,7 +676,7 @@ export default function Home() {
                   Je transforme des idées créatives en sites web fonctionnels, que ce soit en écrivant du code sur-mesure ou en personnalisant des solutions WordPress. Mon objectif est de construire des plateformes qui répondent aux besoins de mes clients et qui offrent une expérience utilisateur fluide.
                 </p>
                 <p className="text-center lg:text-left">
-                  Je crois fermement en un web ouvert et accessible. C'est pourquoi j'accorde une importance capitale au respect des standards, à la performance et aux normes d'accessibilité (RGAA). Un bon site, selon moi, est un site rapide, facile à utiliser et qui ne laisse personne de côté.
+                  Je crois fermement en un web ouvert et accessible. C'est pourquoi j'accorde une importance capitale au respect des standards, à la performance et aux normes d&apos;accessibilité (RGAA). Un bon site, selon moi, est un site rapide, facile à utiliser et qui ne laisse personne de côté.
                 </p>
                 <p className="text-center lg:text-left">
                   Constamment en veille technologique, j'aime explorer de nouveaux outils et de nouvelles méthodes pour améliorer la qualité de mon travail et proposer des solutions toujours plus innovantes.
