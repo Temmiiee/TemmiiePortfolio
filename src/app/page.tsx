@@ -175,10 +175,11 @@ const AnimatedDiv = ({ children, className, animation = "animate-fade-in-up", de
   );
 };
 
-// Galaxy Background Component - Reusable animated space background
+// Galaxy Background Component - Reusable animated space background with enhanced visual effects
 const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCardRects?: DOMRect[]; containerRef: React.RefObject<HTMLDivElement | null> }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
+    
     interface Star {
       x: number;
       y: number;
@@ -190,7 +191,10 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
       pulseOffset: number;
       vx: number;
       vy: number;
+      type: 'normal' | 'bright' | 'twinkle';
+      twinklePhase: number;
     }
+    
     interface Particle {
       x: number;
       y: number;
@@ -198,6 +202,7 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
       opacity: number;
       color: string;
     }
+    
     interface Wave {
       x: number;
       y: number;
@@ -208,14 +213,55 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
       colorStops: [string, string];
       elastic: boolean;
       progress: number;
+      speed?: number;
     }
+    
+    interface Nebula {
+      x: number;
+      y: number;
+      radius: number;
+      color: string;
+      opacity: number;
+      rotation: number;
+      rotationSpeed: number;
+    }
+    
+    interface Planet {
+      x: number;
+      y: number;
+      radius: number;
+      color: string;
+      glowColor: string;
+      rotationAngle: number;
+      orbitRadius: number;
+      orbitSpeed: number;
+      centerX: number;
+      centerY: number;
+    }
+    
+    interface ShootingStar {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      length: number;
+      opacity: number;
+      color: string;
+      life: number;
+      maxLife: number;
+    }
+    
     const stars = useRef<Star[]>([]);
     const particles = useRef<Particle[]>([]);
     const waves = useRef<Wave[]>([]);
+    const nebulae = useRef<Nebula[]>([]);
+    const planets = useRef<Planet[]>([]);
+    const shootingStars = useRef<ShootingStar[]>([]);
     const [isHover, setIsHover] = useState(false);
     const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
     const animationFrameId = useRef<number>(0);
     const containerRectRef = useRef<DOMRect | null>(null);
+    const lastShootingStarTime = useRef<number>(0);
 
     // Initialisation et resize
     useEffect(() => {
@@ -239,20 +285,64 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
       setDimensions({ width, height });
       canvas.width = width;
       canvas.height = height;
-      // Initialisation des étoiles une seule fois
+      // Initialisation des étoiles une seule fois avec plus de variété
       if (stars.current.length === 0) {
-        stars.current = Array.from({ length: 100 }, () => ({
+        stars.current = Array.from({ length: 150 }, () => {
+          const type = Math.random() < 0.7 ? 'normal' : Math.random() < 0.9 ? 'bright' : 'twinkle';
+          const baseSize = type === 'bright' ? 1.5 : type === 'twinkle' ? 0.8 : 1.0;
+          
+          return {
+            x: Math.random() * width,
+            y: Math.random() * height,
+            r: Math.random() * baseSize + 0.3,
+            color: type === 'bright' 
+              ? `rgba(120, 180, 255, ${Math.random() * 0.4 + 0.6})` 
+              : type === 'twinkle'
+              ? `rgba(255, 200, 150, ${Math.random() * 0.6 + 0.4})`
+              : `rgba(255, 255, 255, ${Math.random() * 0.7 + 0.3})`,
+            glow: type !== 'normal' || Math.random() > 0.6,
+            glowIntensity: Math.random() * 0.5 + 0.5,
+            pulseSpeed: Math.random() * 0.02 + 0.01,
+            pulseOffset: Math.random() * Math.PI * 2,
+            vx: (Math.random() - 0.5) * 0.1,
+            vy: (Math.random() - 0.5) * 0.1,
+            type,
+            twinklePhase: Math.random() * Math.PI * 2,
+          };
+        });
+        
+        // Initialisation des nébuleuses
+        nebulae.current = Array.from({ length: 3 }, () => ({
           x: Math.random() * width,
           y: Math.random() * height,
-          r: Math.random() * 1.2 + 0.5,
-          color: `rgba(255, 255, 255, ${Math.random() * 0.7 + 0.3})`,
-          glow: Math.random() > 0.7,
-          glowIntensity: Math.random() * 0.5 + 0.5,
-          pulseSpeed: Math.random() * 0.02 + 0.01,
-          pulseOffset: Math.random() * Math.PI * 2,
-          vx: (Math.random() - 0.5) * 0.1,
-          vy: (Math.random() - 0.5) * 0.1,
+          radius: Math.random() * 100 + 80,
+          color: Math.random() < 0.5 
+            ? `rgba(138, 43, 226, 0.1)` // Violet
+            : `rgba(75, 0, 130, 0.08)`, // Indigo
+          opacity: Math.random() * 0.3 + 0.1,
+          rotation: 0,
+          rotationSpeed: (Math.random() - 0.5) * 0.002,
         }));
+        
+        // Initialisation des planètes lointaines
+        planets.current = Array.from({ length: 2 }, (_, i) => {
+          const centerX = width * (0.2 + i * 0.6);
+          const centerY = height * 0.3;
+          const orbitRadius = 50 + i * 30;
+          
+          return {
+            x: centerX + orbitRadius,
+            y: centerY,
+            radius: 8 + i * 4,
+            color: i === 0 ? 'rgba(100, 149, 237, 0.7)' : 'rgba(255, 140, 0, 0.6)',
+            glowColor: i === 0 ? 'rgba(100, 149, 237, 0.3)' : 'rgba(255, 140, 0, 0.2)',
+            rotationAngle: 0,
+            orbitRadius,
+            orbitSpeed: 0.001 + i * 0.0005,
+            centerX,
+            centerY,
+          };
+        });
       }
     }, [containerRef, dimensions.width, dimensions.height]);
 
@@ -265,26 +355,146 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
 
       const draw = () => {
         ctx.clearRect(0, 0, dimensions.width, dimensions.height);
-        // Fond galaxie
+        
+        // Fond galaxie amélioré avec plus de profondeur
         ctx.save();
         ctx.globalAlpha = 1;
-        const grad = ctx.createRadialGradient(
+        const centerGrad = ctx.createRadialGradient(
           dimensions.width / 2,
           dimensions.height / 2,
-          dimensions.width / 8,
+          dimensions.width / 12,
           dimensions.width / 2,
           dimensions.height / 2,
-          dimensions.width / 1.2
+          dimensions.width / 1.1
         );
-        grad.addColorStop(0, '#0a0a1a');
-        grad.addColorStop(0.5, '#0f0f23');
-        grad.addColorStop(1, '#1a1a2e');
-        ctx.fillStyle = grad;
+        centerGrad.addColorStop(0, '#0a0a1a');
+        centerGrad.addColorStop(0.3, '#0f0f23');
+        centerGrad.addColorStop(0.6, '#1a1a2e');
+        centerGrad.addColorStop(1, '#0d1117');
+        ctx.fillStyle = centerGrad;
+        ctx.fillRect(0, 0, dimensions.width, dimensions.height);
+        
+        // Couche de fond supplémentaire pour la profondeur
+        const outerGrad = ctx.createRadialGradient(
+          dimensions.width * 0.3,
+          dimensions.height * 0.7,
+          0,
+          dimensions.width * 0.3,
+          dimensions.height * 0.7,
+          dimensions.width * 0.8
+        );
+        outerGrad.addColorStop(0, 'rgba(25, 25, 112, 0.15)');
+        outerGrad.addColorStop(0.5, 'rgba(72, 61, 139, 0.08)');
+        outerGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = outerGrad;
         ctx.fillRect(0, 0, dimensions.width, dimensions.height);
         ctx.restore();
 
+        // Dessin des nébuleuses
+        const time = Date.now() * 0.001;
+        nebulae.current.forEach((nebula: Nebula) => {
+          ctx.save();
+          ctx.translate(nebula.x, nebula.y);
+          ctx.rotate(nebula.rotation);
+          
+          const nebulaGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, nebula.radius);
+          nebulaGrad.addColorStop(0, nebula.color.replace('0.1', '0.15'));
+          nebulaGrad.addColorStop(0.6, nebula.color);
+          nebulaGrad.addColorStop(1, 'transparent');
+          
+          ctx.fillStyle = nebulaGrad;
+          ctx.globalAlpha = nebula.opacity * (0.8 + Math.sin(time * 0.5 + nebula.x) * 0.2);
+          ctx.fillRect(-nebula.radius, -nebula.radius, nebula.radius * 2, nebula.radius * 2);
+          
+          nebula.rotation += nebula.rotationSpeed;
+          ctx.restore();
+        });
+
+        // Dessin des planètes lointaines
+        planets.current.forEach((planet: Planet) => {
+          // Calcul de la position orbitale
+          planet.x = planet.centerX + Math.cos(planet.rotationAngle) * planet.orbitRadius;
+          planet.y = planet.centerY + Math.sin(planet.rotationAngle) * planet.orbitRadius * 0.3; // Orbite elliptique
+          planet.rotationAngle += planet.orbitSpeed;
+          
+          ctx.save();
+          // Halo autour de la planète
+          const planetHaloGrad = ctx.createRadialGradient(
+            planet.x, planet.y, 0,
+            planet.x, planet.y, planet.radius * 3
+          );
+          planetHaloGrad.addColorStop(0, planet.glowColor);
+          planetHaloGrad.addColorStop(1, 'transparent');
+          ctx.fillStyle = planetHaloGrad;
+          ctx.fillRect(
+            planet.x - planet.radius * 3,
+            planet.y - planet.radius * 3,
+            planet.radius * 6,
+            planet.radius * 6
+          );
+          
+          // Corps de la planète
+          ctx.beginPath();
+          ctx.arc(planet.x, planet.y, planet.radius, 0, 2 * Math.PI);
+          ctx.fillStyle = planet.color;
+          ctx.fill();
+          
+          // Reflet subtil
+          const reflectGrad = ctx.createRadialGradient(
+            planet.x - planet.radius * 0.3,
+            planet.y - planet.radius * 0.3,
+            0,
+            planet.x,
+            planet.y,
+            planet.radius
+          );
+          reflectGrad.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+          reflectGrad.addColorStop(1, 'transparent');
+          ctx.fillStyle = reflectGrad;
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Dessin des étoiles filantes
+        shootingStars.current.forEach((star: ShootingStar, index: number) => {
+          ctx.save();
+          const gradient = ctx.createLinearGradient(
+            star.x, star.y,
+            star.x - star.vx * star.length, star.y - star.vy * star.length
+          );
+          gradient.addColorStop(0, `rgba(${star.color}, ${star.opacity})`);
+          gradient.addColorStop(1, `rgba(${star.color}, 0)`);
+          
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(star.x, star.y);
+          ctx.lineTo(star.x - star.vx * star.length, star.y - star.vy * star.length);
+          ctx.stroke();
+          
+          // Tête brillante
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, 1.5, 0, 2 * Math.PI);
+          ctx.fillStyle = `rgba(${star.color}, ${star.opacity})`;
+          ctx.shadowColor = `rgba(${star.color}, 0.8)`;
+          ctx.shadowBlur = 8;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          
+          // Mise à jour
+          star.x += star.vx;
+          star.y += star.vy;
+          star.life--;
+          star.opacity = star.life / star.maxLife;
+          
+          if (star.life <= 0 || star.x < 0 || star.x > dimensions.width || star.y < 0 || star.y > dimensions.height) {
+            shootingStars.current.splice(index, 1);
+          }
+          ctx.restore();
+        });
+
         // Dessin des vagues
-        waves.current.forEach((wave: Wave, waveIdx: number) => {
+        waves.current.forEach((wave: Wave) => {
           ctx.save();
           ctx.beginPath();
           ctx.arc(wave.x, wave.y, wave.radius, 0, 2 * Math.PI);
@@ -301,7 +511,6 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
           ctx.restore();
         });
 
-        const time = Date.now() * 0.001;
         stars.current.forEach((star: Star) => {
           // Effet vague sur les étoiles
           waves.current.forEach((wave: Wave) => {
@@ -315,31 +524,52 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
               star.vy += (dy / dist) * force * 0.2;
             }
           });
+          
           star.x += star.vx;
           star.y += star.vy;
           star.vx *= 0.98;
           star.vy *= 0.98;
           if (star.x < 0 || star.x > dimensions.width) star.vx *= -1;
           if (star.y < 0 || star.y > dimensions.height) star.vy *= -1;
+          
           let radius = star.r;
-          if (star.glow) {
-            radius = star.r * (1 + Math.sin(time * star.pulseSpeed + star.pulseOffset) * 0.2);
-          }
           let color = star.color;
           let shadowBlur = 5;
+          
+          // Effet de scintillement pour les étoiles qui scintillent
+          if (star.type === 'twinkle') {
+            star.twinklePhase += 0.1;
+            const twinkleIntensity = Math.sin(star.twinklePhase) * 0.5 + 0.5;
+            radius = star.r * (0.8 + twinkleIntensity * 0.4);
+            shadowBlur = 3 + twinkleIntensity * 7;
+          }
+          
+          // Pulsation pour les étoiles avec glow
+          if (star.glow) {
+            radius = star.r * (1 + Math.sin(time * star.pulseSpeed + star.pulseOffset) * 0.3);
+            shadowBlur = 5 + Math.sin(time * star.pulseSpeed + star.pulseOffset) * 5;
+          }
+          
+          // Interaction avec la souris
           if (isHover && mousePos) {
             const dx = star.x - mousePos.x;
             const dy = star.y - mousePos.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < 120) {
               radius = star.r * 2.2;
-              color = 'rgba(120, 180, 255, 0.95)';
+              color = star.type === 'bright' 
+                ? 'rgba(120, 180, 255, 0.95)'
+                : star.type === 'twinkle'
+                ? 'rgba(255, 200, 150, 0.95)'
+                : 'rgba(180, 120, 255, 0.95)';
               shadowBlur = 15;
               const force = 0.05;
               star.vx += (dx / dist) * force;
               star.vy += (dy / dist) * force;
             }
           }
+          
+          // Interaction avec les cartes survolées
           if (hoveredCardRects.length && containerRectRef.current) {
             hoveredCardRects.forEach(rect => {
               const cardX = rect.left - containerRectRef.current!.left + rect.width / 2;
@@ -357,10 +587,11 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
               }
             });
           }
+          
           ctx.beginPath();
           ctx.arc(star.x, star.y, radius, 0, 2 * Math.PI);
           ctx.fillStyle = color;
-          ctx.shadowColor = '#fff';
+          ctx.shadowColor = star.type === 'twinkle' ? '#ffc896' : star.type === 'bright' ? '#78b4ff' : '#fff';
           ctx.shadowBlur = shadowBlur;
           ctx.fill();
           ctx.shadowBlur = 0;
@@ -382,7 +613,57 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
         });
       };
       const animate = () => {
-        // Animation des vagues
+        // Génération d'étoiles filantes aléatoirement
+        const currentTime = Date.now();
+        if (currentTime - lastShootingStarTime.current > 3000 + Math.random() * 7000) {
+          if (shootingStars.current.length < 3) {
+            const edge = Math.floor(Math.random() * 4);
+            let startX, startY, dirX, dirY;
+            
+            switch (edge) {
+              case 0: // Haut
+                startX = Math.random() * dimensions.width;
+                startY = -20;
+                dirX = (Math.random() - 0.5) * 2;
+                dirY = Math.random() * 3 + 2;
+                break;
+              case 1: // Droite
+                startX = dimensions.width + 20;
+                startY = Math.random() * dimensions.height;
+                dirX = -(Math.random() * 3 + 2);
+                dirY = (Math.random() - 0.5) * 2;
+                break;
+              case 2: // Bas
+                startX = Math.random() * dimensions.width;
+                startY = dimensions.height + 20;
+                dirX = (Math.random() - 0.5) * 2;
+                dirY = -(Math.random() * 3 + 2);
+                break;
+              default: // Gauche
+                startX = -20;
+                startY = Math.random() * dimensions.height;
+                dirX = Math.random() * 3 + 2;
+                dirY = (Math.random() - 0.5) * 2;
+            }
+            
+            const colors = ['255, 255, 255', '120, 180, 255', '255, 200, 150', '200, 100, 255'];
+            
+            shootingStars.current.push({
+              x: startX,
+              y: startY,
+              vx: dirX,
+              vy: dirY,
+              length: Math.random() * 20 + 15,
+              opacity: 1,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              life: 60 + Math.random() * 40,
+              maxLife: 60 + Math.random() * 40,
+            });
+          }
+          lastShootingStarTime.current = currentTime;
+        }
+        
+        // Animation des vagues améliorée
         for (let idx = waves.current.length - 1; idx >= 0; idx--) {
           const wave = waves.current[idx];
           // Animation élastique
@@ -448,46 +729,66 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
         if (!containerRectRef.current) return;
         const x = e.clientX - containerRectRef.current.left;
         const y = e.clientY - containerRectRef.current.top;
+        
         // Ajout de plusieurs petites ondes violettes très lentes et petites
-        const nbWaves = 3;
+        const nbWaves = 5;
         for (let w = 0; w < nbWaves; w++) {
-          const angle = (w / nbWaves) * Math.PI * 2;
-          const offset = 10 + Math.random() * 8;
+          const angle = (w / nbWaves) * Math.PI * 2 + Math.random() * 0.5;
+          const offset = 5 + Math.random() * 15;
           const wx = x + Math.cos(angle) * offset;
           const wy = y + Math.sin(angle) * offset;
           waves.current.push({
             x: wx,
             y: wy,
             radius: 0,
-            maxRadius: Math.min(dimensions.width, dimensions.height) * (0.08 + Math.random() * 0.04),
+            maxRadius: Math.min(dimensions.width, dimensions.height) * (0.06 + Math.random() * 0.06),
             strength: 0.32 + Math.random() * 0.18,
-            alpha: 0.7,
+            alpha: 0.8,
             colorStops: ['#a259ff', '#6c2bd7'],
             elastic: true,
             progress: 0,
+            speed: 0.003 + Math.random() * 0.002,
           });
         }
-        // Effet particules violet très léger
-        const particleCount = 6;
+        
+        // Effet particules violet plus spectaculaire
+        const particleCount = 12;
         for (let i = 0; i < particleCount; i++) {
-          const angle = (i / particleCount) * Math.PI * 2;
-          const velocity = Math.random() * 1.2 + 0.3;
-          const distance = Math.random() * 8 + 2;
+          const angle = (i / particleCount) * Math.PI * 2 + Math.random() * 0.3;
+          const distance = Math.random() * 12 + 3;
           particles.current.push({
             x: x + Math.cos(angle) * distance,
             y: y + Math.sin(angle) * distance,
-            size: Math.random() * 1 + 0.4,
-            opacity: 0.7,
+            size: Math.random() * 1.5 + 0.5,
+            opacity: 0.8,
             color: '162, 89, 255' // violet
           });
         }
-        for (let i = 0; i < 2; i++) {
+        
+        // Particules centrales plus intenses
+        for (let i = 0; i < 4; i++) {
           particles.current.push({
-            x: x + (Math.random() - 0.5) * 8,
-            y: y + (Math.random() - 0.5) * 8,
-            size: Math.random() * 1.5 + 0.7,
-            opacity: 0.8,
+            x: x + (Math.random() - 0.5) * 6,
+            y: y + (Math.random() - 0.5) * 6,
+            size: Math.random() * 2 + 1,
+            opacity: 0.9,
             color: '108, 43, 215' // violet foncé
+          });
+        }
+        
+        // Chance de créer une étoile filante depuis le point de clic
+        if (Math.random() < 0.3) {
+          const angle = Math.random() * Math.PI * 2;
+          shootingStars.current.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * 4,
+            vy: Math.sin(angle) * 4,
+            length: 25,
+            opacity: 1,
+            color: '162, 89, 255',
+            life: 45,
+            maxLife: 45,
           });
         }
       };
@@ -501,7 +802,7 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
         canvas.removeEventListener('mouseleave', handleMouseLeave);
         canvas.removeEventListener('click', handleClick);
       };
-    }, [isHover]);
+    }, [isHover, dimensions.width, dimensions.height]);
 
     return (
       <canvas
