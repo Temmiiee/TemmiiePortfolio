@@ -175,22 +175,8 @@ const AnimatedDiv = ({ children, className, animation = "animate-fade-in-up", de
   );
 };
 
-const ProcessSection = () => {
-  const { ref: sectionRef, isIntersecting } = useIntersectionObserver({ threshold: 0.2, rootMargin: '-80px 0px -80px 0px', triggerOnce: true });
-  const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
-  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const [hoveredCardRects, setHoveredCardRects] = useState<DOMRect[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (hoveredCardIndex !== null && cardRefs.current[hoveredCardIndex]) {
-      setHoveredCardRects([cardRefs.current[hoveredCardIndex]!.getBoundingClientRect()]);
-    } else {
-      setHoveredCardRects([]);
-    }
-  }, [hoveredCardIndex]);
-
-  const GalaxyBackground = ({ hoveredCardRects = [] }: { hoveredCardRects?: DOMRect[] }) => {
+// Galaxy Background Component - Reusable animated space background
+const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCardRects?: DOMRect[]; containerRef: React.RefObject<HTMLDivElement> }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
     
@@ -232,7 +218,7 @@ const ProcessSection = () => {
       updateContainerRect();
       window.addEventListener('resize', updateContainerRect);
       return () => window.removeEventListener('resize', updateContainerRect);
-    }, []);
+    }, [containerRef]);
 
     useEffect(() => {
       const canvas = canvasRef.current;
@@ -259,7 +245,7 @@ const ProcessSection = () => {
           vy: (Math.random() - 0.5) * 0.1,
         }));
       }
-    }, []);
+    }, [containerRef]);
 
     // Animation
     useEffect(() => {
@@ -426,6 +412,10 @@ const ProcessSection = () => {
     );
   };
 
+const ProcessSection = () => {
+  const { ref: sectionRef, isIntersecting } = useIntersectionObserver({ threshold: 0.2, rootMargin: '-80px 0px -80px 0px', triggerOnce: true });
+  const containerRef = useRef<HTMLDivElement>(null);
+
   return (
     <section
       id="processus"
@@ -438,9 +428,8 @@ const ProcessSection = () => {
     >
       <div 
         ref={containerRef}
-        className="py-12 md:py-16 lg:py-20 rounded-2xl interactive-bg relative overflow-hidden"
+        className="py-12 md:py-16 lg:py-20 rounded-2xl bg-gradient-to-br from-secondary/50 to-background relative overflow-hidden border border-border/50"
       >
-        <GalaxyBackground hoveredCardRects={hoveredCardRects} />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <header className="text-center mb-12 md:mb-16">
             <h2 id="process-title" className="font-headline text-3xl md:text-4xl font-bold text-primary">Mon Processus de Travail</h2>
@@ -461,9 +450,6 @@ const ProcessSection = () => {
                     </div>
                     <div
                       className="ml-16 flex-1"
-                      onMouseEnter={() => setHoveredCardIndex(index)}
-                      onMouseLeave={() => setHoveredCardIndex(null)}
-                      ref={(el) => { cardRefs.current[index] = el; }}
                     >
                       <div className={cn(
                         "bg-card/80 backdrop-blur-sm p-6 rounded-lg border w-full transition-all duration-500",
@@ -488,9 +474,6 @@ const ProcessSection = () => {
                       <>
                         <div
                           className="pr-8"
-                          onMouseEnter={() => setHoveredCardIndex(index)}
-                          onMouseLeave={() => setHoveredCardIndex(null)}
-                          ref={(el) => { cardRefs.current[index] = el; }}
                         >
                           <div className={cn(
                             "bg-card/80 backdrop-blur-sm p-6 rounded-lg border w-full text-right transition-all duration-500",
@@ -509,9 +492,6 @@ const ProcessSection = () => {
                         <div></div>
                         <div
                           className="pl-8"
-                          onMouseEnter={() => setHoveredCardIndex(index)}
-                          onMouseLeave={() => setHoveredCardIndex(null)}
-                          ref={(el) => { cardRefs.current[index] = el; }}
                         >
                           <div className={cn(
                             "bg-card/80 backdrop-blur-sm p-6 rounded-lg border w-full transition-all duration-500",
@@ -536,37 +516,53 @@ const ProcessSection = () => {
   );
 }
 
-export default function Home() {
+const HeroSection = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className="space-y-4 md:space-y-6">
-      <StructuredData />
-      <section id="accueil" className="text-center py-12 md:py-16 lg:py-20 min-h-[80vh] flex flex-col justify-center scroll-mt-20" aria-labelledby="hero-title">
+    <section 
+      id="accueil" 
+      ref={containerRef}
+      className="text-center py-12 md:py-16 lg:py-20 min-h-[80vh] flex flex-col justify-center scroll-mt-20 relative overflow-hidden rounded-2xl"
+      aria-labelledby="hero-title"
+    >
+      <GalaxyBackground hoveredCardRects={[]} containerRef={containerRef} />
+      <div className="relative z-10">
         <AnimatedDiv animation="animate-fade-in-up" delay={0}>
-          <h1 id="hero-title" className="font-headline text-4xl sm:text-5xl md:text-6xl font-bold text-primary mb-4">
+          <h1 id="hero-title" className="font-headline text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
             Matthéo Termine
           </h1>
         </AnimatedDiv>
         <AnimatedDiv animation="animate-fade-in-up" delay={200}>
-          <p className="font-headline text-xl md:text-2xl text-muted-foreground mb-6 max-w-3xl mx-auto" role="doc-subtitle">
+          <p className="font-headline text-xl md:text-2xl text-white/90 mb-6 max-w-3xl mx-auto drop-shadow-md" role="doc-subtitle">
             Intégrateur Web Freelance
           </p>
         </AnimatedDiv>
         <AnimatedDiv animation="animate-fade-in-up" delay={400}>
-          <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto mb-8">
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-8 drop-shadow-md">
             Je réalise des sites web modernes, accessibles (normes RGAA), rapides et optimisés SEO.
           </p>
         </AnimatedDiv>
         <AnimatedDiv animation="animate-fade-in-up" delay={600}>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="shadow-lg">
               <Link href="#projets" aria-label="Voir mes projets">Mes projets</Link>
             </Button>
-            <Button asChild size="lg" variant="outline">
+            <Button asChild size="lg" variant="outline" className="shadow-lg bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20">
               <Link href="#contact" aria-label="Me contacter">Me contacter</Link>
             </Button>
           </div>
         </AnimatedDiv>
-      </section>
+      </div>
+    </section>
+  );
+};
+
+export default function Home() {
+  return (
+    <div className="space-y-4 md:space-y-6">
+      <StructuredData />
+      <HeroSection />
 
       <AnimatedSection id="services" className="py-12 md:py-16 lg:py-20 min-h-[85vh] flex flex-col justify-center" aria-labelledby="services-title">
         <AnimatedDiv animation="animate-fade-in-up" delay={0}>
