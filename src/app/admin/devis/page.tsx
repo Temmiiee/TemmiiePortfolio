@@ -293,7 +293,7 @@ export default function AdminDevisPage() {
         <div className="mt-8 text-center">
           <Button variant="outline" asChild>
             <Link href="/">
-              Retour à l'accueil
+              Retour à l&apos;accueil
             </Link>
           </Button>
         </div>

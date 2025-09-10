@@ -281,7 +281,7 @@ export function QuoteCalculator() {
           <FormField
             control={form.control}
             name="features"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                  <div className="mb-4">
                     <FormLabel className="text-lg font-semibold">3. Fonctionnalités additionnelles</FormLabel>
@@ -328,7 +328,7 @@ export function QuoteCalculator() {
                 .filter(item => !(item.key === 'ecommerce-variations' && watchedValues.siteType !== 'ecommerce'))}
                 </div>
                  {watchedValues.siteType !== 'ecommerce' && watchedValues.features?.includes('ecommerce-variations') && (
-                    <p className="text-sm text-red-500 mt-2">La fonctionnalité "Variations de produits" n&apos;est pertinente que pour un site E-commerce et a été retirée de l'estimation.</p>)}
+                    <p className="text-sm text-red-500 mt-2">La fonctionnalité &quot;Variations de produits&quot; n&apos;est pertinente que pour un site E-commerce et a été retirée de l&apos;estimation.</p>)}
                 <FormMessage />
               </FormItem>
             )}
@@ -344,7 +344,7 @@ export function QuoteCalculator() {
                       4. Maintenance & Hébergement (Optionnel)
                     </FormLabel>
                     <FormDescription>
-                      Souscrire à l'offre de maintenance mensuelle pour la tranquillité d'esprit.
+                      Souscrire à l&apos;offre de maintenance mensuelle pour la tranquillité d&apos;esprit.
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -367,7 +367,7 @@ export function QuoteCalculator() {
               <FormItem className="space-y-3">
                 <FormLabel className="text-lg font-semibold">6. Quelle technologie préférez-vous ?</FormLabel>
                 <FormDescription>
-                    Si vous n'avez pas de préférence, je choisirai l'outil le plus adapté à votre projet.
+                    Si vous n&apos;avez pas de préférence, je choisirai l&apos;outil le plus adapté à votre projet.
                 </FormDescription>
                 <FormControl>
                   <RadioGroup
@@ -475,7 +475,7 @@ export function QuoteCalculator() {
             <div>
                 <h3 className="text-lg font-semibold">8. Informations complémentaires</h3>
                 <FormDescription>
-                    Ces informations ne modifient pas le tarif mais m'aideront à mieux comprendre votre projet.
+                    Ces informations ne modifient pas le tarif mais m&apos;aideront à mieux comprendre votre projet.
                 </FormDescription>
             </div>
 
@@ -523,7 +523,7 @@ export function QuoteCalculator() {
                     <FormItem>
                       <FormLabel>Charte graphique, logo, inspirations ou archive ZIP</FormLabel>
                       <FormDescription>
-                        Vous pouvez téléverser jusqu'à 3 fichiers (images, PDF, ZIP...). Formats acceptés : jpg, jpeg, png, gif, pdf, zip.
+                        Vous pouvez téléverser jusqu&apos;à 3 fichiers (images, PDF, ZIP...). Formats acceptés : jpg, jpeg, png, gif, pdf, zip.
                       </FormDescription>
                       <FormControl>
                         <div

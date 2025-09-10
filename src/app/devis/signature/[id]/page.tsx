@@ -137,7 +137,7 @@ export default function DevisSignaturePage() {
             <h2 className="text-xl font-bold mb-2">Erreur</h2>
             <p className="text-gray-600 mb-4">{error}</p>
             <Button asChild>
-              <Link href="/">Retour à l'accueil</Link>
+              <Link href="/">Retour à l&apos;accueil</Link>
             </Button>
           </CardContent>
         </Card>
@@ -168,7 +168,7 @@ export default function DevisSignaturePage() {
               Ce devis a déjà été signé. Vous recevrez une réponse sous 24h.
             </p>
             <Button asChild>
-              <Link href="/">Retour à l'accueil</Link>
+              <Link href="/">Retour à l&apos;accueil</Link>
             </Button>
           </CardContent>
         </Card>
@@ -260,7 +260,7 @@ export default function DevisSignaturePage() {
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-3 text-primary">Conditions :</h3>
               <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-2">
-                <p>• Devis valable 30 jours à compter de la date d'émission</p>
+                <p>• Devis valable 30 jours à compter de la date d&apos;émission</p>
                 <p>• Délai de réalisation : 2-4 semaines selon la complexité</p>
                 <p>• Maintenance et hébergement : engagement minimum 12 mois</p>
                 <p>• Modifications majeures après validation : facturation supplémentaire</p>
@@ -288,9 +288,9 @@ export default function DevisSignaturePage() {
                 disabled={isSubmitting}
               />
               <label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">
-                J'accepte les conditions générales de vente et confirme que les informations 
-                de ce devis correspondent à ma demande. Je comprends qu'en signant ce document, 
-                je m'engage à respecter les modalités de paiement et les conditions énoncées.
+                J&apos;accepte les conditions générales de vente et confirme que les informations 
+                de ce devis correspondent à ma demande. Je comprends qu&apos;en signant ce document, 
+                je m&apos;engage à respecter les modalités de paiement et les conditions énoncées.
               </label>
             </div>
 

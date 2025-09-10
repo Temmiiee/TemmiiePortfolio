@@ -65,7 +65,7 @@ export default function DevisConfirmationPage() {
                 <div>
                   <h3 className="font-semibold text-foreground">Email envoyé</h3>
                   <p className="text-sm text-foreground/70">
-                    Votre devis a été envoyé à Matthéo Termine qui l'examinera et vous recontactera rapidement.
+                    Votre devis a été envoyé à Matthéo Termine qui l&apos;examinera et vous recontactera rapidement.
                   </p>
                 </div>
               </div>
@@ -105,7 +105,7 @@ export default function DevisConfirmationPage() {
           <Button variant="outline" size="lg" asChild>
             <Link href="/">
               <Home className="mr-2 h-5 w-5" />
-              Retour à l'accueil
+              Retour à l&apos;accueil
             </Link>
           </Button>
           
@@ -119,7 +119,7 @@ export default function DevisConfirmationPage() {
 
         <div className="mt-8 text-center">
           <p className="text-sm text-foreground/60">
-            Une question ? N'hésitez pas à contacter Matthéo directement à{' '}
+            Une question ? N&apos;hésitez pas à contacter Matthéo directement à{' '}
             <a 
               href="mailto:contact@mattheo-termine.fr" 
               className="text-primary hover:underline"

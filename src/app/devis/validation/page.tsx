@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -25,7 +25,6 @@ interface DevisData {
 }
 
 function DevisValidationContent() {
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [devisData, setDevisData] = useState<DevisData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -272,7 +271,7 @@ function DevisValidationContent() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-foreground/70">
-            En cliquant sur "Envoyer la demande de projet", votre pré-étude sera transmise à Matthéo Termine.<br />
+            En cliquant sur &quot;Envoyer la demande de projet&quot;, votre pré-étude sera transmise à Matthéo Termine.<br />
             Vous recevrez une réponse personnalisée après analyse.
           </p>
         </div>

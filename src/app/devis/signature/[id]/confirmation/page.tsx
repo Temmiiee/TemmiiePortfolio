@@ -104,8 +104,8 @@ export default function SignatureConfirmationPage() {
               <h4 className="font-semibold text-blue-900 mb-2">Prochaines étapes :</h4>
               <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
                 <li>Matthéo examine votre devis signé (24-48h)</li>
-                <li>Vous recevez la confirmation d'acceptation</li>
-                <li>Facturation de l'acompte (30% du montant total)</li>
+                <li>Vous recevez la confirmation d&apos;acceptation</li>
+                <li>Facturation de l&apos;acompte (30% du montant total)</li>
                 <li>Démarrage du développement de votre projet</li>
                 <li>Livraison et mise en ligne</li>
               </ol>
@@ -116,7 +116,7 @@ export default function SignatureConfirmationPage() {
               <p className="text-sm text-amber-800">
                 En signant ce devis, vous vous engagez selon les conditions énoncées. 
                 Si Matthéo accepte le projet, le contrat devient effectif et les modalités 
-                de paiement s'appliquent.
+                de paiement s&apos;appliquent.
               </p>
             </div>
 
@@ -136,7 +136,7 @@ export default function SignatureConfirmationPage() {
           <Button variant="outline" size="lg" asChild>
             <Link href="/">
               <Home className="mr-2 h-5 w-5" />
-              Retour à l'accueil
+              Retour à l&apos;accueil
             </Link>
           </Button>
           
@@ -150,7 +150,7 @@ export default function SignatureConfirmationPage() {
 
         <div className="mt-8 text-center">
           <p className="text-sm text-foreground/60">
-            Une question sur votre projet ? N'hésitez pas à contacter Matthéo directement à{' '}
+            Une question sur votre projet ? N&apos;hésitez pas à contacter Matthéo directement à{' '}
             <a 
               href="mailto:contact@mattheo-termine.fr" 
               className="text-primary hover:underline"
@@ -176,7 +176,7 @@ export default function SignatureConfirmationPage() {
                   </div>
                   <div className="ml-4">
                     <h4 className="font-semibold">Devis signé</h4>
-                    <p className="text-sm text-gray-600">Aujourd'hui - Terminé</p>
+                    <p className="text-sm text-gray-600">Aujourd&apos;hui - Terminé</p>
                   </div>
                 </div>
 

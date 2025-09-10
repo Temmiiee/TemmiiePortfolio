@@ -193,8 +193,30 @@ const ProcessSection = () => {
   const GalaxyBackground = ({ hoveredCardRects = [] }: { hoveredCardRects?: DOMRect[] }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
-    const stars = useRef<any[]>([]);
-    const particles = useRef<any[]>([]);
+    
+    interface Star {
+      x: number;
+      y: number;
+      r: number;
+      color: string;
+      glow: boolean;
+      glowIntensity: number;
+      pulseSpeed: number;
+      pulseOffset: number;
+      vx: number;
+      vy: number;
+    }
+    
+    interface Particle {
+      x: number;
+      y: number;
+      size: number;
+      opacity: number;
+      color: string;
+    }
+    
+    const stars = useRef<Star[]>([]);
+    const particles = useRef<Particle[]>([]);
     const [isHover, setIsHover] = useState(false);
     const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
     const animationFrameId = useRef<number>(0);
@@ -237,7 +259,7 @@ const ProcessSection = () => {
           vy: (Math.random() - 0.5) * 0.1,
         }));
       }
-    }, [containerRef.current]);
+    }, []);
 
     // Animation
     useEffect(() => {
@@ -669,7 +691,7 @@ export default function Home() {
             <AnimatedDiv animation="animate-fade-in-left" className="space-y-8 lg:space-y-10">
               <div className="text-center lg:text-left">
                 <h3 className="font-headline text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground leading-tight max-w-2xl mx-auto lg:mx-0">
-                  Passionné par la création d'expériences web performantes et inclusives.
+                  Passionné par la création d&apos;expériences web performantes et inclusives.
                 </h3>
               </div>
 
@@ -678,10 +700,10 @@ export default function Home() {
                   Je transforme des idées créatives en sites web fonctionnels, que ce soit en écrivant du code sur-mesure ou en personnalisant des solutions WordPress. Mon objectif est de construire des plateformes qui répondent aux besoins de mes clients et qui offrent une expérience utilisateur fluide.
                 </p>
                 <p className="text-center lg:text-left">
-                  Je crois fermement en un web ouvert et accessible. C'est pourquoi j'accorde une importance capitale au respect des standards, à la performance et aux normes d&apos;accessibilité (RGAA). Un bon site, selon moi, est un site rapide, facile à utiliser et qui ne laisse personne de côté.
+                  Je crois fermement en un web ouvert et accessible. C&apos;est pourquoi j&apos;accorde une importance capitale au respect des standards, à la performance et aux normes d&apos;accessibilité (RGAA). Un bon site, selon moi, est un site rapide, facile à utiliser et qui ne laisse personne de côté.
                 </p>
                 <p className="text-center lg:text-left">
-                  Constamment en veille technologique, j'aime explorer de nouveaux outils et de nouvelles méthodes pour améliorer la qualité de mon travail et proposer des solutions toujours plus innovantes.
+                  Constamment en veille technologique, j&apos;aime explorer de nouveaux outils et de nouvelles méthodes pour améliorer la qualité de mon travail et proposer des solutions toujours plus innovantes.
                 </p>
               </div>
 
@@ -704,7 +726,7 @@ export default function Home() {
             <h2 id="contact-title" className="font-headline text-3xl md:text-4xl font-bold text-primary mb-4">Contactez-moi</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-primary to-accent mx-auto mb-6"></div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Une question, un projet ? N'hésitez pas à me contacter. Je vous répondrai dans les plus brefs délais.
+              Une question, un projet ? N&apos;hésitez pas à me contacter. Je vous répondrai dans les plus brefs délais.
             </p>
           </header>
 
