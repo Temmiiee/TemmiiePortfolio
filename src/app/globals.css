@@ -21,7 +21,7 @@ h1, h2, h3, h4, h5, h6 {
     --popover: 0 0% 100%;
     --popover-foreground: 222 84% 4.9%;
 
-    --primary: 231 48% 48%; /* #3F51B5 */
+    --primary: 258 89% 66%; /* #a259ff - aligns with animation violet */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
@@ -30,7 +30,7 @@ h1, h2, h3, h4, h5, h6 {
     --muted: 210 40% 96.1%;
     --muted-foreground: 216 12% 35%; /* Improved contrast ratio */
 
-    --accent: 174 100% 29%; /* #009688 */
+    --accent: 258 89% 76%; /* #b866ff - lighter violet for accent */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -38,7 +38,7 @@ h1, h2, h3, h4, h5, h6 {
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 231 48% 48%;
+    --ring: 258 89% 66%;
 
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -59,7 +59,7 @@ h1, h2, h3, h4, h5, h6 {
     --popover: 222 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 231 48% 48%;
+    --primary: 258 89% 66%; /* #a259ff */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -68,7 +68,7 @@ h1, h2, h3, h4, h5, h6 {
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215.4 16.3% 56.9%;
 
-    --accent: 174 100% 29%;
+    --accent: 258 89% 76%; /* #b866ff */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
@@ -76,7 +76,7 @@ h1, h2, h3, h4, h5, h6 {
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 231 48% 48%;
+    --ring: 258 89% 66%;
     
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -347,6 +347,27 @@ h1, h2, h3, h4, h5, h6 {
     0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .animate-fade-in-up,
+  .animate-fade-in-down,
+  .animate-fade-in-left,
+  .animate-fade-in-right,
+  .animate-stagger-fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .bg-overlay-strong {
   background:
     linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.3) 100%),
@@ -372,4 +393,39 @@ h1, h2, h3, h4, h5, h6 {
 .text-contrast-aa-large {
   /* For large text: minimum 3:1 contrast ratio */
   color: hsl(222, 47%, 11%); /* Dark blue-gray */
+}
+
+/* Enhanced focus indicators for better visibility */
+*:focus-visible {
+  outline: 2px solid hsl(258, 89%, 66%) !important;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Ensure interactive elements have sufficient contrast */
+button, a, input, textarea, select {
+  transition: all 0.2s ease;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid hsl(258, 89%, 66%) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsla(258, 89%, 66%, 0.2);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --primary: 258 89% 50%; /* Darker violet for better contrast */
+    --ring: 258 89% 50%;
+  }
+  
+  .dark {
+    --primary: 258 89% 75%; /* Lighter violet for dark mode */
+    --ring: 258 89% 75%;
+  }
 }

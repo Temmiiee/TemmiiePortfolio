@@ -730,65 +730,45 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
         const x = e.clientX - containerRectRef.current.left;
         const y = e.clientY - containerRectRef.current.top;
         
-        // Ajout de plusieurs petites ondes violettes très lentes et petites
-        const nbWaves = 5;
-        for (let w = 0; w < nbWaves; w++) {
-          const angle = (w / nbWaves) * Math.PI * 2 + Math.random() * 0.5;
-          const offset = 5 + Math.random() * 15;
-          const wx = x + Math.cos(angle) * offset;
-          const wy = y + Math.sin(angle) * offset;
+        // Check for reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        if (!prefersReducedMotion) {
+          // Simple ripple effect - single expanding circle
           waves.current.push({
-            x: wx,
-            y: wy,
-            radius: 0,
-            maxRadius: Math.min(dimensions.width, dimensions.height) * (0.06 + Math.random() * 0.06),
-            strength: 0.32 + Math.random() * 0.18,
-            alpha: 0.8,
-            colorStops: ['#a259ff', '#6c2bd7'],
-            elastic: true,
-            progress: 0,
-            speed: 0.003 + Math.random() * 0.002,
-          });
-        }
-        
-        // Effet particules violet plus spectaculaire
-        const particleCount = 12;
-        for (let i = 0; i < particleCount; i++) {
-          const angle = (i / particleCount) * Math.PI * 2 + Math.random() * 0.3;
-          const distance = Math.random() * 12 + 3;
-          particles.current.push({
-            x: x + Math.cos(angle) * distance,
-            y: y + Math.sin(angle) * distance,
-            size: Math.random() * 1.5 + 0.5,
-            opacity: 0.8,
-            color: '162, 89, 255' // violet
-          });
-        }
-        
-        // Particules centrales plus intenses
-        for (let i = 0; i < 4; i++) {
-          particles.current.push({
-            x: x + (Math.random() - 0.5) * 6,
-            y: y + (Math.random() - 0.5) * 6,
-            size: Math.random() * 2 + 1,
-            opacity: 0.9,
-            color: '108, 43, 215' // violet foncé
-          });
-        }
-        
-        // Chance de créer une étoile filante depuis le point de clic
-        if (Math.random() < 0.3) {
-          const angle = Math.random() * Math.PI * 2;
-          shootingStars.current.push({
             x: x,
             y: y,
-            vx: Math.cos(angle) * 4,
-            vy: Math.sin(angle) * 4,
-            length: 25,
-            opacity: 1,
-            color: '162, 89, 255',
-            life: 45,
-            maxLife: 45,
+            radius: 0,
+            maxRadius: Math.min(dimensions.width, dimensions.height) * 0.15,
+            strength: 0.6,
+            alpha: 0.8,
+            colorStops: ['hsl(258, 89%, 66%)', 'transparent'], // Use CSS primary color
+            elastic: false,
+            progress: 0,
+            speed: 0.02,
+          });
+          
+          // Add a few subtle particles for visual interest
+          const particleCount = 6;
+          for (let i = 0; i < particleCount; i++) {
+            const angle = (i / particleCount) * Math.PI * 2;
+            const distance = Math.random() * 8 + 4;
+            particles.current.push({
+              x: x + Math.cos(angle) * distance,
+              y: y + Math.sin(angle) * distance,
+              size: Math.random() * 1 + 0.5,
+              opacity: 0.7,
+              color: '162, 89, 255' // Keep consistent with primary color
+            });
+          }
+        } else {
+          // For users who prefer reduced motion, just add a simple static indicator
+          particles.current.push({
+            x: x,
+            y: y,
+            size: 2,
+            opacity: 0.8,
+            color: '162, 89, 255'
           });
         }
       };
@@ -822,6 +802,8 @@ const GalaxyBackground = ({ hoveredCardRects = [], containerRef }: { hoveredCard
           transition: 'background 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
         }}
         aria-hidden="true"
+        role="presentation"
+        aria-label="Interactive galaxy background animation"
       />
     );
   };
