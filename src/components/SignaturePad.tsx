@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RotateCcw, Check, X } from 'lucide-react';
+import { RotateCcw, Check } from 'lucide-react';
 
 interface SignaturePadProps {
   onSignatureChange: (signature: string | null) => void;

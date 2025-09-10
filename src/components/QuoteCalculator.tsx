@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,12 @@ import {
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Separator } from "./ui/separator";
-import Link from "next/link";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useSearchParams } from "next/navigation";
+import { CheckCircle2 } from "lucide-react";
 
 const formSchema = z.object({
   siteType: z.enum(["vitrine", "ecommerce", "webapp"], {

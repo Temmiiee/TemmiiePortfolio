@@ -3,19 +3,18 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Download, Send, ArrowLeft } from 'lucide-react';
+import { Download, Send, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 interface DevisData {
   siteType: string;
   designType: string;
+  technology?: string;
   features: string[];
   maintenance?: boolean;
+  projectDescription?: string;
   clientInfo: {
     name: string;
     email: string;
@@ -71,7 +70,7 @@ function DevisValidationContent() {
   };
 
   const handleSubmitDevis = async () => {
-    if (!devisData) return;
+    if (!devisData || !devisRef.current) return;
     setIsSubmitting(true);
     try {
       // Générer le PDF du devis

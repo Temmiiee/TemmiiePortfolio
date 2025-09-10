@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { PT_Sans, Space_Grotesk } from 'next/font/google';
+// Commented out Google Fonts for build environment compatibility
+// import { PT_Sans, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
@@ -7,16 +8,34 @@ import { Footer } from '@/components/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import Link from 'next/link';
 
+// Fallback font configuration for build environment
+const ptSans = {
+  variable: '--font-body',
+  style: { fontFamily: 'system-ui, sans-serif' }
+};
+
+const spaceGrotesk = {
+  variable: '--font-space-grotesk', 
+  style: { fontFamily: 'system-ui, sans-serif' }
+};
+
+// Uncomment below and comment out the fallback fonts above when Google Fonts connectivity is available:
+/*
 const ptSans = PT_Sans({
   subsets: ['latin'],
   weight: ['400', '700'],
   variable: '--font-body',
+  display: 'swap',
+  fallback: ['system-ui', 'sans-serif'],
 });
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-space-grotesk',
+  display: 'swap',
+  fallback: ['system-ui', 'sans-serif'],
 });
+*/
 
 export const metadata: Metadata = {
   title: {

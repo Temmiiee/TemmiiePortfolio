@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 // Pour les tests, on simule l'envoi d'email
 // En production, décommentez les lignes nodemailer et configurez vos variables d'environnement
@@ -15,24 +17,6 @@ import { NextRequest, NextResponse } from 'next/server';
 // });
 
 export async function POST(request: NextRequest) {
-    // Enregistrement du devis dans devis.json (après définition des variables)
-    const fs = require('fs');
-    const path = require('path');
-    const devisFilePath = path.join(process.cwd(), 'src', 'app', 'api', 'devis.json');
-    let devisList = [];
-    try {
-      devisList = JSON.parse(fs.readFileSync(devisFilePath, 'utf-8'));
-    } catch (e) {
-      devisList = [];
-    }
-    devisList.push({
-      devisNumber: devisNumber,
-      devisData: devisData,
-      status: 'en_attente',
-      date: today,
-      pdf: null // PDF non stocké pour l'instant
-    });
-    fs.writeFileSync(devisFilePath, JSON.stringify(devisList, null, 2));
   try {
     // Récupérer le FormData (PDF + devisData + devisNumber)
     const formData = await request.formData();
@@ -52,7 +36,7 @@ export async function POST(request: NextRequest) {
     let devisData;
     try {
       devisData = JSON.parse(devisDataRaw as string);
-    } catch (err) {
+    } catch {
       return NextResponse.json(
         { error: 'Données devis invalides' },
         { status: 400 }
@@ -62,25 +46,21 @@ export async function POST(request: NextRequest) {
     const today = new Date().toLocaleDateString('fr-FR');
 
     // Enregistrement du devis dans devis.json
-    {
-      const fs = require('fs');
-      const path = require('path');
-      const devisFilePath = path.join(process.cwd(), 'src', 'app', 'api', 'devis.json');
-      let devisList = [];
-      try {
-        devisList = JSON.parse(fs.readFileSync(devisFilePath, 'utf-8'));
-      } catch (e) {
-        devisList = [];
-      }
-      devisList.push({
-        devisNumber: devisNumber,
-        devisData: devisData,
-        status: 'en_attente',
-        date: today,
-        pdf: null // PDF non stocké pour l'instant
-      });
-      fs.writeFileSync(devisFilePath, JSON.stringify(devisList, null, 2));
+    const devisFilePath = path.join(process.cwd(), 'src', 'app', 'api', 'devis.json');
+    let devisList = [];
+    try {
+      devisList = JSON.parse(fs.readFileSync(devisFilePath, 'utf-8'));
+    } catch {
+      devisList = [];
     }
+    devisList.push({
+      devisNumber: devisNumber,
+      devisData: devisData,
+      status: 'en_attente',
+      date: today,
+      pdf: null // PDF non stocké pour l'instant
+    });
+    fs.writeFileSync(devisFilePath, JSON.stringify(devisList, null, 2));
 
     // Template HTML pour l'email (sans signature)
     const htmlTemplate = `
