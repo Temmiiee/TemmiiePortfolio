@@ -2,19 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-// Pour les tests, on simule l'envoi d'email
-// En production, décommentez les lignes nodemailer et configurez vos variables d'environnement
+import nodemailer from 'nodemailer';
 
-// import nodemailer from 'nodemailer';
-// const transporter = nodemailer.createTransporter({
-//   host: process.env.SMTP_HOST || 'smtp.gmail.com',
-//   port: parseInt(process.env.SMTP_PORT || '587'),
-//   secure: false,
-//   auth: {
-//     user: process.env.SMTP_USER,
-//     pass: process.env.SMTP_PASS,
-//   },
-// });
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT || '587'),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,8 +20,11 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const devisNumber = formData.get('devisNumber');
     const devisDataRaw = formData.get('devisData');
-    // PDF non utilisé ici, mais récupérable :
-    // const pdfFile = formData.get('pdf');
+    const pdfFile = formData.get('pdf');
+
+    console.log('--- [API/send-devis] Début traitement POST ---');
+    const contentType = request.headers.get('content-type');
+    console.log('Content-Type:', contentType);
 
     if (!devisDataRaw || !devisNumber) {
       return NextResponse.json(
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
       devisData: devisData,
       status: 'en_attente',
       date: today,
-      pdf: null // PDF non stocké pour l'instant
+      pdf: !!pdfFile,
     });
     fs.writeFileSync(devisFilePath, JSON.stringify(devisList, null, 2));
 
@@ -136,6 +137,11 @@ export async function POST(request: NextRequest) {
       to: 'mattheotermine104@gmail.com',
       subject: `Nouveau Devis #${devisNumber} - ${devisData.clientInfo.name}`,
       html: htmlTemplate,
+      attachments: pdfFile && typeof pdfFile !== 'string' ? [{
+        filename: `devis-${devisNumber}.pdf`,
+        content: Buffer.from(await (pdfFile as File).arrayBuffer()),
+        contentType: 'application/pdf',
+      }] : [],
     };
 
     // Email de confirmation pour le client (sans signature)
@@ -190,19 +196,16 @@ export async function POST(request: NextRequest) {
       `,
     };
 
-    // Pour les tests, on simule l'envoi d'email
-    // En production, décommentez ces lignes :
-    // await Promise.all([
-    //   transporter.sendMail(mailOptionsToProvider),
-    //   transporter.sendMail(mailOptionsToClient),
-    // ]);
-
-    // Simulation pour les tests
-    console.log('📧 Email simulé envoyé au prestataire:', mailOptionsToProvider.subject);
-    console.log('📧 Email simulé envoyé au client:', mailOptionsToClient.subject);
-
-    // Attendre un peu pour simuler l'envoi
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Envoi réel des emails
+    try {
+      const resultProvider = await transporter.sendMail(mailOptionsToProvider);
+      console.log('📧 Email envoyé au prestataire:', resultProvider.accepted, resultProvider.response);
+      const resultClient = await transporter.sendMail(mailOptionsToClient);
+      console.log('📧 Email envoyé au client:', resultClient.accepted, resultClient.response);
+    } catch (mailError) {
+  console.error('Erreur lors de l\'envoi des emails:', mailError);
+  return NextResponse.json({ error: 'Erreur lors de l\'envoi des emails', details: (mailError as any)?.message }, { status: 500 });
+    }
 
     return NextResponse.json({ 
       success: true, 
