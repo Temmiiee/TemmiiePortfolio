@@ -42,7 +42,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const featureOptions = [
-  { id: "blog", label: "Intégration d&apos;un blog / système d'actualités", price: 300 },
+  { id: "blog", label: "Intégration d'un blog / système d'actualités", price: 300 },
   { id: "gallery", label: "Galerie d'images / Portfolio avancé", price: 250 },
   { id: "newsletter", label: "Système d'inscription à la newsletter", price: 150 },
   { id: "multi-langue", label: "Configuration pour un site multilingue", price: 450 },

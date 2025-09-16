@@ -1,8 +1,0 @@
-{
-  "servers": {
-    "Sentry": {
-      "url": "https://mcp.sentry.dev/mcp/none-2c2/javascript-nextjs",
-      "type": "http"
-    }
-  }
-}
