@@ -216,9 +216,9 @@ const AboutSection = () => {
 
   useEffect(() => {
     if (isIntersecting) {
-      // Animation séquentielle beaucoup plus lente
-      setTimeout(() => setPhotoVisible(true), 800);
-      setTimeout(() => setContentVisible(true), 1200);
+      // Animation séquentielle plus fluide
+      setTimeout(() => setPhotoVisible(true), 400);
+      setTimeout(() => setContentVisible(true), 600);
     }
   }, [isIntersecting]);
 
@@ -240,10 +240,10 @@ const AboutSection = () => {
             <div className="flex justify-center lg:justify-end">
               <div 
                 className={cn(
-                  "about-photo-container transition-all duration-2000 ease-out",
+                  "about-photo-container transition-all duration-1000 ease-out",
                   photoVisible 
                     ? "opacity-100 translate-x-0 scale-100" 
-                    : "opacity-0 translate-x-32 scale-75"
+                    : "opacity-0 translate-x-8 scale-95"
                 )}
               >
                 <div className="relative">
@@ -263,15 +263,15 @@ const AboutSection = () => {
             {/* Contenu - Animation depuis le centre vers la droite */}
             <div 
               className={cn(
-                "about-content transition-all duration-2000 ease-out",
+                "about-content transition-all duration-1000 ease-out",
                 contentVisible 
                   ? "opacity-100 translate-x-0 scale-100" 
-                  : "opacity-0 -translate-x-32 scale-75"
+                  : "opacity-0 -translate-x-8 scale-98"
               )}
             >
-              <div className="about-text space-y-6 text-lg leading-relaxed text-muted-foreground">
+              <div className="about-text space-y-8 text-lg leading-relaxed text-muted-foreground">
                 <p>
-                  Passionné par la création d'expériences web performantes et inclusives. 
+                  Passionné par la création d&apos;expériences web performantes et inclusives. 
                   Je transforme des idées créatives en sites web fonctionnels, que ce soit en 
                   écrivant du code sur-mesure ou en personnalisant des solutions WordPress.
                 </p>
@@ -282,14 +282,14 @@ const AboutSection = () => {
                 </p>
                 
                 <p>
-                  Je crois fermement en un web ouvert et accessible. C'est pourquoi j'accorde 
+                  Je crois fermement en un web ouvert et accessible. C&apos;est pourquoi j&apos;accorde 
                   une importance capitale au respect des standards, à la performance et aux 
-                  normes d'accessibilité (RGAA). Un bon site, selon moi, est un site rapide, 
+                  normes d&apos;accessibilité (RGAA). Un bon site, selon moi, est un site rapide, 
                   facile à utiliser et qui ne laisse personne de côté.
                 </p>
                 
                 <p>
-                  Constamment en veille technologique, j'aime explorer de nouveaux outils et 
+                  Constamment en veille technologique, j&apos;aime explorer de nouveaux outils et 
                   de nouvelles méthodes pour améliorer la qualité de mon travail et proposer 
                   des solutions toujours plus innovantes.
                 </p>
