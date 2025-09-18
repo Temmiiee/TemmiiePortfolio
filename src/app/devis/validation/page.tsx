@@ -57,25 +57,24 @@ function DevisValidationContent() {
         margin: [10, 10, 10, 10],
         autoPaging: 'text',
         html2canvas: {
-          scale: 0.75, // Réduit légèrement pour éviter les erreurs
+          scale: 1,
           useCORS: true,
           backgroundColor: '#ffffff',
           letterRendering: true,
           allowTaint: false,
           removeContainer: true,
           logging: false,
-          height: 1200, // Ajusté pour éviter les erreurs
-          width: 900,   // Ajusté pour éviter les erreurs
-          foreignObjectRendering: false // Désactivé pour éviter les erreurs de base64
+          width: devisRef.current.offsetWidth,
+          height: devisRef.current.offsetHeight,
+          foreignObjectRendering: false
         },
-        width: 190, // Largeur en mm pour A4 (210 - marges)
-        windowWidth: 900,
+        width: 190,
+        windowWidth: devisRef.current.offsetWidth,
         x: 0,
         y: 0,
         callback: function(pdf: jsPDF) {
-          // Ajuster la taille si nécessaire  
           const pdfWithInternal = pdf as jsPDF & { internal: { getNumberOfPages(): number } };
-          void pdfWithInternal.internal.getNumberOfPages(); // Éviter l'avertissement
+          void pdfWithInternal.internal.getNumberOfPages();
         }
       });
       
@@ -96,19 +95,19 @@ function DevisValidationContent() {
         margin: [10, 10, 10, 10],
         autoPaging: 'text',
         html2canvas: {
-          scale: 0.75, // Réduit légèrement pour éviter les erreurs
+          scale: 1,
           useCORS: true,
           backgroundColor: '#ffffff',
           letterRendering: true,
           allowTaint: false,
           removeContainer: true,
           logging: false,
-          height: 1200,
-          width: 900,
-          foreignObjectRendering: false // Désactivé pour éviter les erreurs de base64
+          width: devisRef.current.offsetWidth,
+          height: devisRef.current.offsetHeight,
+          foreignObjectRendering: false
         },
         width: 190,
-        windowWidth: 900,
+        windowWidth: devisRef.current.offsetWidth,
         x: 0,
         y: 0,
       });
@@ -169,37 +168,11 @@ function DevisValidationContent() {
         {/* Devis Document */}
         <div 
           ref={devisRef} 
-          className="mb-8 bg-white" 
-          style={{ 
-            fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif', 
-            fontSize: '13px', 
-            lineHeight: '1.5', 
-            color: '#1a1a1a',
-            maxWidth: '210mm',
-            width: '210mm',
-            minHeight: '297mm',
-            margin: '0 auto',
-            padding: '0',
-            boxSizing: 'border-box',
-            backgroundColor: '#ffffff',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-            border: '1px solid #e5e7eb'
-          }}
+          className="mb-8 devis-document"
         >
           {/* Professional Header */}
-          <div 
-            style={{ 
-              background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
-              color: '#ffffff',
-              padding: '24px',
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'flex-start',
-              marginBottom: '0',
-              position: 'relative'
-            }}
-          >
-            <div style={{ flex: '1' }}>
+          <div className="devis-header">
+            <div style={{ flex: '1 1 0%', minWidth: '220px' }}>
               <h2 
                 style={{ 
                   color: '#ffffff', 
@@ -239,7 +212,10 @@ function DevisValidationContent() {
             }}>
               <p style={{ margin: '2px 0', color: '#fff', fontWeight: '600' }}>
                 <strong>N° de demande:</strong><br />
-                <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{devisNumber}</span>
+                {/* Affichage côté client uniquement pour éviter l'hydration error */}
+                {typeof window !== 'undefined' && devisNumber && (
+                  <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{devisNumber}</span>
+                )}
               </p>
               <p style={{ margin: '8px 0 2px 0', color: '#fff', fontWeight: '600' }}>
                 <strong>Date:</strong><br />
