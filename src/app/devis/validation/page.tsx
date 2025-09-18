@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Download, Send, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import jsPDF from 'jspdf';
@@ -53,29 +52,29 @@ function DevisValidationContent() {
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Configuration optimisée pour le PDF avec taille correcte
+      // Configuration optimisée pour le PDF avec taille correcte et qualité améliorée
       await pdf.html(devisRef.current, {
-        margin: [8, 8, 8, 8],
+        margin: [10, 10, 10, 10],
         autoPaging: 'text',
         html2canvas: {
-          scale: 0.6,
+          scale: 1,
           useCORS: true,
           backgroundColor: '#ffffff',
           letterRendering: true,
           allowTaint: false,
           removeContainer: true,
           logging: false,
-          height: 1122, // Hauteur A4 en pixels (794 * 1.414)
-          width: 794,   // Largeur A4 en pixels
+          width: devisRef.current.offsetWidth,
+          height: devisRef.current.offsetHeight,
+          foreignObjectRendering: false
         },
-        width: 194, // Largeur en mm pour A4 (210 - marges)
-        windowWidth: 794,
+        width: 190,
+        windowWidth: devisRef.current.offsetWidth,
         x: 0,
         y: 0,
         callback: function(pdf: jsPDF) {
-          // Ajuster la taille si nécessaire  
           const pdfWithInternal = pdf as jsPDF & { internal: { getNumberOfPages(): number } };
-          void pdfWithInternal.internal.getNumberOfPages(); // Éviter l'avertissement
+          void pdfWithInternal.internal.getNumberOfPages();
         }
       });
       
@@ -93,21 +92,22 @@ function DevisValidationContent() {
       // Générer le PDF du devis avec configuration optimisée
       const pdf = new jsPDF('p', 'mm', 'a4');
       await pdf.html(devisRef.current, {
-        margin: [8, 8, 8, 8],
+        margin: [10, 10, 10, 10],
         autoPaging: 'text',
         html2canvas: {
-          scale: 0.6,
+          scale: 1,
           useCORS: true,
           backgroundColor: '#ffffff',
           letterRendering: true,
           allowTaint: false,
           removeContainer: true,
           logging: false,
-          height: 1122,
-          width: 794,
+          width: devisRef.current.offsetWidth,
+          height: devisRef.current.offsetHeight,
+          foreignObjectRendering: false
         },
-        width: 194,
-        windowWidth: 794,
+        width: 190,
+        windowWidth: devisRef.current.offsetWidth,
         x: 0,
         y: 0,
       });
@@ -168,150 +168,486 @@ function DevisValidationContent() {
         {/* Devis Document */}
         <div 
           ref={devisRef} 
-          className="mb-8 bg-white" 
-          style={{ 
-            fontFamily: 'Arial, sans-serif', 
-            fontSize: '12px', 
-            lineHeight: '1.4', 
-            color: '#000000',
-            maxWidth: '794px',
-            width: '794px',
-            margin: '0 auto',
-            padding: '16px',
-            boxSizing: 'border-box'
-          }}
+          className="mb-8 devis-document"
         >
-          <div 
-            className="p-4 bg-white" 
-            style={{ 
-              borderBottom: '2px solid #e5e7eb', 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'flex-start',
-              marginBottom: '0'
-            }}
-          >
-            <div style={{ flex: '1' }}>
+          {/* Professional Header */}
+          <div className="devis-header">
+            <div style={{ flex: '1 1 0%', minWidth: '220px' }}>
               <h2 
                 style={{ 
-                  color: '#000000', 
-                  fontSize: '20px', 
-                  margin: '0 0 12px 0',
-                  fontWeight: 'bold'
+                  color: '#ffffff', 
+                  fontSize: '24px', 
+                  margin: '0 0 16px 0',
+                  fontWeight: '700',
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase'
                 }}
               >
                 DEMANDE DE PROJET
               </h2>
-              <div style={{ fontSize: '10px', lineHeight: '1.3' }}>
-                <p style={{ margin: '0', fontWeight: 'bold', color: '#000' }}>Prestataire :</p>
-                <p style={{ margin: '1px 0', color: '#000' }}>Matthéo Termine</p>
-                <p style={{ margin: '1px 0', color: '#000' }}>Intégrateur Web Freelance</p>
-                <p style={{ margin: '1px 0', color: '#000' }}>Email: contact@mattheo-termine.fr</p>
-                <p style={{ margin: '1px 0', color: '#000' }}>Site: https://mattheo-termine.fr</p>
-              </div>
-            </div>
-            <div style={{ textAlign: 'right', fontSize: '10px', lineHeight: '1.3' }}>
-              <p style={{ margin: '1px 0', color: '#000' }}><strong>Numéro:</strong> {devisNumber}</p>
-              <p style={{ margin: '1px 0', color: '#000' }}><strong>Date:</strong> {today}</p>
-              <p style={{ margin: '6px 0 0 0', color: '#dc2626', fontWeight: 'bold', fontSize: '9px' }}>
-                DOCUMENT NON CONTRACTUEL
-              </p>
-            </div>
-          </div>
-          <div style={{ padding: '16px', backgroundColor: '#ffffff', color: '#000000' }}>
-            {/* Informations client */}
-            <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ 
-                fontSize: '16px', 
-                fontWeight: 'bold', 
-                marginBottom: '12px', 
-                color: '#1f2937',
-                borderBottom: '1px solid #d1d5db',
-                paddingBottom: '4px'
-              }}>
-                INFORMATIONS CLIENT
-              </h3>
-              <div style={{ fontSize: '12px', lineHeight: '1.5' }}>
-                <p style={{ margin: '4px 0', color: '#000' }}>
-                  <strong>Nom :</strong> {devisData.clientInfo.name}
-                </p>
-                {devisData.clientInfo.company && (
-                  <p style={{ margin: '4px 0', color: '#000' }}>
-                    <strong>Entreprise :</strong> {devisData.clientInfo.company}
-                  </p>
-                )}
-                <p style={{ margin: '4px 0', color: '#000' }}>
-                  <strong>Email :</strong> {devisData.clientInfo.email}
-                </p>
-                {devisData.clientInfo.phone && (
-                  <p style={{ margin: '4px 0', color: '#000' }}>
-                    <strong>Téléphone :</strong> {devisData.clientInfo.phone}
-                  </p>
-                )}
-              </div>
-            </div>
-            <Separator className="my-6" />
-            {/* Récapitulatif du projet */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-black">Résumé du projet</h3>
-              <div className="space-y-2">
-                <p><strong>Type de site :</strong> {devisData.siteType === 'vitrine' ? 'Site vitrine' : devisData.siteType === 'ecommerce' ? 'E-commerce' : 'Application web'}</p>
-                <p><strong>Design :</strong> {devisData.designType === 'custom' ? 'Sur-mesure' : 'Basé sur un template'}</p>
-                <p><strong>Technologie :</strong> {devisData.technology === 'no-preference' ? 'Pas de préférence' : devisData.technology}</p>
-                {devisData.features && devisData.features.length > 0 && (
-                  <p><strong>Fonctionnalités :</strong> {devisData.features.join(', ')}</p>
-                )}
-                {devisData.projectDescription && (
-                  <p><strong>Description :</strong> {devisData.projectDescription}</p>
-                )}
-                {devisData.maintenance && (
-                  <p><strong>Maintenance & Hébergement :</strong> Oui (49€ HT / mois)</p>
-                )}
-              </div>
-            </div>
-            <Separator className="my-6" />
-            {/* Détail des prestations */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-black">Prestations incluses</h3>
-              <ul className="space-y-2 ml-4 text-black list-disc">
-                <li>Analyse et configuration technique adaptée au projet</li>
-                <li>Mise en place du design ({devisData.designType === 'custom' ? 'sur-mesure' : 'template adapté'})</li>
-                <li>Intégration des contenus fournis par le client (textes, images, logo)</li>
-                <li>Optimisation responsive (mobile et tablette)</li>
-                <li>Mise en conformité RGPD (base)</li>
-                {devisData.features && devisData.features.length > 0 && devisData.features.map((feature, index) => (
-                  <li key={index}>{feature}</li>
-                ))}
-                {devisData.maintenance && (
-                  <li>Maintenance technique, hébergement, sauvegardes et assistance</li>
-                )}
-              </ul>
-            </div>
-            <Separator className="my-6" />
-            {/* Conditions financières */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-black">Conditions financières</h3>
-              <div className="space-y-2">
-                <p><strong>Total HT :</strong> {devisData.total} €</p>
-                {devisData.maintenance && (
-                  <p><strong>Maintenance & Hébergement :</strong> 49€ HT / mois</p>
-                )}
-                <div className="mt-4">
-                  <p><strong>Modalités de paiement :</strong></p>
-                  <ul className="ml-4 space-y-1 text-black list-disc">
-                    <li>30% à la signature du devis</li>
-                    <li>70% à la livraison du site</li>
-                    {devisData.maintenance && (
-                      <li>Maintenance : facturation mensuelle ou annuelle</li>
-                    )}
-                  </ul>
+              <div style={{ fontSize: '12px', lineHeight: '1.4', opacity: '0.95' }}>
+                <div style={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+                  padding: '12px', 
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                  <p style={{ margin: '0 0 6px 0', fontWeight: '600', color: '#fff' }}>Prestataire :</p>
+                  <p style={{ margin: '2px 0', color: '#fff', fontWeight: '500' }}>Matthéo Termine</p>
+                  <p style={{ margin: '2px 0', color: '#fff' }}>Intégrateur Web Freelance</p>
+                  <p style={{ margin: '2px 0', color: '#fff' }}>📧 contact@mattheo-termine.fr</p>
+                  <p style={{ margin: '2px 0', color: '#fff' }}>🌐 https://mattheo-termine.fr</p>
                 </div>
               </div>
             </div>
-            <Separator className="my-6" />
+            <div style={{ 
+              textAlign: 'right', 
+              fontSize: '11px', 
+              lineHeight: '1.4',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              padding: '12px',
+              borderRadius: '6px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              minWidth: '180px'
+            }}>
+              <p style={{ margin: '2px 0', color: '#fff', fontWeight: '600' }}>
+                <strong>N° de demande:</strong><br />
+                {/* Affichage côté client uniquement pour éviter l'hydration error */}
+                {typeof window !== 'undefined' && devisNumber && (
+                  <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{devisNumber}</span>
+                )}
+              </p>
+              <p style={{ margin: '8px 0 2px 0', color: '#fff', fontWeight: '600' }}>
+                <strong>Date:</strong><br />
+                <span style={{ fontSize: '13px' }}>{today}</span>
+              </p>
+              <div style={{ 
+                marginTop: '12px', 
+                padding: '6px 8px',
+                backgroundColor: '#dc2626',
+                borderRadius: '4px',
+                border: '1px solid #b91c1c'
+              }}>
+                <p style={{ 
+                  margin: '0', 
+                  color: '#fff', 
+                  fontWeight: 'bold', 
+                  fontSize: '9px',
+                  textAlign: 'center',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}>
+                  Document non contractuel
+                </p>
+              </div>
+            </div>
+          </div>
+          <div style={{ padding: '24px', backgroundColor: '#ffffff', color: '#1a1a1a' }}>
+            {/* Informations client */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ 
+                fontSize: '18px', 
+                fontWeight: '700', 
+                marginBottom: '16px', 
+                color: '#1e40af',
+                borderBottom: '2px solid #3b82f6',
+                paddingBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                📋 INFORMATIONS CLIENT
+              </h3>
+              <div style={{ 
+                fontSize: '13px', 
+                lineHeight: '1.6',
+                backgroundColor: '#f8fafc',
+                padding: '16px',
+                borderRadius: '8px',
+                border: '1px solid #e2e8f0'
+              }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <p style={{ margin: '0', color: '#1a1a1a' }}>
+                    <strong style={{ color: '#1e40af' }}>Nom complet :</strong><br />
+                    <span style={{ fontSize: '14px' }}>{devisData.clientInfo.name}</span>
+                  </p>
+                  {devisData.clientInfo.company && (
+                    <p style={{ margin: '0', color: '#1a1a1a' }}>
+                      <strong style={{ color: '#1e40af' }}>Entreprise :</strong><br />
+                      <span style={{ fontSize: '14px' }}>{devisData.clientInfo.company}</span>
+                    </p>
+                  )}
+                  <p style={{ margin: '0', color: '#1a1a1a' }}>
+                    <strong style={{ color: '#1e40af' }}>Email :</strong><br />
+                    <span style={{ fontSize: '14px' }}>{devisData.clientInfo.email}</span>
+                  </p>
+                  {devisData.clientInfo.phone && (
+                    <p style={{ margin: '0', color: '#1a1a1a' }}>
+                      <strong style={{ color: '#1e40af' }}>Téléphone :</strong><br />
+                      <span style={{ fontSize: '14px' }}>{devisData.clientInfo.phone}</span>
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div style={{ margin: '20px 0', height: '1px', backgroundColor: '#e2e8f0' }}></div>
+            
+            {/* Récapitulatif du projet */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ 
+                fontSize: '18px', 
+                fontWeight: '700', 
+                marginBottom: '16px', 
+                color: '#1e40af',
+                borderBottom: '2px solid #3b82f6',
+                paddingBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                🎯 RÉSUMÉ DU PROJET
+              </h3>
+              <div style={{ 
+                backgroundColor: '#f8fafc',
+                padding: '16px',
+                borderRadius: '8px',
+                border: '1px solid #e2e8f0'
+              }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                  <div style={{ 
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <p style={{ margin: '0', fontSize: '13px' }}>
+                      <strong style={{ color: '#1e40af' }}>Type de site :</strong><br />
+                      <span style={{ fontSize: '14px', color: '#1a1a1a' }}>
+                        {devisData.siteType === 'vitrine' ? '🏢 Site vitrine' : devisData.siteType === 'ecommerce' ? '🛒 E-commerce' : '⚡ Application web'}
+                      </span>
+                    </p>
+                  </div>
+                  <div style={{ 
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <p style={{ margin: '0', fontSize: '13px' }}>
+                      <strong style={{ color: '#1e40af' }}>Design :</strong><br />
+                      <span style={{ fontSize: '14px', color: '#1a1a1a' }}>
+                        {devisData.designType === 'custom' ? '🎨 Sur-mesure' : '📋 Template adapté'}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div style={{ 
+                  backgroundColor: '#ffffff',
+                  padding: '12px',
+                  borderRadius: '6px',
+                  border: '1px solid #e2e8f0',
+                  marginBottom: '12px'
+                }}>
+                  <p style={{ margin: '0', fontSize: '13px' }}>
+                    <strong style={{ color: '#1e40af' }}>Technologie :</strong><br />
+                    <span style={{ fontSize: '14px', color: '#1a1a1a' }}>
+                      {devisData.technology === 'no-preference' ? '⚙️ Pas de préférence (choix optimal)' : `⚙️ ${devisData.technology}`}
+                    </span>
+                  </p>
+                </div>
+
+                {devisData.features && devisData.features.length > 0 && (
+                  <div style={{ 
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #e2e8f0',
+                    marginBottom: '12px'
+                  }}>
+                    <p style={{ margin: '0 0 8px 0', fontSize: '13px' }}>
+                      <strong style={{ color: '#1e40af' }}>Fonctionnalités spéciales :</strong>
+                    </p>
+                    <ul style={{ margin: '0', paddingLeft: '16px', fontSize: '13px', color: '#1a1a1a' }}>
+                      {devisData.features.map((feature, index) => (
+                        <li key={index} style={{ margin: '4px 0' }}>✅ {feature}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {devisData.projectDescription && (
+                  <div style={{ 
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #e2e8f0',
+                    marginBottom: '12px'
+                  }}>
+                    <p style={{ margin: '0', fontSize: '13px' }}>
+                      <strong style={{ color: '#1e40af' }}>Description détaillée :</strong><br />
+                      <span style={{ fontSize: '13px', color: '#1a1a1a', fontStyle: 'italic' }}>
+                        &ldquo;{devisData.projectDescription}&rdquo;
+                      </span>
+                    </p>
+                  </div>
+                )}
+
+                {devisData.maintenance && (
+                  <div style={{ 
+                    backgroundColor: '#ecfdf5',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #10b981'
+                  }}>
+                    <p style={{ margin: '0', fontSize: '13px' }}>
+                      <strong style={{ color: '#059669' }}>🔧 Maintenance & Hébergement :</strong><br />
+                      <span style={{ fontSize: '14px', color: '#1a1a1a' }}>
+                        Inclus (49€ HT / mois)
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div style={{ margin: '20px 0', height: '1px', backgroundColor: '#e2e8f0' }}></div>
+            
+            {/* Détail des prestations */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ 
+                fontSize: '18px', 
+                fontWeight: '700', 
+                marginBottom: '16px', 
+                color: '#1e40af',
+                borderBottom: '2px solid #3b82f6',
+                paddingBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                📦 PRESTATIONS INCLUSES
+              </h3>
+              <div style={{ 
+                backgroundColor: '#f8fafc',
+                padding: '16px',
+                borderRadius: '8px',
+                border: '1px solid #e2e8f0'
+              }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div style={{ 
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <ul style={{ margin: '0', paddingLeft: '16px', fontSize: '13px', color: '#1a1a1a', listStyle: 'none' }}>
+                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
+                        Analyse et configuration technique adaptée au projet
+                      </li>
+                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
+                        Mise en place du design ({devisData.designType === 'custom' ? 'sur-mesure' : 'template adapté'})
+                      </li>
+                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
+                        Intégration des contenus fournis par le client
+                      </li>
+                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
+                        Optimisation responsive (mobile et tablette)
+                      </li>
+                    </ul>
+                  </div>
+                  <div style={{ 
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <ul style={{ margin: '0', paddingLeft: '16px', fontSize: '13px', color: '#1a1a1a', listStyle: 'none' }}>
+                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
+                        Mise en conformité RGPD (base)
+                      </li>
+                      {devisData.features && devisData.features.length > 0 && devisData.features.map((feature, index) => (
+                        <li key={index} style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
+                          <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
+                          {feature}
+                        </li>
+                      ))}
+                      {devisData.maintenance && (
+                        <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
+                          <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
+                          Maintenance technique et hébergement
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style={{ margin: '20px 0', height: '1px', backgroundColor: '#e2e8f0' }}></div>
+            
+            {/* Conditions financières */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ 
+                fontSize: '18px', 
+                fontWeight: '700', 
+                marginBottom: '16px', 
+                color: '#1e40af',
+                borderBottom: '2px solid #3b82f6',
+                paddingBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                💰 CONDITIONS FINANCIÈRES
+              </h3>
+              
+              {/* Tableau récapitulatif des coûts */}
+              <div style={{ 
+                backgroundColor: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                marginBottom: '16px'
+              }}>
+                <div style={{ 
+                  backgroundColor: '#1e40af',
+                  color: '#ffffff',
+                  padding: '12px',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  textAlign: 'center'
+                }}>
+                  RÉCAPITULATIF FINANCIER
+                </div>
+                <div style={{ padding: '16px' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    padding: '12px',
+                    backgroundColor: '#ffffff',
+                    borderRadius: '6px',
+                    border: '1px solid #e2e8f0',
+                    marginBottom: '8px'
+                  }}>
+                    <span style={{ fontSize: '16px', fontWeight: '600', color: '#1a1a1a' }}>
+                      💼 Total du projet (HT)
+                    </span>
+                    <span style={{ 
+                      fontSize: '20px', 
+                      fontWeight: '700', 
+                      color: '#1e40af',
+                      backgroundColor: '#eff6ff',
+                      padding: '6px 12px',
+                      borderRadius: '4px'
+                    }}>
+                      {devisData.total} €
+                    </span>
+                  </div>
+                  
+                  {devisData.maintenance && (
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      padding: '12px',
+                      backgroundColor: '#ffffff',
+                      borderRadius: '6px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <span style={{ fontSize: '14px', fontWeight: '600', color: '#1a1a1a' }}>
+                        🔧 Maintenance & Hébergement (HT)
+                      </span>
+                      <span style={{ 
+                        fontSize: '16px', 
+                        fontWeight: '600', 
+                        color: '#059669',
+                        backgroundColor: '#ecfdf5',
+                        padding: '4px 8px',
+                        borderRadius: '4px'
+                      }}>
+                        49€ / mois
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Modalités de paiement */}
+              <div style={{ 
+                backgroundColor: '#fefce8',
+                border: '1px solid #eab308',
+                borderRadius: '8px',
+                padding: '16px'
+              }}>
+                <h4 style={{ 
+                  margin: '0 0 12px 0', 
+                  fontSize: '14px', 
+                  fontWeight: '700', 
+                  color: '#92400e',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                  💳 MODALITÉS DE PAIEMENT
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div style={{ 
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #eab308'
+                  }}>
+                    <p style={{ margin: '0', fontSize: '13px', fontWeight: '600', color: '#92400e' }}>
+                      1️⃣ Acompte à la signature
+                    </p>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '16px', fontWeight: '700', color: '#1a1a1a' }}>
+                      30% ({Math.round(devisData.total * 0.3)} €)
+                    </p>
+                  </div>
+                  <div style={{ 
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #eab308'
+                  }}>
+                    <p style={{ margin: '0', fontSize: '13px', fontWeight: '600', color: '#92400e' }}>
+                      2️⃣ Solde à la livraison
+                    </p>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '16px', fontWeight: '700', color: '#1a1a1a' }}>
+                      70% ({Math.round(devisData.total * 0.7)} €)
+                    </p>
+                  </div>
+                </div>
+                {devisData.maintenance && (
+                  <div style={{ 
+                    marginTop: '12px',
+                    backgroundColor: '#ffffff',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #eab308'
+                  }}>
+                    <p style={{ margin: '0', fontSize: '13px', fontWeight: '600', color: '#92400e' }}>
+                      🔄 Maintenance : facturation mensuelle ou annuelle selon convenance
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div style={{ margin: '20px 0', height: '1px', backgroundColor: '#e2e8f0' }}></div>
             {/* Mention non contractuel et instructions */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-black">Projet de devis</h3>
+              <h3 style={{ 
+                fontSize: '18px', 
+                fontWeight: '700', 
+                marginBottom: '16px', 
+                color: '#dc2626',
+                borderBottom: '2px solid #ef4444',
+                paddingBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                ⚠️ IMPORTANT - DOCUMENT NON CONTRACTUEL
+              </h3>
               <p className="mb-4 font-bold text-red-600">Document non contractuel tant qu’il n’est pas validé par le prestataire.</p>
               <p className="mb-4">Ce document est une pré-étude indicative générée automatiquement selon votre demande. Il ne constitue pas un devis légal ni un engagement du prestataire.</p>
               <p className="mb-4">Après analyse, le prestataire pourra vous envoyer un devis officiel à signer si le projet est accepté.</p>
