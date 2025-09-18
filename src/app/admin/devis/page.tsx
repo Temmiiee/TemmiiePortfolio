@@ -34,43 +34,13 @@ export default function AdminDevisPage() {
 
   const loadSignedDevis = async () => {
     try {
-      // En production, ceci ferait un appel API
-      // Pour les tests, on simule avec des données statiques
-      const mockDevis: SignedDevis[] = [
-        {
-          id: 'devis-001',
-          devisNumber: '2025-0124-001',
-          clientInfo: {
-            name: 'Jean Dupont',
-            email: 'jean.dupont@email.com',
-            company: 'Entreprise ABC',
-            phone: '06 12 34 56 78'
-          },
-          siteType: 'Site Multi-pages Professionnel',
-          budget: '1150€ HT',
-          signedAt: new Date().toISOString(),
-          status: 'signed',
-          signature: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
-        },
-        {
-          id: 'devis-002',
-          devisNumber: '2025-0123-002',
-          clientInfo: {
-            name: 'Marie Martin',
-            email: 'marie.martin@email.com',
-            company: 'Startup XYZ'
-          },
-          siteType: 'Application Web',
-          budget: '2500€ HT',
-          signedAt: new Date(Date.now() - 86400000).toISOString(), // Hier
-          status: 'accepted',
-          signature: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
-        }
-      ];
-
-      setDevisList(mockDevis);
+      const res = await fetch('/api/admin/devis');
+      if (!res.ok) throw new Error('Erreur API');
+      const data = await res.json();
+      setDevisList(Array.isArray(data.devis) ? data.devis : []);
     } catch (error) {
       console.error('Erreur lors du chargement des devis:', error);
+      setDevisList([]);
     } finally {
       setLoading(false);
     }
@@ -78,17 +48,13 @@ export default function AdminDevisPage() {
 
   const handleAcceptDevis = async (devisId: string) => {
     try {
-      // En production, appel API pour accepter
-      
-      // Mettre à jour localement pour les tests
-      setDevisList(prev => 
-        prev.map(devis => 
-          devis.id === devisId 
-            ? { ...devis, status: 'accepted' as const }
-            : devis
-        )
-      );
-
+      const res = await fetch('/api/admin/devis/accept', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ devisId })
+      });
+      if (!res.ok) throw new Error('Erreur API');
+      await loadSignedDevis();
       alert('Devis accepté ! Le client va recevoir une confirmation.');
     } catch (error) {
       console.error('Erreur lors de l\'acceptation:', error);
@@ -98,21 +64,14 @@ export default function AdminDevisPage() {
 
   const handleRejectDevis = async (devisId: string) => {
     const reason = prompt('Raison du refus (optionnel):');
-    
     try {
-      // En production, appel API pour refuser
-      // Utilisation de reason si nécessaire pour l'API
-      void reason; // Éviter l'avertissement en attendant l'implémentation API
-      
-      // Mettre à jour localement pour les tests
-      setDevisList(prev => 
-        prev.map(devis => 
-          devis.id === devisId 
-            ? { ...devis, status: 'rejected' as const }
-            : devis
-        )
-      );
-
+      const res = await fetch('/api/admin/devis/reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ devisId, reason })
+      });
+      if (!res.ok) throw new Error('Erreur API');
+      await loadSignedDevis();
       alert('Devis refusé. Le client va recevoir une notification.');
     } catch (error) {
       console.error('Erreur lors du refus:', error);

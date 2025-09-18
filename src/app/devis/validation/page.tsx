@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, Suspense, useRef } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, Send, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -23,12 +23,225 @@ interface DevisData {
   total: number;
 }
 
+// Function to generate clean PDF without HTML conversion issues
+function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string) {
+  const pageWidth = 210; // A4 width in mm
+  const pageHeight = 297; // A4 height in mm
+  const margin = 15;
+  const contentWidth = pageWidth - (margin * 2);
+  let currentY = margin;
+
+  // Colors
+  const primaryColor = [30, 64, 175]; // Blue
+  const lightBlue = [239, 246, 255];
+  const darkGray = [26, 26, 26];
+  const lightGray = [156, 163, 175];
+
+  // Helper function to add text with word wrap
+  const addText = (text: string, x: number, y: number, maxWidth: number, fontSize = 10) => {
+    pdf.setFontSize(fontSize);
+    const lines = pdf.splitTextToSize(text, maxWidth);
+    lines.forEach((line: string, index: number) => {
+      pdf.text(line, x, y + (index * (fontSize * 0.5)));
+    });
+    return y + (lines.length * (fontSize * 0.5));
+  };
+
+  // Header section with blue background
+  pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  pdf.rect(0, 0, pageWidth, 50, 'F');
+  
+  // Title
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(20);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('DEMANDE DE PROJET', margin, 25);
+  
+  // Document info
+  pdf.setFontSize(10);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text(`N° ${devisNumber}`, pageWidth - margin - 40, 20);
+  pdf.text(`Date: ${new Date().toLocaleDateString('fr-FR')}`, pageWidth - margin - 40, 30);
+  
+  // Provider info
+  pdf.text('Matthéo Termine', margin, 35);
+  pdf.text('Intégrateur Web Freelance', margin, 42);
+
+  currentY = 65;
+
+  // Client Information Section
+  pdf.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  pdf.setFontSize(14);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('INFORMATIONS CLIENT', margin, currentY);
+  currentY += 8;
+
+  // Client details box
+  pdf.setFillColor(248, 250, 252);
+  pdf.rect(margin, currentY - 3, contentWidth, 25, 'F');
+  pdf.setDrawColor(226, 232, 240);
+  pdf.rect(margin, currentY - 3, contentWidth, 25, 'S');
+
+  pdf.setFontSize(10);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text(`Nom: ${devisData.clientInfo.name}`, margin + 5, currentY + 5);
+  pdf.text(`Email: ${devisData.clientInfo.email}`, margin + 5, currentY + 12);
+  
+  if (devisData.clientInfo.company) {
+    pdf.text(`Entreprise: ${devisData.clientInfo.company}`, margin + 5, currentY + 19);
+  }
+  
+  currentY += 35;
+
+  // Project Summary Section
+  pdf.setFontSize(14);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('RÉSUMÉ DU PROJET', margin, currentY);
+  currentY += 8;
+
+  // Project details
+  pdf.setFillColor(248, 250, 252);
+  pdf.rect(margin, currentY - 3, contentWidth, 35, 'F');
+  pdf.setDrawColor(226, 232, 240);
+  pdf.rect(margin, currentY - 3, contentWidth, 35, 'S');
+
+  pdf.setFontSize(10);
+  pdf.setFont('helvetica', 'normal');
+  
+  const siteTypeText = devisData.siteType === 'vitrine' ? 'Site vitrine' : 
+                      devisData.siteType === 'ecommerce' ? 'E-commerce' : 'Application web';
+  pdf.text(`Type de site: ${siteTypeText}`, margin + 5, currentY + 5);
+  
+  const designText = devisData.designType === 'custom' ? 'Design sur-mesure' : 'Template adapté';
+  pdf.text(`Design: ${designText}`, margin + 5, currentY + 12);
+  
+  if (devisData.technology) {
+    const techText = devisData.technology === 'no-preference' ? 'Pas de préférence' : devisData.technology;
+    pdf.text(`Technologie: ${techText}`, margin + 5, currentY + 19);
+  }
+
+  if (devisData.maintenance) {
+    pdf.text('Maintenance & Hébergement: Inclus (49€ HT/mois)', margin + 5, currentY + 26);
+  }
+
+  currentY += 45;
+
+  // Features Section if any
+  if (devisData.features && devisData.features.length > 0) {
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('FONCTIONNALITÉS SPÉCIALES', margin, currentY);
+    currentY += 8;
+
+    devisData.features.forEach((feature) => {
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`• ${feature}`, margin + 5, currentY);
+      currentY += 6;
+    });
+    
+    currentY += 5;
+  }
+
+  // Project Description if provided
+  if (devisData.projectDescription) {
+    if (currentY > 230) {
+      pdf.addPage();
+      currentY = margin;
+    }
+    
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('DESCRIPTION DÉTAILLÉE', margin, currentY);
+    currentY += 8;
+
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    currentY = addText(`"${devisData.projectDescription}"`, margin + 5, currentY, contentWidth - 10);
+    currentY += 10;
+  }
+
+  // Pricing Section
+  if (currentY > 220) {
+    pdf.addPage();
+    currentY = margin;
+  }
+
+  pdf.setFontSize(14);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('CONDITIONS FINANCIÈRES', margin, currentY);
+  currentY += 8;
+
+  // Total price box
+  pdf.setFillColor(lightBlue[0], lightBlue[1], lightBlue[2]);
+  pdf.rect(margin, currentY - 3, contentWidth, 15, 'F');
+  pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  pdf.rect(margin, currentY - 3, contentWidth, 15, 'S');
+
+  pdf.setFontSize(16);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  pdf.text(`Total du projet: ${devisData.total}€ HT`, margin + 5, currentY + 8);
+
+  currentY += 25;
+
+  // Payment terms
+  pdf.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  pdf.setFontSize(12);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Modalités de paiement:', margin, currentY);
+  currentY += 8;
+
+  pdf.setFontSize(10);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text(`• Acompte à la signature: 30% (${Math.round(devisData.total * 0.3)}€)`, margin + 5, currentY);
+  currentY += 6;
+  pdf.text(`• Solde à la livraison: 70% (${Math.round(devisData.total * 0.7)}€)`, margin + 5, currentY);
+  currentY += 10;
+
+  if (devisData.maintenance) {
+    pdf.text('• Maintenance: facturation mensuelle selon convenance', margin + 5, currentY);
+    currentY += 10;
+  }
+
+  // Important notice
+  if (currentY > 250) {
+    pdf.addPage();
+    currentY = margin;
+  }
+
+  pdf.setFillColor(254, 252, 232);
+  pdf.rect(margin, currentY - 3, contentWidth, 30, 'F');
+  pdf.setDrawColor(234, 179, 8);
+  pdf.rect(margin, currentY - 3, contentWidth, 30, 'S');
+
+  pdf.setFontSize(12);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setTextColor(146, 64, 14);
+  pdf.text('⚠️ DOCUMENT NON CONTRACTUEL', margin + 5, currentY + 8);
+
+  pdf.setFontSize(9);
+  pdf.setFont('helvetica', 'normal');
+  pdf.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  currentY = addText(
+    'Ce document est une pré-étude indicative. Il ne constitue pas un devis légal. Le prestataire vous enverra un devis officiel après validation du projet.',
+    margin + 5,
+    currentY + 15,
+    contentWidth - 10,
+    9
+  );
+
+  // Footer
+  pdf.setFontSize(8);
+  pdf.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
+  pdf.text('contact@mattheo-termine.fr | https://mattheo-termine.fr', margin, pageHeight - 10);
+}
+
 function DevisValidationContent() {
   const router = useRouter();
   const [devisData, setDevisData] = useState<DevisData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [devisNumber, setDevisNumber] = useState('');
-  const devisRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Récupérer les données du devis depuis les paramètres URL ou localStorage
@@ -48,35 +261,12 @@ function DevisValidationContent() {
   }, []);
 
   const handleDownloadPDF = async () => {
-    if (!devisRef.current || !devisData) return;
+    if (!devisData) return;
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Configuration optimisée pour le PDF avec taille correcte et qualité améliorée
-      await pdf.html(devisRef.current, {
-        margin: [10, 10, 10, 10],
-        autoPaging: 'text',
-        html2canvas: {
-          scale: 1,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          letterRendering: true,
-          allowTaint: false,
-          removeContainer: true,
-          logging: false,
-          width: devisRef.current.offsetWidth,
-          height: devisRef.current.offsetHeight,
-          foreignObjectRendering: false
-        },
-        width: 190,
-        windowWidth: devisRef.current.offsetWidth,
-        x: 0,
-        y: 0,
-        callback: function(pdf: jsPDF) {
-          const pdfWithInternal = pdf as jsPDF & { internal: { getNumberOfPages(): number } };
-          void pdfWithInternal.internal.getNumberOfPages();
-        }
-      });
+      // Generate PDF programmatically for clean, error-free output
+      generateDevisPDF(pdf, devisData, devisNumber);
       
       pdf.save(`Devis_${devisNumber}_${devisData.clientInfo.name.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {
@@ -86,33 +276,15 @@ function DevisValidationContent() {
   };
 
   const handleSubmitDevis = async () => {
-    if (!devisData || !devisRef.current) return;
+    if (!devisData) return;
     setIsSubmitting(true);
     try {
-      // Générer le PDF du devis avec configuration optimisée
+      // Generate PDF programmatically for clean output
       const pdf = new jsPDF('p', 'mm', 'a4');
-      await pdf.html(devisRef.current, {
-        margin: [10, 10, 10, 10],
-        autoPaging: 'text',
-        html2canvas: {
-          scale: 1,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          letterRendering: true,
-          allowTaint: false,
-          removeContainer: true,
-          logging: false,
-          width: devisRef.current.offsetWidth,
-          height: devisRef.current.offsetHeight,
-          foreignObjectRendering: false
-        },
-        width: 190,
-        windowWidth: devisRef.current.offsetWidth,
-        x: 0,
-        y: 0,
-      });
+      generateDevisPDF(pdf, devisData, devisNumber);
       const pdfBlob = pdf.output('blob');
-      // Envoyer le PDF par email au prestataire
+      
+      // Send PDF via email to provider
       const formData = new FormData();
       formData.append('pdf', pdfBlob, `Devis_${devisNumber}_${devisData.clientInfo.name.replace(/\s+/g, '_')}.pdf`);
       formData.append('devisData', JSON.stringify(devisData));
@@ -167,7 +339,6 @@ function DevisValidationContent() {
 
         {/* Devis Document */}
         <div 
-          ref={devisRef} 
           className="mb-8 devis-document"
         >
           {/* Professional Header */}
