@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
       console.log('📧 Email envoyé au client:', resultClient.accepted, resultClient.response);
     } catch (mailError) {
   console.error('Erreur lors de l\'envoi des emails:', mailError);
-  return NextResponse.json({ error: 'Erreur lors de l\'envoi des emails', details: (mailError as any)?.message }, { status: 500 });
+  return NextResponse.json({ error: 'Erreur lors de l\'envoi des emails', details: mailError instanceof Error ? mailError.message : String(mailError) }, { status: 500 });
     }
 
     return NextResponse.json({ 

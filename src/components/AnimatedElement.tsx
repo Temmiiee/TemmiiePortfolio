@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 import { ANIMATION_CONFIG } from '@/lib/animation-config';
 
-interface AnimatedElementProps {
+interface AnimatedElementProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   className?: string;
   animation?: 'fade-up' | 'fade-down' | 'fade-left' | 'fade-right' | 'scale' | 'none';
@@ -14,7 +14,7 @@ interface AnimatedElementProps {
   threshold?: number;
   rootMargin?: string;
   triggerOnce?: boolean;
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
 }
 
 export const AnimatedElement: React.FC<AnimatedElementProps> = ({
@@ -26,7 +26,7 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = ({
   threshold = ANIMATION_CONFIG.thresholds.medium,
   rootMargin = ANIMATION_CONFIG.rootMargins.medium,
   triggerOnce = true,
-  as: Component = 'div',
+  as = 'div',
   ...props
 }) => {
   const { ref, isIntersecting } = useIntersectionObserver({
@@ -60,17 +60,15 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = ({
     }
   };
 
-  return (
-    <Component
-      ref={ref as any}
-      className={cn(getAnimationClasses(), className)}
-      style={{
-        transitionDuration: `${duration}ms`,
-        transitionDelay: `${delay}ms`,
-      }}
-      {...props}
-    >
-      {children}
-    </Component>
-  );
+  const elementProps = {
+    ref,
+    className: cn(getAnimationClasses(), className),
+    style: {
+      transitionDuration: `${duration}ms`,
+      transitionDelay: `${delay}ms`,
+    },
+    ...props,
+  };
+
+  return React.createElement(as, elementProps, children);
 };

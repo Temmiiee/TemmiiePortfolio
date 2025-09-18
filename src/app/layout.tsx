@@ -228,7 +228,6 @@ export default function RootLayout({
           defaultTheme="dark"
           enableSystem={false}
           disableTransitionOnChange
-          suppressHydrationWarning
         >
           <Link href="#main-content" className="skip-link">
             Aller au contenu principal

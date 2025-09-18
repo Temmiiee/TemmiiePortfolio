@@ -29,23 +29,14 @@ jobs:
       - name: Run TypeScript type checking
         run: npm run typecheck
         
-      - name: Run ESLint with error reporting
-        run: npm run lint -- --format=json --output-file=eslint-report.json
-        continue-on-error: true
+      - name: Run ESLint
+        run: npm run lint
         
       - name: Generate ESLint report
         run: |
-          echo "ESLint Results:" >> $GITHUB_STEP_SUMMARY
-          echo '```json' >> $GITHUB_STEP_SUMMARY
-          if [ -f eslint-report.json ]; then
-            cat eslint-report.json >> $GITHUB_STEP_SUMMARY
-          else
-            echo "ESLint report file not found - the linting step may have failed" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo '```' >> $GITHUB_STEP_SUMMARY
-        if: always()
+          echo "ESLint check completed successfully" >> $GITHUB_STEP_SUMMARY
         
-      - name: Bundle analyzer
+      - name: Build and analyze bundle
         run: |
           npm run build
           echo "Build completed successfully" >> $GITHUB_STEP_SUMMARY
@@ -54,8 +45,5 @@ jobs:
           
       - name: Check for security vulnerabilities
         run: |
-          npm audit --json > audit-report.json || true
-          echo "Security Audit Results:" >> $GITHUB_STEP_SUMMARY
-          echo '```json' >> $GITHUB_STEP_SUMMARY
-          cat audit-report.json >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level high
+          echo "Security audit completed" >> $GITHUB_STEP_SUMMARY

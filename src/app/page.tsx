@@ -9,7 +9,7 @@ import { projects } from "@/lib/projects";
 import Image from "next/image";
 import { ContactForm } from "@/components/ContactForm";
 import { StructuredData } from "@/components/StructuredData";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { WordpressIcon } from "@/components/icons/WordpressIcon";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
@@ -129,7 +129,6 @@ const pricingPlans = [
   },
 ];
 
-// Composant d'animation simplifié et optimisé
 const AnimatedSection = ({ children, className, id, ...props }: { 
   children: React.ReactNode, 
   className?: string, 
@@ -162,7 +161,6 @@ const AnimatedSection = ({ children, className, id, ...props }: {
   );
 };
 
-// Composant d'animation pour les éléments individuels
 const AnimatedDiv = ({ 
   children, 
   className, 
@@ -204,7 +202,6 @@ const AnimatedDiv = ({
   );
 };
 
-// Composant About avec animation depuis le centre
 const AboutSection = () => {
   const [photoVisible, setPhotoVisible] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
@@ -230,7 +227,7 @@ const AboutSection = () => {
             À propos de moi
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Développeur passionné par la création d'expériences web exceptionnelles
+            Développeur passionné par la création d&apos;expériences web exceptionnelles
           </p>
         </div>
 
@@ -315,7 +312,6 @@ const AboutSection = () => {
   );
 };
 
-// Composant Hero avec animations améliorées
 const HeroSection = () => {
   const [nameVisible, setNameVisible] = useState(false);
   const [titleVisible, setTitleVisible] = useState(false);
@@ -350,7 +346,6 @@ const HeroSection = () => {
         currentIndex++;
       } else {
         clearInterval(typingInterval);
-        // Arrêter le curseur clignotant après l'animation
         setTimeout(() => setShowCursor(false), 1000);
       }
     }, 80);
@@ -417,7 +412,6 @@ const HeroSection = () => {
           dans la création de leur identité numérique.
         </p>
 
-        {/* Boutons */}
         <div className={cn(
           "flex flex-col sm:flex-row gap-4 justify-center transition-all duration-800",
           buttonsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
@@ -512,10 +506,8 @@ export default function Home() {
     <>
       <StructuredData />
       
-      {/* Hero Section */}
       <HeroSection />
 
-      {/* Services Section */}
       <AnimatedSection id="services" className="py-24 bg-secondary/30" aria-labelledby="services-title">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -527,7 +519,7 @@ export default function Home() {
             </p>
           </div>
           
-          <div ref={servicesObserverRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div ref={servicesObserverRef as React.RefObject<HTMLDivElement>} className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
@@ -571,7 +563,7 @@ export default function Home() {
             </p>
           </div>
           
-          <div ref={processObserverRef} className="process-timeline">
+          <div ref={processObserverRef as React.RefObject<HTMLDivElement>} className="process-timeline">
             {/* Particules flottantes décoratives */}
             <div className="floating-particle"></div>
             <div className="floating-particle"></div>
@@ -608,7 +600,6 @@ export default function Home() {
         </div>
       </AnimatedSection>
 
-      {/* Pricing Section */}
       <AnimatedSection id="pricing" className="py-24 bg-secondary/30" aria-labelledby="pricing-title">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -620,7 +611,7 @@ export default function Home() {
             </p>
           </div>
           
-          <div ref={pricingObserverRef} className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div ref={pricingObserverRef as React.RefObject<HTMLDivElement>} className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {pricingPlans.map((plan, index) => (
               <Card 
                 key={index} 
@@ -671,7 +662,6 @@ export default function Home() {
         </div>
       </AnimatedSection>
 
-      {/* Projects Section */}
       <AnimatedSection id="projects" className="py-24" aria-labelledby="projects-title">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -685,7 +675,7 @@ export default function Home() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.slice(0, 6).map((project, index) => (
-              <AnimatedDiv key={`project-${project.id}-${index}`} delay={index * 100}>
+              <AnimatedDiv key={`project-${project.slug}-${index}`} delay={index * 100}>
                 <ProjectCard project={project} />
               </AnimatedDiv>
             ))}
@@ -701,10 +691,8 @@ export default function Home() {
         </div>
       </AnimatedSection>
 
-      {/* About Section */}
       <AboutSection />
 
-      {/* Contact Section */}
       <AnimatedSection id="contact" className="py-24 bg-secondary/30" aria-labelledby="contact-title">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">

@@ -72,9 +72,10 @@ function DevisValidationContent() {
         windowWidth: 794,
         x: 0,
         y: 0,
-        callback: function(pdf) {
-          // Ajuster la taille si nécessaire
-          const pageCount = pdf.internal.getNumberOfPages();
+        callback: function(pdf: jsPDF) {
+          // Ajuster la taille si nécessaire  
+          const pdfWithInternal = pdf as jsPDF & { internal: { getNumberOfPages(): number } };
+          const pageCount = pdfWithInternal.internal.getNumberOfPages();
           console.log(`PDF généré avec ${pageCount} page(s)`);
         }
       });

@@ -32,7 +32,6 @@ const formSchema = z.object({
     ["template", "custom"],
     "Veuillez sélectionner un type de design."
   ),
-  // Suppression du champ wordpress
   features: z.array(z.string()).optional(),
   maintenance: z.boolean().default(false),
   projectDescription: z.string().optional(),
@@ -48,7 +47,6 @@ const formSchema = z.object({
     ["react", "vue", "nextjs", "twig", "wordpress", "no-preference"],
     "Veuillez sélectionner une technologie."
   ),
-  // Champ pages supprimé
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -114,9 +112,9 @@ const pricingModel = {
 };
 
 export function QuoteCalculator() {
-  // Hooks pour la zone de dépôt de fichiers
   const [isDragActive, setIsDragActive] = useState(false);
   const [fileNames, setFileNames] = useState<string[]>([]);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
   const params = useMemo(
     () => ({
@@ -171,7 +169,6 @@ export function QuoteCalculator() {
     maintenanceCost,
     details,
   } = useMemo(() => {
-    // Calcul du prix même si les coordonnées ne sont pas renseignées
     let base = 0;
     const details: Record<string, number> = {};
     const siteType = watchedValues.siteType || "vitrine";
@@ -212,7 +209,6 @@ export function QuoteCalculator() {
   }, [watchedValues]);
 
   const onSubmit = (data: FormValues) => {
-    // Génération des données du devis parfaitement personnalisées
     const devisData = {
       siteType: data.siteType,
       designType: data.designType,
@@ -369,8 +365,6 @@ export function QuoteCalculator() {
                     .map((item) => (
                       <FormField
                         key={item.id}
-                        // Only show ecommerce-variations if siteType is ecommerce
-                        // style={{ display: item.id === 'ecommerce-variations' && watchedValues.siteType !== 'ecommerce' ? 'none' : 'flex' }}
                         control={form.control}
                         name="features"
                         render={({ field }) => {
@@ -626,8 +620,6 @@ export function QuoteCalculator() {
             control={form.control}
             name="files"
             render={({ field }) => {
-              const fileInputRef = React.useRef<HTMLInputElement>(null);
-
               const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
                 e.preventDefault();
                 setIsDragActive(false);
