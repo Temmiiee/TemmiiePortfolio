@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 import nodemailer from 'nodemailer';
 
@@ -41,23 +39,6 @@ export async function POST(request: NextRequest) {
     }
 
     const today = new Date().toLocaleDateString('fr-FR');
-
-    // Enregistrement du devis dans devis.json
-    const devisFilePath = path.join(process.cwd(), 'src', 'app', 'api', 'devis.json');
-    let devisList = [];
-    try {
-      devisList = JSON.parse(fs.readFileSync(devisFilePath, 'utf-8'));
-    } catch {
-      devisList = [];
-    }
-    devisList.push({
-      devisNumber: devisNumber,
-      devisData: devisData,
-      status: 'en_attente',
-      date: today,
-      pdf: !!pdfFile,
-    });
-    fs.writeFileSync(devisFilePath, JSON.stringify(devisList, null, 2));
 
     // Template HTML pour l'email (sans signature)
     const htmlTemplate = `
@@ -162,7 +143,6 @@ export async function POST(request: NextRequest) {
             .footer { background: #333333; color: #ffffff; padding: 20px; text-align: center; }
             .highlight { background: #2563eb; color: #ffffff; padding: 16px; text-align: center; margin: 20px 0; font-weight: bold; font-size: 16px; }
             p { margin: 12px 0; color: #333333; }
-            ul { margin: 12px 0; padding-left: 20px; }
             li { margin-bottom: 6px; color: #333333; }
             strong { color: #333333; font-weight: 600; }
           </style>
