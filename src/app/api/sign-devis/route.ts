@@ -25,14 +25,7 @@ export async function POST(request: NextRequest) {
       userAgent: request.headers.get('user-agent') || 'unknown'
     };
 
-    console.log('📝 Devis signé:', {
-      devisId,
-      client: clientInfo.name,
-      signedAt,
-      hasSignature: !!signature
-    });
-
-    // Template HTML pour l'email de notification au prestataire
+    // En production, vous enverriez les emails ici
     const htmlTemplateProvider = `
       <!DOCTYPE html>
       <html>
@@ -167,8 +160,6 @@ export async function POST(request: NextRequest) {
 
     // En production, vous enverriez les emails ici
     // Pour les tests, on simule
-    console.log('📧 Email simulé envoyé au prestataire: Devis signé par', clientInfo.name);
-    console.log('📧 Email simulé envoyé au client: Confirmation de signature');
 
     // Simulation d'attente
     await new Promise(resolve => setTimeout(resolve, 1000));
