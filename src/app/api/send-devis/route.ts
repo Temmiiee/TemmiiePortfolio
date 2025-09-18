@@ -22,10 +22,6 @@ export async function POST(request: NextRequest) {
     const devisDataRaw = formData.get('devisData');
     const pdfFile = formData.get('pdf');
 
-    console.log('--- [API/send-devis] Début traitement POST ---');
-    const contentType = request.headers.get('content-type');
-    console.log('Content-Type:', contentType);
-
     if (!devisDataRaw || !devisNumber) {
       return NextResponse.json(
         { error: 'Données manquantes' },
@@ -205,10 +201,8 @@ export async function POST(request: NextRequest) {
 
     // Envoi réel des emails
     try {
-      const resultProvider = await transporter.sendMail(mailOptionsToProvider);
-      console.log('📧 Email envoyé au prestataire:', resultProvider.accepted, resultProvider.response);
-      const resultClient = await transporter.sendMail(mailOptionsToClient);
-      console.log('📧 Email envoyé au client:', resultClient.accepted, resultClient.response);
+      await transporter.sendMail(mailOptionsToProvider);
+      await transporter.sendMail(mailOptionsToClient);
     } catch (mailError) {
   console.error('Erreur lors de l\'envoi des emails:', mailError);
   return NextResponse.json({ error: 'Erreur lors de l\'envoi des emails', details: mailError instanceof Error ? mailError.message : String(mailError) }, { status: 500 });

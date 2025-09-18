@@ -29,9 +29,9 @@ const formSchema = z.object({
   }),
 });
 
-async function submitAction(data: z.infer<typeof formSchema>) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function submitAction(_data: z.infer<typeof formSchema>) {
   // In a real app, you'd send this data to a backend API, email service, etc.
-  console.log("Form data submitted:", data);
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   return { success: true, message: "Message envoyé avec succès !" };

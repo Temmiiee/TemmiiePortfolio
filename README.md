@@ -2,8 +2,7 @@
 
 A modern, accessible website for Matthéo Termine, a freelance web integrator specializing in creating fast, SEO-optimized, and RGAA-compliant websites.
 
-![CI/CD Pipeline](https://github.com/Temmiiee/TemmiiePortfolio/workflows/CI/CD%20Pipeline/badge.svg)
-![Code Quality](https://github.com/Temmiiee/TemmiiePortfolio/workflows/Code%20Quality/badge.svg)
+![CI Pipeline](https://github.com/Temmiiee/TemmiiePortfolio/workflows/CI%20Pipeline/badge.svg)
 
 ## ✨ Features
 

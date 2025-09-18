@@ -79,7 +79,6 @@ export default function AdminDevisPage() {
   const handleAcceptDevis = async (devisId: string) => {
     try {
       // En production, appel API pour accepter
-      console.log('Acceptation du devis:', devisId);
       
       // Mettre à jour localement pour les tests
       setDevisList(prev => 
@@ -102,7 +101,8 @@ export default function AdminDevisPage() {
     
     try {
       // En production, appel API pour refuser
-      console.log('Refus du devis:', devisId, 'Raison:', reason);
+      // Utilisation de reason si nécessaire pour l'API
+      void reason; // Éviter l'avertissement en attendant l'implémentation API
       
       // Mettre à jour localement pour les tests
       setDevisList(prev => 
