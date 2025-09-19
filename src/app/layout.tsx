@@ -7,6 +7,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { CookieBanner, CookieStatus } from "@/components/CookieBanner";
 import Link from "next/link";
 
 // Fallback font configuration for build environment
@@ -125,9 +126,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "your-google-verification-code", // Replace with actual verification code
-    yandex: "your-yandex-verification-code", // Add if needed
-    yahoo: "your-yahoo-verification-code", // Add if needed
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
   },
   other: {
     "msapplication-TileColor": "#a259ff",
@@ -245,6 +244,8 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <CookieBanner />
+          <CookieStatus />
           <Toaster />
         </ThemeProvider>
       </body>
