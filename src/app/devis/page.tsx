@@ -107,38 +107,29 @@ export default function DevisPage() {
   };
 
   return (
-    <div className="relative flex flex-col md:flex-row gap-10 md:gap-16 md:items-start px-4 md:px-8 py-8 md:py-16">
-      <div className="w-full md:w-2/3">
+    <div className="flex flex-col lg:flex-row gap-8 px-4 md:px-8 py-8 md:py-16">
+      <div className="flex-1">
         <Suspense fallback={<div>Chargement du formulaire...</div>}>
           <QuoteCalculatorWrapper onFormChange={handleFormChange} />
         </Suspense>
       </div>
-      {/* Bloc sticky/fixed pour l'estimation */}
-      <div className="w-full md:w-1/3">
-        <div
-          className="md:sticky md:top-8 md:max-w-[400px] md:mx-auto z-50"
-          style={{
-            maxWidth: '400px',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-          }}
-        >
-          {(() => {
-            const emailValid = !!formValues.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email);
-            const nameValid = !!formValues.name && formValues.name.trim().length > 0;
-            const canValidate = emailValid && nameValid;
-            return (
-              <DevisEstimationSidebar
-                siteType={formValues.siteType}
-                designType={formValues.designType}
-                features={formValues.features ?? []}
-                maintenance={formValues.maintenance}
-                onValidate={handleValidate}
-                canValidate={canValidate}
-              />
-            );
-          })()}
-        </div>
+      {/* Sidebar sticky pour l'estimation */}
+      <div className="w-full lg:w-80 lg:ml-8">
+        {(() => {
+          const emailValid = !!formValues.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email);
+          const nameValid = !!formValues.name && formValues.name.trim().length > 0;
+          const canValidate = emailValid && nameValid;
+          return (
+            <DevisEstimationSidebar
+              siteType={formValues.siteType}
+              designType={formValues.designType}
+              features={formValues.features ?? []}
+              maintenance={formValues.maintenance}
+              onValidate={handleValidate}
+              canValidate={canValidate}
+            />
+          );
+        })()}
       </div>
     </div>
   );

@@ -676,18 +676,17 @@ export default function Home() {
                     <div 
                       className="absolute left-1/2 transform -translate-x-1/2" 
                       style={{ 
-                        top: '-12px',
+                        top: '-22px',
                         zIndex: 50
                       }}
                     >
                       <span 
-                        className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium shadow-lg border-2 border-white"
+                        className="bg-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-medium shadow-lg border-2 border-white/50"
                         aria-label="Offre la plus populaire"
                         style={{ 
                           position: 'relative',
                           display: 'inline-block',
                           whiteSpace: 'nowrap',
-                          boxShadow: '0 4px 12px rgba(162, 89, 255, 0.3)'
                         }}
                       >
                         🌟 Populaire

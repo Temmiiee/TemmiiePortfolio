@@ -66,6 +66,7 @@ const pricingModel = {
 };
 
 export function DevisEstimationSidebar({ siteType, designType, features, maintenance, onValidate, canValidate = true }: DevisEstimationSidebarProps) {
+
   let base = 0;
   if (siteType === "vitrine" || siteType === "ecommerce" || siteType === "webapp") {
     base += pricingModel.siteType[siteType];
@@ -83,7 +84,7 @@ export function DevisEstimationSidebar({ siteType, designType, features, mainten
   const totalPrice = base + featurePrice;
 
   return (
-    <div className="md:sticky md:top-8 w-full md:w-80 md:pl-4">
+    <div className="sticky top-24 w-full md:w-80">
       <div className="bg-secondary p-6 rounded-lg shadow-lg text-center border border-border">
         <h3 className="text-2xl font-bold font-headline mb-4">Estimation du devis</h3>
         <p className="text-4xl font-bold text-primary">

@@ -10,6 +10,10 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  // Configuration de timeout pour éviter les blocages
+  connectionTimeout: 30000, // 30 secondes
+  socketTimeout: 30000, // 30 secondes
+  greetingTimeout: 10000, // 10 secondes
 });
 
 export async function POST(request: NextRequest) {
@@ -315,10 +319,12 @@ export async function POST(request: NextRequest) {
       `,
     };
 
-    // Envoi réel des emails
+    // Envoi des emails en parallèle pour éviter les timeouts
     try {
-      await transporter.sendMail(mailOptionsToProvider);
-      await transporter.sendMail(mailOptionsToClient);
+      await Promise.all([
+        transporter.sendMail(mailOptionsToProvider),
+        transporter.sendMail(mailOptionsToClient)
+      ]);
     } catch (mailError) {
   console.error('Erreur lors de l\'envoi des emails:', mailError);
   return NextResponse.json({ error: 'Erreur lors de l\'envoi des emails', details: mailError instanceof Error ? mailError.message : String(mailError) }, { status: 500 });
