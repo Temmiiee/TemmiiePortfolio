@@ -63,6 +63,12 @@ export const config = {
 
 // Helper pour obtenir l'URL de base
 export const getBaseUrl = () => {
+  // Priorité à la variable d'environnement NEXT_PUBLIC_BASE_URL
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.NEXT_PUBLIC_BASE_URL;
+  }
+  
+  // Fallback sur la configuration statique
   return config.isProduction ? config.urls.production : config.urls.development;
 };
 

@@ -16,7 +16,8 @@ export async function GET(
     // Trouver le devis
     const devis = await getDevisByNumber(devisNumber);
     if (!devis) {
-      return NextResponse.redirect(new URL('/admin/devis?error=not-found', request.url));
+      const baseUrl = new URL(request.url).origin;
+      return NextResponse.redirect(new URL('/admin/devis?error=not-found', baseUrl));
     }
 
     // Si pas d'action, juste afficher le devis
@@ -26,8 +27,9 @@ export async function GET(
 
     // Vérifier si le devis n'est pas déjà traité
     if (devis.status !== 'pending') {
+      const baseUrl = new URL(request.url).origin;
       return NextResponse.redirect(
-        new URL(`/admin/devis?error=already-processed&status=${devis.status}`, request.url)
+        new URL(`/admin/devis?error=already-processed&status=${devis.status}`, baseUrl)
       );
     }
 
@@ -37,7 +39,8 @@ export async function GET(
       const updatedDevis = await updateDevisStatus(devisNumber, newStatus);
 
       if (!updatedDevis) {
-        return NextResponse.redirect(new URL('/admin/devis?error=update-failed', request.url));
+        const baseUrl = new URL(request.url).origin;
+        return NextResponse.redirect(new URL('/admin/devis?error=update-failed', baseUrl));
       }
 
       // Envoyer un email de notification au client
@@ -51,18 +54,21 @@ export async function GET(
       }
 
       // Rediriger vers l'admin avec succès
+      const baseUrl = new URL(request.url).origin;
       return NextResponse.redirect(
-        new URL(`/admin/devis?success=${action}&devis=${devisNumber}`, request.url)
+        new URL(`/admin/devis?success=${action}&devis=${devisNumber}`, baseUrl)
       );
     }
 
-    return NextResponse.redirect(new URL('/admin/devis?error=invalid-action', request.url));
+    const baseUrl = new URL(request.url).origin;
+    return NextResponse.redirect(new URL('/admin/devis?error=invalid-action', baseUrl));
 
   } catch (error) {
     if (shouldLog()) {
       console.error('Erreur dans l\'API admin devis:', error);
     }
-    return NextResponse.redirect(new URL('/admin/devis?error=server-error', request.url));
+    const baseUrl = new URL(request.url).origin;
+    return NextResponse.redirect(new URL('/admin/devis?error=server-error', baseUrl));
   }
 }
 

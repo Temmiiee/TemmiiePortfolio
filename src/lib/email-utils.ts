@@ -134,7 +134,7 @@ export const getEmailBaseStyles = () => `
     line-height: 1.6 !important;
   }
   .footer { 
-    background-color: #374151 !important; 
+    background-color: #1f2937 !important; 
     color: #ffffff !important; 
     padding: 25px !important; 
     text-align: center !important;

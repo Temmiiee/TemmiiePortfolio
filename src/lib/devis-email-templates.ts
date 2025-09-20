@@ -179,14 +179,14 @@ export const createProviderEmailTemplate = (devisData: DevisEmailData, baseUrl: 
       <div class="container">
         <div class="header">
           <h1>Nouveau Devis Reçu</h1>
-          <p><strong>Numéro:</strong> ${devisData.devisNumber}</p>
-          <p><strong>Date:</strong> ${today}</p>
+          <p style="color: #ffffff !important; margin: 8px 0 !important;"><strong style="color: #ffffff !important;">Numéro:</strong> ${devisData.devisNumber}</p>
+          <p style="color: #ffffff !important; margin: 8px 0 !important;"><strong style="color: #ffffff !important;">Date:</strong> ${today}</p>
         </div>
         <div class="content">
           ${content}
         </div>
         <div class="footer">
-          <p>${config.company.contactEmail} | ${config.company.website}</p>
+          <p style="color: #ffffff !important; margin: 5px 0 !important;">${config.company.contactEmail} | ${config.company.website}</p>
         </div>
       </div>
     </body>
@@ -226,7 +226,7 @@ export const createStatusNotificationTemplate = (
 ) => {
   const isApproved = status === 'approved';
   const statusText = isApproved ? 'Approuvé' : 'Refusé';
-  const statusColor = isApproved ? '#16a34a' : '#dc2626';
+  const statusColor = isApproved ? '#15803d' : '#b91c1c'; // Couleurs plus foncées
   const statusEmoji = isApproved ? '✅' : '❌';
 
   const statusStyles = `
