@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { config, shouldLog } from '@/lib/config';
+import { shouldLog } from '@/lib/config';
 
 export type ConsentState = {
   analytics: boolean;
@@ -23,52 +23,6 @@ export function useConsent() {
   
   const [consentStatus, setConsentStatus] = useState<ConsentStatus>('pending');
   const [showBanner, setShowBanner] = useState(false);
-
-  // Charger Google Analytics
-  const loadGoogleAnalytics = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    
-    const GA_ID = config.analytics.gaId;
-    
-    if (!GA_ID) {
-      if (shouldLog()) {
-        console.warn('NEXT_PUBLIC_GA_ID non défini - Google Analytics non chargé');
-      }
-      return;
-    }
-    
-    // Éviter de charger plusieurs fois
-    if (document.querySelector(`script[src*="${GA_ID}"]`)) {
-      return;
-    }
-
-    // Charger le script gtag
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-    document.head.appendChild(script);
-
-    // Initialiser gtag
-    script.onload = () => {
-      window.dataLayer = window.dataLayer || [];
-      function gtag(...args: unknown[]) {
-        window.dataLayer.push(args);
-      }
-      
-      window.gtag = gtag;
-      
-      gtag('js', new Date());
-      gtag('config', GA_ID, {
-        anonymize_ip: true, // Anonymisation IP pour RGPD
-        allow_ad_personalization_signals: false,
-        allow_google_signals: false
-      });
-      
-      if (shouldLog()) {
-        console.log('Google Analytics chargé avec consentement');
-      }
-    };
-  }, []);
 
   // Charger les préférences au montage
   useEffect(() => {
@@ -96,10 +50,7 @@ export function useConsent() {
             setConsentStatus('partial');
           }
           
-          // Charger Google Analytics si autorisé
-          if (preferences.analytics) {
-            loadGoogleAnalytics();
-          }
+          // Google Analytics est maintenant géré par ConditionalGoogleAnalytics
         } else {
           // Consentement expiré, redemander
           setShowBanner(true);
@@ -114,7 +65,7 @@ export function useConsent() {
       }
       setShowBanner(true);
     }
-  }, [loadGoogleAnalytics]);
+  }, []);
 
   // Sauvegarder les préférences
   const savePreferences = useCallback((preferences: ConsentState) => {
@@ -143,8 +94,7 @@ export function useConsent() {
     setConsentStatus('accepted');
     setShowBanner(false);
     savePreferences(newPreferences);
-    loadGoogleAnalytics();
-  }, [savePreferences, loadGoogleAnalytics]);
+  }, [savePreferences]);
 
   // Rejeter les cookies non essentiels
   const rejectAll = useCallback(() => {
@@ -166,16 +116,13 @@ export function useConsent() {
     
     if (preferences.analytics || preferences.marketing) {
       setConsentStatus('accepted');
-      if (preferences.analytics) {
-        loadGoogleAnalytics();
-      }
     } else {
       setConsentStatus('rejected');
     }
     
     setShowBanner(false);
     savePreferences(preferences);
-  }, [savePreferences, loadGoogleAnalytics]);
+  }, [savePreferences]);
 
   // Réouvrir les préférences
   const openPreferences = useCallback(() => {
@@ -193,10 +140,3 @@ export function useConsent() {
   };
 }
 
-// Types pour window.gtag
-declare global {
-  interface Window {
-    dataLayer: unknown[];
-    gtag: (...args: unknown[]) => void;
-  }
-}

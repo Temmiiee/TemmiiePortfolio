@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { CookieBanner, CookieStatus } from "@/components/CookieBanner";
 import Link from "next/link";
+import { ConditionalGoogleAnalytics } from '@/components/ConditionalGoogleAnalytics';
 
 // Fallback font configuration for build environment
 const ptSans = {
@@ -180,21 +181,6 @@ export default function RootLayout({
         />
         <meta name="msapplication-TileColor" content="#a259ff" />
         <link rel="canonical" href="https://mattheo-termine.fr" />
-        {/* Google tag (gtag.js) */}
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-B54DKYN6DV"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-B54DKYN6DV');
-            `,
-          }}
-        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -263,6 +249,8 @@ export default function RootLayout({
           <CookieStatus />
           <Toaster />
         </ThemeProvider>
+        {/* Google Analytics via @next/third-parties - charge seulement si consenté */}
+        <ConditionalGoogleAnalytics />
       </body>
     </html>
   );
