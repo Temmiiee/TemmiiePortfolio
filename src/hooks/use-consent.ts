@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { config, shouldLog } from '@/lib/config';
 
 export type ConsentState = {
   analytics: boolean;
@@ -27,10 +28,12 @@ export function useConsent() {
   const loadGoogleAnalytics = useCallback(() => {
     if (typeof window === 'undefined') return;
     
-    const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+    const GA_ID = config.analytics.gaId;
     
     if (!GA_ID) {
-      console.warn('NEXT_PUBLIC_GA_ID non défini - Google Analytics non chargé');
+      if (shouldLog()) {
+        console.warn('NEXT_PUBLIC_GA_ID non défini - Google Analytics non chargé');
+      }
       return;
     }
     
@@ -61,7 +64,9 @@ export function useConsent() {
         allow_google_signals: false
       });
       
-      console.log('Google Analytics chargé avec consentement');
+      if (shouldLog()) {
+        console.log('Google Analytics chargé avec consentement');
+      }
     };
   }, []);
 
@@ -104,7 +109,9 @@ export function useConsent() {
         setShowBanner(true);
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des préférences de consentement:', error);
+      if (shouldLog()) {
+        console.error('Erreur lors du chargement des préférences de consentement:', error);
+      }
       setShowBanner(true);
     }
   }, [loadGoogleAnalytics]);
@@ -117,7 +124,9 @@ export function useConsent() {
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(preferences));
       localStorage.setItem(CONSENT_DATE_KEY, new Date().toISOString());
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde des préférences:', error);
+      if (shouldLog()) {
+        console.error('Erreur lors de la sauvegarde des préférences:', error);
+      }
     }
   }, []);
 

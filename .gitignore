@@ -110,5 +110,8 @@ firestore-debug.log
 *.backup
 eslint-report.json
 
+# Data folder (contains sensitive devis data)
+/data/
+
 # Warp AI configuration
 WARP.md

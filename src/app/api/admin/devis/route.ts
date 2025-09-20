@@ -1,23 +1,41 @@
-import { NextResponse } from 'next/server';
-import { get } from '@vercel/edge-config';
+import { NextRequest, NextResponse } from 'next/server';
+import { getAllDevis, getDevisStats } from '@/lib/devis-storage';
+import { shouldLog } from '@/lib/config';
 
-export async function GET() {
+type Stats = {
+  total: number;
+  pending: number;
+  approved: number;
+  rejected: number;
+};
+
+export async function GET(request: NextRequest) {
   try {
-    // Récupère l'index des devis signés
-    const indexRaw = await get('signedDevis:index');
-    // Filtrer pour ne garder que les IDs string valides
-    const index = Array.isArray(indexRaw) ? indexRaw.filter((id): id is string => typeof id === 'string' && !!id) : [];
-    if (index.length === 0) {
-      return NextResponse.json({ devis: [] });
-    }
-    // Récupère tous les devis signés
-    const devisListRaw = await Promise.all(
-      index.map(async (id) => await get(`signedDevis:${id}`))
+    const { searchParams } = new URL(request.url);
+    const includeStats = searchParams.get('stats') === 'true';
+
+    const devis = await getAllDevis();
+    
+    // Trier par date de création (plus récent en premier)
+    const sortedDevis = devis.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-    // Filtrer les devis valides (non null)
-    const devisList = devisListRaw.filter(Boolean);
-    return NextResponse.json({ devis: devisList });
+
+    const response: { devis: typeof sortedDevis; stats?: Stats } = { devis: sortedDevis };
+
+    if (includeStats) {
+      response.stats = await getDevisStats();
+    }
+
+    return NextResponse.json(response);
+
   } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la récupération des devis', details: error instanceof Error ? error.message : String(error) }, { status: 500 });
+    if (shouldLog()) {
+      console.error('Erreur lors de la récupération des devis:', error);
+    }
+    return NextResponse.json(
+      { error: 'Erreur lors de la récupération des devis' },
+      { status: 500 }
+    );
   }
 }
