@@ -1,9 +1,12 @@
 import nodemailer from 'nodemailer';
-import { getEmailConfig, config, shouldLog } from './config';
+import { getEmailConfig, validateEmailConfig, config, shouldLog } from './config';
 
 // Configuration SMTP centralisée
 export const createEmailTransporter = () => {
   try {
+    // Valider la configuration seulement à l'exécution
+    validateEmailConfig();
+    
     const emailConfig = getEmailConfig();
     if (shouldLog()) {
       console.log('Configuration SMTP:', {

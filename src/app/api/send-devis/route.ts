@@ -12,8 +12,6 @@ import {
 } from '@/lib/devis-email-templates';
 import { config, getBaseUrl, shouldLog } from '@/lib/config';
 
-const transporter = createEmailTransporter();
-
 export async function POST(request: NextRequest) {
   try {
     // Récupérer le FormData (PDF + devisData + devisNumber)
@@ -101,12 +99,18 @@ export async function POST(request: NextRequest) {
       html: clientEmailHtml,
     };
 
-    // Vérifier la configuration SMTP avant envoi
-    if (!config.email.smtp.user || !config.email.smtp.pass) {
+    // Créer le transporteur à l'exécution
+    let transporter;
+    try {
+      transporter = createEmailTransporter();
+    } catch (transporterError) {
       if (shouldLog()) {
-        console.error('Configuration SMTP manquante');
+        console.error('Erreur de configuration SMTP:', transporterError);
       }
-      return NextResponse.json({ error: 'Configuration email non disponible' }, { status: 500 });
+      return NextResponse.json({ 
+        error: 'Configuration email non disponible',
+        details: (transporterError as Error).message
+      }, { status: 500 });
     }
 
     // Test de connexion SMTP (seulement en développement)

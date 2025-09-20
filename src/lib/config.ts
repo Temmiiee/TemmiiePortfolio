@@ -94,12 +94,14 @@ export const getEmailConfig = () => {
     },
   };
 
-  // Validation de la configuration
+  return smtpConfig;
+};
+
+// Helper pour valider la configuration SMTP (séparé du getEmailConfig)
+export const validateEmailConfig = () => {
   if (!config.email.smtp.user || !config.email.smtp.pass) {
     throw new Error(`Configuration SMTP incomplète: user=${!!config.email.smtp.user}, pass=${!!config.email.smtp.pass}`);
   }
-
-  return smtpConfig;
 };
 
 export default config;
