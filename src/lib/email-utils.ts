@@ -3,7 +3,22 @@ import { getEmailConfig, config, shouldLog } from './config';
 
 // Configuration SMTP centralisée
 export const createEmailTransporter = () => {
-  return nodemailer.createTransport(getEmailConfig());
+  try {
+    const emailConfig = getEmailConfig();
+    if (shouldLog()) {
+      console.log('Configuration SMTP:', {
+        host: emailConfig.host,
+        port: emailConfig.port,
+        secure: emailConfig.secure,
+        user: emailConfig.auth?.user ? '***' : 'NON_DÉFINI',
+        pass: emailConfig.auth?.pass ? '***' : 'NON_DÉFINI'
+      });
+    }
+    return nodemailer.createTransport(emailConfig);
+  } catch (error) {
+    console.error('Erreur lors de la création du transporteur email:', error);
+    throw error;
+  }
 };
 
 // Fonction pour envoyer un email avec retry logic
@@ -12,22 +27,55 @@ export const sendEmailWithRetry = async (
   options: nodemailer.SendMailOptions, 
   retries = config.timeouts.email.retries
 ) => {
+  let lastError: Error | null = null;
+  
   for (let i = 0; i <= retries; i++) {
     try {
       const result = await transporter.sendMail(options);
       if (shouldLog()) {
-        console.log(`Email envoyé avec succès (tentative ${i + 1}):`, result.messageId);
+        console.log(`Email envoyé avec succès (tentative ${i + 1}/${retries + 1}):`, result.messageId);
       }
       return result;
     } catch (error) {
+      lastError = error as Error;
+      const errorDetails = {
+        tentative: `${i + 1}/${retries + 1}`,
+        code: (error as NodeJS.ErrnoException)?.code || 'UNKNOWN',
+        command: (error as { command?: string })?.command || 'UNKNOWN',
+        response: (error as { response?: string })?.response || 'UNKNOWN',
+        responseCode: (error as { responseCode?: number })?.responseCode || 0,
+        message: (error as Error)?.message
+      };
+      
       if (shouldLog()) {
-        console.error(`Tentative ${i + 1} échouée:`, error);
+        console.error(`Tentative ${i + 1} échouée:`, errorDetails);
+      } else {
+        // En production, log quand même les erreurs critiques
+        console.error(`Email - Tentative ${i + 1} échouée:`, {
+          code: errorDetails.code,
+          responseCode: errorDetails.responseCode,
+          message: errorDetails.message
+        });
       }
-      if (i === retries) throw error;
+      
+      if (i === retries) {
+        // Dernier essai, on lance l'erreur avec plus de contexte
+        const enhancedError = new Error(`Échec d'envoi email après ${retries + 1} tentatives: ${lastError.message}`) as Error & {
+          originalError: Error;
+          details: typeof errorDetails;
+        };
+        enhancedError.originalError = lastError;
+        enhancedError.details = errorDetails;
+        throw enhancedError;
+      }
+      
       // Attendre 2 secondes avant de réessayer
       await new Promise(resolve => setTimeout(resolve, 2000));
     }
   }
+  
+  // Cette ligne ne devrait jamais être atteinte, mais TypeScript l'exige
+  throw new Error('Fonction sendEmailWithRetry: fin inattendue');
 };
 
 // Base des styles CSS pour les emails

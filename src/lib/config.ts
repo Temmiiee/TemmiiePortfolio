@@ -72,17 +72,34 @@ export const shouldLog = () => {
 };
 
 // Helper pour la configuration SMTP
-export const getEmailConfig = () => ({
-  ...config.email.smtp,
-  connectionTimeout: config.timeouts.email.connection,
-  socketTimeout: config.timeouts.email.socket,
-  greetingTimeout: config.timeouts.email.greeting,
-  pool: true,
-  maxConnections: config.limits.maxEmailConnections,
-  maxMessages: config.limits.maxEmailMessages,
-  tls: {
-    rejectUnauthorized: config.isProduction
-  },
-});
+export const getEmailConfig = () => {
+  const smtpConfig = {
+    host: config.email.smtp.host,
+    port: config.email.smtp.port,
+    secure: config.email.smtp.secure, // true pour port 465, false pour autres ports
+    auth: {
+      user: config.email.smtp.user,
+      pass: config.email.smtp.pass,
+    },
+    connectionTimeout: config.timeouts.email.connection,
+    socketTimeout: config.timeouts.email.socket,
+    greetingTimeout: config.timeouts.email.greeting,
+    pool: true,
+    maxConnections: config.limits.maxEmailConnections,
+    maxMessages: config.limits.maxEmailMessages,
+    tls: {
+      rejectUnauthorized: config.isProduction,
+      // Configuration spéciale pour Gmail
+      ciphers: 'SSLv3'
+    },
+  };
+
+  // Validation de la configuration
+  if (!config.email.smtp.user || !config.email.smtp.pass) {
+    throw new Error(`Configuration SMTP incomplète: user=${!!config.email.smtp.user}, pass=${!!config.email.smtp.pass}`);
+  }
+
+  return smtpConfig;
+};
 
 export default config;
