@@ -8,15 +8,16 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setMounted(true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
+    setMounted(true);
   }, []);
 
+  // Rendu serveur - éviter les différences d'hydratation
   if (!mounted) {
-    return <div style={{ visibility: 'hidden' }}>{children}</div>;
+    return (
+      <div suppressHydrationWarning>
+        {children}
+      </div>
+    );
   }
 
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;

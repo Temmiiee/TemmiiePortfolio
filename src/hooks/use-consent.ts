@@ -127,6 +127,10 @@ export function useConsent() {
   // Réouvrir les préférences
   const openPreferences = useCallback(() => {
     setShowBanner(true);
+    // Forcer le re-rendu en remettant le statut à jour
+    if (shouldLog()) {
+      console.log('Ouverture des préférences cookies');
+    }
   }, []);
 
   return {

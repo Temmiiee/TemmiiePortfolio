@@ -48,15 +48,17 @@ const nextConfig: NextConfig = {
     ];
   },
   
-  // Configuration webpack pour optimiser le build
-  webpack: (config, { dev, isServer }) => {
-    // En production, désactiver les warnings de source maps manquantes
-    if (!dev && !isServer) {
-      config.devtool = false;
-    }
-    
-    return config;
-  },
+  // Configuration conditionnelle pour webpack (uniquement si pas Turbopack)
+  ...(!process.env.TURBOPACK && {
+    webpack: (config, { dev, isServer }) => {
+      // En production, désactiver les warnings de source maps manquantes
+      if (!dev && !isServer) {
+        config.devtool = false;
+      }
+      
+      return config;
+    },
+  }),
 };
 
 export default nextConfig;

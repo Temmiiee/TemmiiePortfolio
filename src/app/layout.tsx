@@ -138,8 +138,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  colorScheme: "dark",
-  themeColor: "#0a0a1a",
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a1a" },
+  ],
   width: "device-width",
   initialScale: 1,
 };
@@ -187,13 +190,20 @@ export default function RootLayout({
             (function() {
               try {
                 var theme = localStorage.getItem('theme');
-                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                
+                if (theme === 'dark' || (theme === 'system' && systemDark) || (!theme && systemDark)) {
                   document.documentElement.classList.add('dark');
-                } else if (theme === 'light') {
+                } else {
                   document.documentElement.classList.remove('dark');
                 }
               } catch (e) {
-                document.documentElement.classList.add('dark');
+                // Fallback en cas d'erreur - utiliser la préférence système si possible
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
               }
             })();
           `,
@@ -206,13 +216,14 @@ export default function RootLayout({
             --font-pt-sans: ${ptSans.style.fontFamily};
             --font-space-grotesk: ${spaceGrotesk.style.fontFamily};
           }
-          /* Éviter le flash blanc */
+          /* Éviter le flash de couleur incorrecte */
           html {
-            background-color: #0a0a1a;
-            color-scheme: dark;
+            background-color: #ffffff;
+            color-scheme: light dark;
           }
           html.dark {
             background-color: #0a0a1a;
+            color-scheme: dark;
           }
           html:not(.dark) {
             background-color: #ffffff;
@@ -225,8 +236,8 @@ export default function RootLayout({
       <body className="font-body antialiased flex flex-col min-h-screen">
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
+          defaultTheme="system"
+          enableSystem={true}
           disableTransitionOnChange
         >
           <Link href="#main-content" className="skip-link">

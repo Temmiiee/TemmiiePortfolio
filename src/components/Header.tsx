@@ -13,8 +13,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 const navLinks = [
   { href: "#accueil", label: "Accueil" },
   { href: "#services", label: "Services" },
+  { href: "#projets", label: "Réalisations" },
   { href: "#processus", label: "Processus" },
-  { href: "#projets", label: "Projets" },
   { href: "#tarifs", label: "Tarifs" },
   { href: "#a-propos", label: "À propos" },
   { href: "#contact", label: "Contact" },
@@ -78,6 +78,12 @@ export function Header() {
       setSheetOpen(false);
       if (isAnchor) {
         e.preventDefault();
+        // Si on est sur une autre page que l'accueil, rediriger vers l'accueil avec l'ancre
+        if (pathname !== '/') {
+          window.location.href = '/' + href;
+          return;
+        }
+        // Si on est sur l'accueil, faire le scroll classique
         const section = document.querySelector(href);
         if (section) {
           section.scrollIntoView({ behavior: "smooth" });
@@ -85,7 +91,6 @@ export function Header() {
           window.history.replaceState(null, "", href);
         }
       }
-      // hashchange listener will update activeLink
     };
     return (
       <Link

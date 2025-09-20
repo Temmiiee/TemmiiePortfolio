@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -21,6 +21,14 @@ export function CookieBanner() {
   const [showDetails, setShowDetails] = useState(false);
   const [customPreferences, setCustomPreferences] = useState<ConsentState>(consentGiven);
 
+  // Réinitialiser les préférences personnalisées quand la bannière s'ouvre
+  React.useEffect(() => {
+    if (showBanner) {
+      setCustomPreferences(consentGiven);
+      setShowDetails(false); // Reset to simple view
+    }
+  }, [showBanner, consentGiven]);
+
   if (!showBanner) return null;
 
   const handleCustomChange = (key: keyof ConsentState, checked: boolean) => {
@@ -37,7 +45,7 @@ export function CookieBanner() {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm" suppressHydrationWarning>
       <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-md">
         <Card className="border-2 border-primary/20 shadow-2xl">
           <CardHeader className="pb-3">
@@ -187,20 +195,27 @@ export function CookieBanner() {
 export function CookieStatus() {
   const { consentStatus, openPreferences } = useConsent();
   
+  const handleOpenPreferences = () => {
+    console.log('CookieStatus: Click detected, opening preferences');
+    openPreferences();
+  };
+  
   if (consentStatus === 'pending') return null;
   
   return (
-    <div className="fixed bottom-4 right-4 z-40">
+    <div className="fixed bottom-4 right-4 z-[101]" suppressHydrationWarning>
       <Button
         variant="ghost"
         size="sm"
-        onClick={openPreferences}
+        onClick={handleOpenPreferences}
         className={cn(
-          "h-8 px-3 text-xs border",
-          consentStatus === 'accepted' && "border-green-500/20 text-green-700 hover:bg-green-50",
-          consentStatus === 'rejected' && "border-red-500/20 text-red-700 hover:bg-red-50",
-          consentStatus === 'partial' && "border-orange-500/20 text-orange-700 hover:bg-orange-50"
+          "h-8 px-3 text-xs border transition-all duration-200 cursor-pointer",
+          "hover:scale-105 hover:shadow-md",
+          consentStatus === 'accepted' && "border-green-500/20 text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/20",
+          consentStatus === 'rejected' && "border-red-500/20 text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20",
+          consentStatus === 'partial' && "border-orange-500/20 text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/20"
         )}
+        title="Modifier les préférences des cookies"
       >
         <Cookie className="h-3 w-3 mr-1" />
         Cookies {consentStatus === 'accepted' ? 'acceptés' : consentStatus === 'rejected' ? 'refusés' : 'partiels'}

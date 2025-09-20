@@ -18,23 +18,23 @@ import { InteractiveGalaxy } from "@/components/InteractiveGalaxy";
 const services = [
   {
     icon: Palette,
-    title: "Création de site vitrine responsive",
-    description: "Des sites web modernes et adaptatifs qui s'affichent parfaitement sur tous les appareils.",
+    title: "Sites web sur-mesure",
+    description: "Next.js, React, TypeScript. Design unique et architecture moderne pour une UX exceptionnelle.",
   },
   {
     icon: WordpressIcon,
-    title: "Création de sites WordPress",
-    description: "Développement de thèmes et de sites sur mesure avec le CMS le plus populaire au monde.",
+    title: "Solutions WordPress",
+    description: "Thèmes personnalisés, plugins sur-mesure et optimisation complète de l'écosystème.",
   },
   {
     icon: Gauge,
-    title: "Optimisation SEO et performance",
-    description: "Amélioration de la vitesse de chargement et du référencement pour une meilleure visibilité.",
+    title: "Performance & SEO",
+    description: "Core Web Vitals <2s, balisage structuré et stratégies SEO pour dominer Google.",
   },
   {
     icon: Accessibility,
-    title: "Accessibilité numérique (RGAA)",
-    description: "Garantir que votre site est utilisable par tous, y compris les personnes en situation de handicap.",
+    title: "Accessibilité RGAA",
+    description: "Conformité RGAA 4.1 et WCAG 2.1 AA pour un web inclusif et légalement conforme.",
   },
 ];
 
@@ -145,15 +145,20 @@ const AnimatedSection = ({ children, className, id, ...props }: {
     setIsMounted(true);
   }, []);
 
+  // Séparer les classes statiques des classes dynamiques pour éviter l'hydratation
+  const staticClasses = cn(className, "transition-all duration-1000 ease-out scroll-mt-20");
+  const animationClasses = !isMounted ? "opacity-100 translate-y-0" : (isIntersecting ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8");
+
   return (
     <section 
       id={id}
       ref={ref} 
-      className={cn(
-        className, 
-        "transition-all duration-1000 ease-out scroll-mt-20", 
-        !isMounted ? "opacity-100 translate-y-0" : (isIntersecting ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8")
-      )}
+      className={staticClasses}
+      style={{
+        opacity: !isMounted ? 1 : (isIntersecting ? 1 : 0),
+        transform: !isMounted ? 'translateY(0)' : (isIntersecting ? 'translateY(0)' : 'translateY(2rem)')
+      }}
+      suppressHydrationWarning
       {...props}
     >
       {children}
@@ -182,19 +187,20 @@ const AnimatedDiv = ({
     setIsMounted(true);
   }, []);
 
+  const staticClasses = cn("transition-all duration-800 ease-out", className);
+
   return (
     <div
       ref={ref as React.RefObject<HTMLDivElement>}
+      className={staticClasses}
       style={{
         transitionDelay: `${delay}ms`,
+        opacity: !isMounted ? 1 : (isIntersecting ? 1 : 0),
+        transform: !isMounted ? 'translateY(0) scale(1)' : (isIntersecting 
+          ? 'translateY(0) scale(1)' 
+          : 'translateY(1.5rem) scale(0.95)')
       }}
-      className={cn(
-        "transition-all duration-800 ease-out",
-        !isMounted ? "opacity-100 translate-y-0 scale-100" : (isIntersecting 
-          ? "opacity-100 translate-y-0 scale-100" 
-          : "opacity-0 translate-y-6 scale-95"),
-        className
-      )}
+      suppressHydrationWarning
       {...props}
     >
       {children}
@@ -220,7 +226,7 @@ const AboutSection = () => {
   }, [isIntersecting]);
 
   return (
-    <section ref={ref} className="about-section py-24" aria-labelledby="about-title">
+    <section id="a-propos" ref={ref} className="about-section py-24" aria-labelledby="about-title" suppressHydrationWarning>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 id="about-title" className="text-3xl md:text-4xl font-bold mb-4">
@@ -340,10 +346,12 @@ const HeroSection = () => {
   const [buttonsVisible, setButtonsVisible] = useState(false);
   const [typingText, setTypingText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   const fullText = "Intégrateur web freelance";
 
   useEffect(() => {
+    setMounted(true);
     const timers = [
       setTimeout(() => setNameVisible(true), 200),
       setTimeout(() => setTitleVisible(true), 800),
@@ -374,7 +382,7 @@ const HeroSection = () => {
   }, [titleVisible, fullText]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" suppressHydrationWarning>
       {/* Arrière-plan galaxie interactif */}
       <InteractiveGalaxy />
       
@@ -528,25 +536,25 @@ export default function Home() {
       
       <HeroSection />
 
-      <AnimatedSection id="services" className="py-24 bg-secondary/30" aria-labelledby="services-title">
+      <AnimatedSection id="services" className="py-16 bg-secondary/30" aria-labelledby="services-title">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 id="services-title" className="text-3xl md:text-4xl font-bold mb-4">
               Mes Services
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Des solutions web complètes adaptées à vos besoins et à votre budget
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Expertise technique et solutions web avancées
             </p>
           </div>
           
-          <div ref={servicesObserverRef as React.RefObject<HTMLDivElement>} className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div ref={servicesObserverRef as React.RefObject<HTMLDivElement>} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
                 <Card 
                   key={index} 
                   className={cn(
-                    "service-card transition-all duration-700 ease-out",
+                    "service-card transition-all duration-700 ease-out h-full",
                     servicesVisible[index] 
                       ? "opacity-100 translate-y-0 scale-100" 
                       : "opacity-0 translate-y-8 scale-95"
@@ -555,24 +563,73 @@ export default function Home() {
                     transitionDelay: `${index * 150}ms`,
                   }}
                 >
-                  <CardHeader className="text-center">
-                    <div className="service-icon-container w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Icon className="w-8 h-8 text-primary" />
+                  <CardHeader className="text-center pb-3">
+                    <div className="service-icon-container w-12 h-12 mx-auto mb-3 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Icon className="w-6 h-6 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">{service.title}</CardTitle>
+                    <CardTitle className="text-lg">{service.title}</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-center">{service.description}</p>
+                  <CardContent className="pt-0">
+                    <p className="text-muted-foreground text-center text-sm leading-relaxed">{service.description}</p>
                   </CardContent>
                 </Card>
               );
             })}
           </div>
+          
+          {/* Technical Expertise Subsection - More compact */}
+          <div className="mt-12 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-4 text-center">
+              <div className="p-4 rounded-lg bg-card border">
+                <h3 className="font-semibold mb-1 text-primary text-sm">Stack moderne</h3>
+                <p className="text-xs text-muted-foreground">Next.js, React, TypeScript</p>
+              </div>
+              <div className="p-4 rounded-lg bg-card border">
+                <h3 className="font-semibold mb-1 text-primary text-sm">Performance</h3>
+<p className="text-xs text-muted-foreground">Vitesse &lt;2s, Lighthouse &gt;90</p>
+              </div>
+              <div className="p-4 rounded-lg bg-card border">
+                <h3 className="font-semibold mb-1 text-primary text-sm">Standards</h3>
+                <p className="text-xs text-muted-foreground">RGAA 4.1, WCAG 2.1 AA</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      <AnimatedSection id="projects" className="py-24" aria-labelledby="projects-title">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 id="projects-title" className="text-3xl md:text-4xl font-bold mb-4">
+              Mes Réalisations
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Découvrez quelques-uns de mes projets récents qui illustrent mon expertise technique
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.slice(0, 6).map((project, index) => (
+              <AnimatedDiv key={`project-${project.slug}-${index}`} delay={index * 100}>
+                <ProjectCard project={project} />
+              </AnimatedDiv>
+            ))}
+          </div>
+          
+          {projects.length > 3 && (
+            <div className="text-center mt-12">
+              <Button asChild variant="outline" size="lg">
+                <Link href="/projets">
+                  Voir tous mes projets
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
       </AnimatedSection>
 
       {/* Process Section */}
-      <AnimatedSection id="process" className="process-section py-24" aria-labelledby="process-title">
+      <AnimatedSection id="processus" className="process-section py-24 bg-secondary/30" aria-labelledby="process-title">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 id="process-title" className="text-3xl md:text-4xl font-bold mb-4">
@@ -790,38 +847,6 @@ export default function Home() {
               </Link>
             </Button>
           </div>
-        </div>
-      </AnimatedSection>
-
-      <AnimatedSection id="projects" className="py-24" aria-labelledby="projects-title">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 id="projects-title" className="text-3xl md:text-4xl font-bold mb-4">
-              Mes Réalisations
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Découvrez quelques-uns de mes projets récents
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.slice(0, 6).map((project, index) => (
-              <AnimatedDiv key={`project-${project.slug}-${index}`} delay={index * 100}>
-                <ProjectCard project={project} />
-              </AnimatedDiv>
-            ))}
-          </div>
-          
-          {projects.length > 3 && (
-            <div className="text-center mt-12">
-              <Button asChild variant="outline" size="lg">
-                {/* Page à rajouter quand j'aurais d'autres projets */}
-                <Link href="/projets">
-                  Voir tous mes projets
-                </Link>
-              </Button>
-            </div>
-          )}
         </div>
       </AnimatedSection>
 
