@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getBaseUrl } from '@/lib/config';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 export async function POST(request: NextRequest) {
   try {
     const { devisId, signature, clientInfo, signedAt } = await request.json();
+    const baseUrl = getBaseUrl();
 
     if (!devisId || !signature || !clientInfo || !signedAt) {
       return NextResponse.json(
@@ -159,10 +161,10 @@ export async function POST(request: NextRequest) {
             <div class="action-buttons">
               <h3>Actions requises :</h3>
               <p>Vous devez maintenant accepter ou refuser ce projet signé.</p>
-              <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9004'}/admin/devis/${devisId}/accept" class="btn btn-accept">
+              <a href="${baseUrl}/admin/devis/${devisId}/accept" class="btn btn-accept">
                 ✅ Accepter le Projet
               </a>
-              <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9004'}/admin/devis/${devisId}/reject" class="btn btn-reject">
+              <a href="${baseUrl}/admin/devis/${devisId}/reject" class="btn btn-reject">
                 ❌ Refuser le Projet
               </a>
             </div>

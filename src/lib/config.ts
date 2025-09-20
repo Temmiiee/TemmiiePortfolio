@@ -11,7 +11,7 @@ export const config = {
 
   // Configuration des URLs
   urls: {
-    production: 'https://www.mattheo-termine.fr',
+    production: 'https://mattheo-termine.fr',
     development: 'http://localhost:3000',
     admin: '/admin/devis',
   },
@@ -63,13 +63,27 @@ export const config = {
 
 // Helper pour obtenir l'URL de base
 export const getBaseUrl = () => {
-  // Priorité à la variable d'environnement NEXT_PUBLIC_BASE_URL
-  if (process.env.NEXT_PUBLIC_BASE_URL) {
-    return process.env.NEXT_PUBLIC_BASE_URL;
+  // En production, essayer plusieurs sources
+  if (config.isProduction) {
+    // 1. Variable d'environnement NEXT_PUBLIC_BASE_URL (si set au build)
+    if (process.env.NEXT_PUBLIC_BASE_URL && !process.env.NEXT_PUBLIC_BASE_URL.includes('localhost')) {
+      return process.env.NEXT_PUBLIC_BASE_URL;
+    }
+    
+    // 2. Variables d'environnement serveur (disponibles uniquement côté serveur)
+    if (typeof window === 'undefined') {
+      // Variable d'environnement serveur BASE_URL
+      if (process.env.BASE_URL && !process.env.BASE_URL.includes('localhost')) {
+        return process.env.BASE_URL;
+      }
+    }
+    
+    // 3. Fallback sur la configuration statique de production
+    return config.urls.production;
   }
   
-  // Fallback sur la configuration statique
-  return config.isProduction ? config.urls.production : config.urls.development;
+  // En développement
+  return process.env.NEXT_PUBLIC_BASE_URL || config.urls.development;
 };
 
 // Helper pour vérifier si les logs sont activés

@@ -199,7 +199,7 @@ export const createClientConfirmationTemplate = (devisData: DevisEmailData) => {
   const content = `
     <p>Merci pour votre demande. Votre projet va être analysé par le prestataire.</p>
     <div style="background-color: #2563eb !important; color: #ffffff !important; padding: 20px !important; text-align: center !important; margin: 25px 0 !important; font-weight: bold !important; font-size: 18px !important;">
-      <strong>Numéro de demande : ${devisData.devisNumber}</strong>
+      <strong style="color: #ffffff !important;">Numéro de demande : ${devisData.devisNumber}</strong>
     </div>
     <p>Vous recevrez une réponse personnalisée après analyse.</p>
     <p><strong>Résumé de votre projet :</strong></p>
