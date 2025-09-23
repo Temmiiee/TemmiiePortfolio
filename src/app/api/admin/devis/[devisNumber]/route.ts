@@ -48,7 +48,9 @@ export async function GET(
         await sendStatusNotification(updatedDevis, newStatus);
       } catch (emailError) {
         if (shouldLog()) {
-          console.error('Erreur envoi email de notification:', emailError);
+          if (shouldLog()) {
+            console.error('Erreur envoi email de notification:', emailError);
+          }
         }
         // On continue même si l'email échoue
       }
@@ -65,7 +67,9 @@ export async function GET(
 
   } catch (error) {
     if (shouldLog()) {
-      console.error('Erreur dans l\'API admin devis:', error);
+      if (shouldLog()) {
+        console.error('Erreur dans l\'API admin devis:', error);
+      }
     }
     const baseUrl = new URL(request.url).origin;
     return NextResponse.redirect(new URL('/admin/devis?error=server-error', baseUrl));
@@ -78,7 +82,9 @@ async function sendStatusNotification(devis: { clientInfo: { name: string; email
   try {
     transporter = createEmailTransporter();
   } catch (transporterError) {
-    console.error('Erreur de configuration SMTP pour notification:', transporterError);
+    if (shouldLog()) {
+      console.error('Erreur de configuration SMTP pour notification:', transporterError);
+    }
     throw transporterError; // Re-throw pour que l'appelant puisse gérer l'erreur
   }
   

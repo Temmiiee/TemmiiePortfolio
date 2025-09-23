@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createEmailTransporter, sendEmailWithRetry } from '@/lib/email-utils';
-import { config } from '@/lib/config';
+import { config, shouldLog } from '@/lib/config';
 
 export async function POST(request: NextRequest) {
   // Simple authentification pour éviter les abus
@@ -14,9 +14,13 @@ export async function POST(request: NextRequest) {
     const transporter = createEmailTransporter();
     
     // Test de connexion SMTP
-    console.log('Test de la connexion SMTP...');
+    if (shouldLog()) {
+      console.log('Test de la connexion SMTP...');
+    }
     await transporter.verify();
-    console.log('✅ Connexion SMTP réussie');
+    if (shouldLog()) {
+      console.log('✅ Connexion SMTP réussie');
+    }
 
     // Test d'envoi d'email simple
     const testEmailOptions = {
@@ -43,9 +47,13 @@ export async function POST(request: NextRequest) {
       `
     };
 
-    console.log('Test d\'envoi d\'email...');
+    if (shouldLog()) {
+      console.log('Test d\'envoi d\'email...');
+    }
     const result = await sendEmailWithRetry(transporter, testEmailOptions);
-    console.log('✅ Email de test envoyé:', result.messageId);
+    if (shouldLog()) {
+      console.log('✅ Email de test envoyé:', result.messageId);
+    }
 
     return NextResponse.json({
       success: true,
@@ -67,7 +75,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('❌ Erreur lors du test SMTP:', error);
+    if (shouldLog()) {
+      console.error('❌ Erreur lors du test SMTP:', error);
+    }
     
     return NextResponse.json({
       success: false,

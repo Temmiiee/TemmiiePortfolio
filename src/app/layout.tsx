@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { CookieBanner, CookieStatus } from "@/components/CookieBanner";
 import { GoogleAnalyticsConsent } from "@/components/GoogleAnalyticsConsent";
 import { ConsentProvider } from "@/contexts/ConsentContext";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Link from "next/link";
 
 // Fallback font configuration for build environment
@@ -255,7 +256,9 @@ export default function RootLayout({
             role="main"
             aria-label="Contenu principal"
           >
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
           </main>
           <Footer />
           <CookieBanner />

@@ -11,7 +11,9 @@ export const createEmailTransporter = () => {
     // Configuration SMTP visible seulement en développement
     return nodemailer.createTransport(emailConfig);
   } catch (error) {
-    console.error('Erreur lors de la création du transporteur email:', error);
+    if (shouldLog()) {
+      console.error('Erreur lors de la création du transporteur email:', error);
+    }
     throw error;
   }
 };

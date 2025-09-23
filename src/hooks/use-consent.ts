@@ -27,13 +27,17 @@ export function useConsent() {
 
   // Montage côté client
   useEffect(() => {
-    console.log('useConsent: mounting, setting mounted to true');
+    if (shouldLog()) {
+      console.log('useConsent: mounting, setting mounted to true');
+    }
     setMounted(true);
   }, []);
 
   // Charger les préférences au montage
   useEffect(() => {
-    console.log('useConsent: load preferences effect, mounted =', mounted);
+    if (shouldLog()) {
+      console.log('useConsent: load preferences effect, mounted =', mounted);
+    }
     if (!mounted || typeof window === 'undefined') return;
 
     try {

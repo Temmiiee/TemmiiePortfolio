@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBaseUrl } from '@/lib/config';
+import { getBaseUrl, shouldLog } from '@/lib/config';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -326,7 +326,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Erreur lors de la signature du devis:', error);
+    if (shouldLog()) {
+      console.error('Erreur lors de la signature du devis:', error);
+    }
     return NextResponse.json(
       { error: 'Erreur lors de la signature du devis' },
       { status: 500 }

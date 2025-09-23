@@ -117,9 +117,13 @@ export async function POST(request: NextRequest) {
     if (shouldLog()) {
       try {
         await transporter.verify();
-        console.log('Connexion SMTP vérifiée');
+        if (shouldLog()) {
+          console.log('Connexion SMTP vérifiée');
+        }
       } catch (verifyError) {
-        console.error('Erreur de vérification SMTP:', verifyError);
+        if (shouldLog()) {
+          console.error('Erreur de vérification SMTP:', verifyError);
+        }
         // On continue quand même car parfois verify() échoue mais sendMail fonctionne
       }
     }

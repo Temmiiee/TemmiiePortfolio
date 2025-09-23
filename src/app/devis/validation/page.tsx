@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Download, Send, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import jsPDF from 'jspdf';
+import { shouldLog } from '@/lib/config';
+import { useToast } from '@/hooks/use-toast';
 
 interface DevisData {
   siteType: string;
@@ -242,6 +244,7 @@ function DevisValidationContent() {
   const [devisData, setDevisData] = useState<DevisData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [devisNumber, setDevisNumber] = useState('');
+  const { toast } = useToast();
 
   useEffect(() => {
     // Récupérer les données du devis depuis les paramètres URL ou localStorage
@@ -270,8 +273,14 @@ function DevisValidationContent() {
       
       pdf.save(`Devis_${devisNumber}_${devisData.clientInfo.name.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {
-      console.error('Erreur lors de la génération du PDF:', error);
-      alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
+      if (shouldLog()) {
+        console.error('Erreur lors de la génération du PDF:', error);
+      }
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Erreur lors de la génération du PDF. Veuillez réessayer.",
+      });
     }
   };
 
@@ -299,8 +308,14 @@ function DevisValidationContent() {
         throw new Error('Erreur lors de l\'envoi du devis');
       }
     } catch (error) {
-      console.error('Erreur:', error);
-      alert('Une erreur est survenue lors de l\'envoi du devis. Veuillez réessayer.');
+      if (shouldLog()) {
+        console.error('Erreur:', error);
+      }
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'envoi du devis. Veuillez réessayer.",
+      });
     } finally {
       setIsSubmitting(false);
     }

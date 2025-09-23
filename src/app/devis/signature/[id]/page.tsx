@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { SignaturePad } from '@/components/SignaturePad';
 import { CheckCircle2, FileText, Clock, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { shouldLog } from '@/lib/config';
 
 interface DevisData {
   id: string;
@@ -122,7 +123,9 @@ export default function DevisSignaturePage() {
       }
     } catch (error) {
       setError('Erreur lors de la signature du devis. Veuillez réessayer.');
-      console.error('Erreur:', error);
+      if (shouldLog()) {
+        console.error('Erreur:', error);
+      }
     } finally {
       setIsSubmitting(false);
     }

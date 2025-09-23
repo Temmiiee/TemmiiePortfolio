@@ -11,7 +11,6 @@ export function StructuredData() {
     url: "https://mattheo-termine.fr",
     image: "https://mattheo-termine.fr/images/mattheo-termine-photo.png",
     email: "contact@mattheo-termine.fr",
-    telephone: "+33XXXXXXXXX", // Replace with actual phone when available
     sameAs: [
       "https://github.com/Temmiiee",
       "https://linkedin.com/in/mattheo-termine", // Replace with actual LinkedIn
