@@ -124,7 +124,7 @@ jobs:
     
     steps:
     - name: Download audit results
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: npm-audit-results
 
