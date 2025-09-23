@@ -1,0 +1,57 @@
+name: "Setup Code Scanning"
+
+on:
+  workflow_dispatch:
+    inputs:
+      enable_codeql:
+        description: 'Enable CodeQL Analysis'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  setup-code-scanning:
+    name: Enable Code Scanning
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL for setup
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript
+        queries: security-extended
+        
+    - name: Setup Node.js for build
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build for analysis
+      run: npm run build
+
+    - name: Perform initial CodeQL analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:javascript"
+        upload: true
+
+    - name: Setup confirmation
+      run: |
+        echo "✅ Code scanning is now enabled for this repository!"
+        echo "🔍 CodeQL analysis completed successfully"
+        echo "📊 Results will be available in the Security tab"
+        echo ""
+        echo "🔗 View results at:"
+        echo "https://github.com/${{ github.repository }}/security/code-scanning"
