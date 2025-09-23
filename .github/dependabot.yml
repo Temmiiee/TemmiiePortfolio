@@ -18,6 +18,31 @@ updates:
     labels:
       - "dependencies"
       - "automated"
+    # Grouping related dependencies
+    groups:
+      react-ecosystem:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      next-ecosystem:
+        patterns:
+          - "next*"
+          - "@next/*"
+      radix-ui:
+        patterns:
+          - "@radix-ui/*"
+      dev-tools:
+        dependency-type: "development"
+        patterns:
+          - "eslint*"
+          - "@typescript-eslint/*"
+          - "prettier*"
+          - "typescript"
+      testing:
+        patterns:
+          - "*test*"
+          - "*jest*"
+          - "*vitest*"
     
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"

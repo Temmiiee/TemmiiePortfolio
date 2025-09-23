@@ -1,0 +1,57 @@
+name: "Portfolio Security Configuration"
+
+# Configuration CodeQL spécialisée pour Next.js/React
+disable-default-queries: false
+
+# Queries personnalisées pour les applications web
+queries:
+  - uses: security-extended
+  - uses: security-and-quality
+  
+# Chemins à analyser
+paths:
+  - "src/"
+  - "pages/"
+  - "app/"
+  - "lib/"
+  - "components/"
+  - "hooks/"
+  - "contexts/"
+
+# Chemins à ignorer
+paths-ignore:
+  - "node_modules/"
+  - ".next/"
+  - "dist/"
+  - "build/"
+  - "coverage/"
+  - "*.test.ts"
+  - "*.test.tsx"
+  - "*.spec.ts"
+  - "*.spec.tsx"
+  - "__tests__/"
+  - "tests/"
+  - "test/"
+  - ".github/"
+  - "public/"
+  - "*.config.js"
+  - "*.config.ts"
+  - "*.config.mjs"
+
+# Packs de queries spécialisés
+packs:
+  javascript:
+    - "codeql/javascript-queries:codeql-suites/javascript-security-extended.qls"
+    - "codeql/javascript-queries:codeql-suites/javascript-code-scanning.qls"
+
+# Configuration pour les frameworks
+query-filters:
+  - include:
+      kind: 
+        - "problem"
+        - "path-problem"
+      severity:
+        - "error"
+        - "warning"
+  - exclude:
+      precision: "low"

@@ -1,0 +1,186 @@
+name: "Security Notifications"
+
+on:
+  schedule:
+    # Vérification hebdomadaire le lundi à 9h
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  security-events: read
+
+jobs:
+  security-check:
+    name: Weekly Security Review
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run comprehensive security audit
+      id: security-audit
+      run: |
+        # Audit complet
+        npm audit --json > audit-full.json || true
+        
+        # Statistiques
+        TOTAL_DEPS=$(npm list --depth=0 --json | jq '.dependencies | length')
+        OUTDATED=$(npm outdated --json 2>/dev/null | jq 'length' || echo 0)
+        
+        # Vulnérabilités par niveau
+        CRITICAL=$(cat audit-full.json | jq '.metadata.vulnerabilities.critical // 0')
+        HIGH=$(cat audit-full.json | jq '.metadata.vulnerabilities.high // 0')
+        MODERATE=$(cat audit-full.json | jq '.metadata.vulnerabilities.moderate // 0')
+        LOW=$(cat audit-full.json | jq '.metadata.vulnerabilities.low // 0')
+        
+        echo "total_deps=$TOTAL_DEPS" >> $GITHUB_OUTPUT
+        echo "outdated=$OUTDATED" >> $GITHUB_OUTPUT
+        echo "critical=$CRITICAL" >> $GITHUB_OUTPUT
+        echo "high=$HIGH" >> $GITHUB_OUTPUT
+        echo "moderate=$MODERATE" >> $GITHUB_OUTPUT
+        echo "low=$LOW" >> $GITHUB_OUTPUT
+        
+        # Vérifier si action requise
+        if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+          echo "needs_attention=true" >> $GITHUB_OUTPUT
+        else
+          echo "needs_attention=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Generate security report
+      id: report
+      run: |
+        REPORT_DATE=$(date '+%Y-%m-%d')
+        
+        cat > security-report.md << EOF
+        # 🔒 Rapport de Sécurité Hebdomadaire
+        
+        **Date du rapport:** $REPORT_DATE
+        
+        ## 📊 Vue d'ensemble
+        
+        - **Total des dépendances:** ${{ steps.security-audit.outputs.total_deps }}
+        - **Dépendances obsolètes:** ${{ steps.security-audit.outputs.outdated }}
+        
+        ## 🚨 Vulnérabilités détectées
+        
+        | Niveau | Nombre |
+        |--------|--------|
+        | 🔴 **Critique** | ${{ steps.security-audit.outputs.critical }} |
+        | 🟠 **Élevé** | ${{ steps.security-audit.outputs.high }} |
+        | 🟡 **Modéré** | ${{ steps.security-audit.outputs.moderate }} |
+        | 🔵 **Faible** | ${{ steps.security-audit.outputs.low }} |
+        
+        ## 🎯 Actions recommandées
+        EOF
+        
+        if [ "${{ steps.security-audit.outputs.needs_attention }}" = "true" ]; then
+          cat >> security-report.md << EOF
+        
+        ⚠️ **Attention requise:** Des vulnérabilités critiques ou élevées ont été détectées.
+        
+        ### Étapes suivantes:
+        1. Examiner les vulnérabilités dans l'onglet Security
+        2. Mettre à jour les dépendances concernées
+        3. Tester l'application après les mises à jour
+        4. Déployer les corrections en production
+        
+        ### Commandes utiles:
+        \`\`\`bash
+        # Voir les vulnérabilités détaillées
+        npm audit
+        
+        # Corriger automatiquement (si possible)
+        npm audit fix
+        
+        # Forcer les corrections (attention aux breaking changes)
+        npm audit fix --force
+        \`\`\`
+        EOF
+        else
+          cat >> security-report.md << EOF
+        
+        ✅ **Excellent!** Aucune vulnérabilité critique ou élevée détectée.
+        
+        ### Maintenance recommandée:
+        - Continuer à surveiller les nouvelles vulnérabilités
+        - Mettre à jour régulièrement les dépendances
+        - Effectuer des audits de sécurité périodiques
+        EOF
+        fi
+        
+        echo "report_created=true" >> $GITHUB_OUTPUT
+
+    - name: Create security issue (if needed)
+      if: steps.security-audit.outputs.needs_attention == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const report = fs.readFileSync('security-report.md', 'utf8');
+          
+          const critical = ${{ steps.security-audit.outputs.critical }};
+          const high = ${{ steps.security-audit.outputs.high }};
+          
+          const title = `🚨 Vulnérabilités de sécurité détectées (${critical} critiques, ${high} élevées)`;
+          
+          // Vérifier si une issue similaire existe déjà
+          const existingIssues = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'open',
+            labels: 'security'
+          });
+          
+          const hasOpenSecurityIssue = existingIssues.data.some(issue => 
+            issue.title.includes('Vulnérabilités de sécurité')
+          );
+          
+          if (!hasOpenSecurityIssue) {
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: report,
+              labels: ['security', 'high-priority', 'dependencies']
+            });
+            
+            console.log(`Issue de sécurité créée: #${issue.data.number}`);
+          } else {
+            console.log('Une issue de sécurité ouverte existe déjà');
+          }
+
+    - name: Upload security artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-report
+        path: |
+          security-report.md
+          audit-full.json
+
+    - name: Summary
+      run: |
+        echo "## 🔒 Résumé du scan de sécurité" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Dépendances totales:** ${{ steps.security-audit.outputs.total_deps }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Vulnérabilités critiques:** ${{ steps.security-audit.outputs.critical }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Vulnérabilités élevées:** ${{ steps.security-audit.outputs.high }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ steps.security-audit.outputs.needs_attention }}" = "true" ]; then
+          echo "⚠️ **Action requise:** Vulnérabilités critiques détectées" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ **Statut:** Aucune vulnérabilité critique" >> $GITHUB_STEP_SUMMARY
+        fi
