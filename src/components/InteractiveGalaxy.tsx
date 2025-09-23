@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from 'react';
+import { useTheme } from 'next-themes';
 
 interface Star {
   x: number;
@@ -45,6 +46,7 @@ interface Particle {
 }
 
 export const InteractiveGalaxy: React.FC = () => {
+  const { theme, resolvedTheme } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -81,7 +83,12 @@ export const InteractiveGalaxy: React.FC = () => {
 
     // Initialiser les planètes
     const initPlanets = () => {
-      const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'];
+      // Couleurs adaptées au thème
+      const isDark = resolvedTheme === 'dark';
+      const colors = isDark 
+        ? ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'] // Couleurs vives pour le mode sombre
+        : ['#e74c3c', '#16a085', '#3498db', '#27ae60']; // Couleurs plus douces pour le mode clair
+      
       planetsRef.current = [];
       for (let i = 0; i < 4; i++) {
         const x = Math.random() * canvas.width;
@@ -176,13 +183,24 @@ export const InteractiveGalaxy: React.FC = () => {
 
     // Animation
     const animate = () => {
-      // Effacer le canvas avec un fond dégradé
+      const isDark = resolvedTheme === 'dark';
+      
+      // Effacer le canvas avec un fond dégradé adapté au thème
       const gradient = ctx.createRadialGradient(
         canvas.width / 2, canvas.height, 0,
         canvas.width / 2, canvas.height, canvas.height
       );
-      gradient.addColorStop(0, '#1b2735');
-      gradient.addColorStop(1, '#090a0f');
+      
+      if (isDark) {
+        // Mode sombre : dégradé foncé
+        gradient.addColorStop(0, '#1b2735');
+        gradient.addColorStop(1, '#090a0f');
+      } else {
+        // Mode clair : dégradé très léger
+        gradient.addColorStop(0, '#f8fafc');
+        gradient.addColorStop(1, '#e2e8f0');
+      }
+      
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -220,17 +238,31 @@ export const InteractiveGalaxy: React.FC = () => {
         // Dessiner l'étoile avec scintillement
         const twinkleOpacity = star.opacity * (0.3 + 0.7 * Math.sin(star.twinkle));
         const hoverEffect = distance < 50 ? 1.5 : 1;
+        const isDark = resolvedTheme === 'dark';
         
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size * hoverEffect, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${twinkleOpacity})`;
+        
+        // Couleur des étoiles adaptée au thème
+        if (isDark) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${twinkleOpacity})`;
+        } else {
+          ctx.fillStyle = `rgba(100, 116, 139, ${twinkleOpacity * 0.8})`; // Gris-bleu pour mode clair
+        }
+        
         ctx.fill();
 
         // Effet de halo pour les étoiles proches de la souris
         if (distance < 50) {
           ctx.beginPath();
           ctx.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${twinkleOpacity * 0.2})`;
+          
+          if (isDark) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${twinkleOpacity * 0.2})`;
+          } else {
+            ctx.fillStyle = `rgba(100, 116, 139, ${twinkleOpacity * 0.15})`;
+          }
+          
           ctx.fill();
         }
       });
@@ -269,9 +301,17 @@ export const InteractiveGalaxy: React.FC = () => {
         particle.life++;
         particle.opacity = 1 - (particle.life / particle.maxLife);
 
+        const isDark = resolvedTheme === 'dark';
+
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity * 0.6})`;
+        
+        if (isDark) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity * 0.6})`;
+        } else {
+          ctx.fillStyle = `rgba(100, 116, 139, ${particle.opacity * 0.5})`;
+        }
+        
         ctx.fill();
 
         return particle.life < particle.maxLife;
@@ -279,9 +319,17 @@ export const InteractiveGalaxy: React.FC = () => {
 
       // Dessiner les ondes de choc (plus lentes)
       ripplesRef.current = ripplesRef.current.filter((ripple) => {
+        const isDark = resolvedTheme === 'dark';
+        
         ctx.beginPath();
         ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${ripple.opacity})`;
+        
+        if (isDark) {
+          ctx.strokeStyle = `rgba(255, 255, 255, ${ripple.opacity})`;
+        } else {
+          ctx.strokeStyle = `rgba(59, 130, 246, ${ripple.opacity})`;
+        }
+        
         ctx.lineWidth = 1;
         ctx.stroke();
 
@@ -289,7 +337,13 @@ export const InteractiveGalaxy: React.FC = () => {
         if (ripple.radius > 15) {
           ctx.beginPath();
           ctx.arc(ripple.x, ripple.y, ripple.radius - 15, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${ripple.opacity * 0.3})`;
+          
+          if (isDark) {
+            ctx.strokeStyle = `rgba(255, 255, 255, ${ripple.opacity * 0.3})`;
+          } else {
+            ctx.strokeStyle = `rgba(59, 130, 246, ${ripple.opacity * 0.4})`;
+          }
+          
           ctx.lineWidth = 1;
           ctx.stroke();
         }
@@ -335,7 +389,7 @@ export const InteractiveGalaxy: React.FC = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []); // Dépendances vides pour éviter les re-renders
+  }, [resolvedTheme]); // Ajouter resolvedTheme comme dépendance pour re-render sur changement de thème
 
   return (
     <canvas

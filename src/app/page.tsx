@@ -379,7 +379,7 @@ const HeroSection = () => {
   }, [titleVisible, fullText]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" suppressHydrationWarning>
+    <section id="accueil" className="relative min-h-screen flex items-center justify-center overflow-hidden" suppressHydrationWarning>
       {/* Arrière-plan galaxie interactif */}
       <InteractiveGalaxy />
       
