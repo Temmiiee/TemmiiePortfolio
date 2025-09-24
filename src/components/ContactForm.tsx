@@ -29,12 +29,35 @@ const formSchema = z.object({
   }),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function submitAction(_data: z.infer<typeof formSchema>) {
-  // In a real app, you'd send this data to a backend API, email service, etc.
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return { success: true, message: "Message envoyé avec succès !" };
+async function submitAction(data: z.infer<typeof formSchema>) {
+  try {
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        message: data.message,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || `Erreur HTTP: ${response.status}`);
+    }
+
+    return { success: true, message: result.message || "Message envoyé avec succès !" };
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi:', error);
+    return { 
+      success: false, 
+      message: error instanceof Error ? error.message : "Une erreur est survenue lors de l'envoi." 
+    };
+  }
 }
 
 export function ContactForm() {
@@ -57,11 +80,11 @@ export function ContactForm() {
       });
       form.reset();
     } else {
-        toast({
-            title: "Erreur",
-            description: "Une erreur est survenue. Veuillez réessayer.",
-            variant: "destructive",
-        })
+      toast({
+        title: "Erreur",
+        description: result.message,
+        variant: "destructive",
+      });
     }
   }
 
