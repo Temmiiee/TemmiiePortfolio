@@ -19,9 +19,9 @@ module.exports = {
       TZ: 'Europe/Paris',
     },
 
-    error_file: '/var/log/pm2/portfolio-error.log',
-    out_file: '/var/log/pm2/portfolio-out.log',
-    log_file: '/var/log/pm2/portfolio.log',
+    error_file: '/home/deploy/logs/portfolio-error.log',
+    out_file: '/home/deploy/logs/portfolio-out.log',
+    log_file: '/home/deploy/logs/portfolio.log',
     log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
     time: true,
     log_type: 'json',
