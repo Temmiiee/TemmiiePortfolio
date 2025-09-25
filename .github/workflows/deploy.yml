@@ -16,9 +16,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            # Déploiement
             cd /var/www/TemmiiePortfolio
+            git config --global --add safe.directory /var/www/TemmiiePortfolio
             git fetch --all
             git reset --hard origin/main
             npm install
             npm run build
-            pm2 restart portfolio || pm2 start ecosystem.config.js
+
+            # Créer le dossier de logs si besoin
+            mkdir -p /home/${{ secrets.SSH_USER }}/logs
+
+            # Démarrer/restart PM2 avec le chemin complet
+            pm2 start /var/www/TemmiiePortfolio/ecosystem.config.js || pm2 restart portfolio
