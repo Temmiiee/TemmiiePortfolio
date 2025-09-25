@@ -49,6 +49,24 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
     return y + (lines.length * (fontSize * 0.5));
   };
 
+  // Normalize strings for jsPDF (replace non-breaking spaces which some fonts don't handle)
+  const safeText = (value: string | number) => {
+    const s = String(value);
+    return s.replace(/\u00A0/g, ' ');
+  };
+
+  // Small wrapper to keep font handling centralized and ensure normalized text
+  const writeText = (text: string | number, x: number, y: number, fontSize?: number) => {
+    if (fontSize) pdf.setFontSize(fontSize);
+    pdf.text(safeText(text), x, y);
+  };
+
+  // Format number with normal space as thousand separator (e.g., 4580 -> "4 580")
+  const formatPrice = (n: number) => {
+    const rounded = Math.round(n);
+    return String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  };
+
   // Header section with blue background
   pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   pdf.rect(0, 0, pageWidth, 50, 'F');
@@ -57,20 +75,24 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   pdf.setTextColor(255, 255, 255);
   pdf.setFontSize(20);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('DEMANDE DE PROJET', margin, 25);
+  // Remonter légèrement le titre pour qu'il soit mieux centré dans le header
+  writeText('DEMANDE DE PROJET', margin, 18);
   
   // Document info
   pdf.setFontSize(10);
   pdf.setFont('helvetica', 'normal');
-  pdf.text(`N° ${devisNumber}`, pageWidth - margin - 40, 20);
-  pdf.text(`Date: ${new Date().toLocaleDateString('fr-FR')}`, pageWidth - margin - 40, 30);
+  // Ajuster les positions Y des informations à droite pour suivre le titre remonté
+  writeText(`N° ${devisNumber}`, pageWidth - margin - 40, 14);
+  writeText(`Date: ${new Date().toLocaleDateString('fr-FR')}`, pageWidth - margin - 40, 22);
   
   // Provider info
-  pdf.text('Matthéo Termine', margin, 35);
-  pdf.text('Intégrateur Web Freelance', margin, 42);
-  pdf.text('SIRET: 991 804 493 00013', margin, 49);
+  // Remonter les informations du prestataire pour qu'elles restent dans la zone du header
+  writeText('Matthéo Termine', margin, 26);
+  writeText('Intégrateur Web Freelance', margin, 33);
+  writeText('SIRET: 991 804 493 00013', margin, 40);
 
-  currentY = 72;
+  // Position initiale du contenu principal, adaptée aux nouvelles positions du header
+  currentY = 66;
 
   // Client Information Section
   pdf.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
@@ -87,11 +109,11 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
 
   pdf.setFontSize(10);
   pdf.setFont('helvetica', 'normal');
-  pdf.text(`Nom: ${devisData.clientInfo.name}`, margin + 5, currentY + 5);
-  pdf.text(`Email: ${devisData.clientInfo.email}`, margin + 5, currentY + 12);
+  writeText(`Nom: ${devisData.clientInfo.name}`, margin + 5, currentY + 5);
+  writeText(`Email: ${devisData.clientInfo.email}`, margin + 5, currentY + 12);
   
   if (devisData.clientInfo.company) {
-    pdf.text(`Entreprise: ${devisData.clientInfo.company}`, margin + 5, currentY + 19);
+  writeText(`Entreprise: ${devisData.clientInfo.company}`, margin + 5, currentY + 19);
   }
   
   currentY += 35;
@@ -99,7 +121,7 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   // Project Summary Section
   pdf.setFontSize(14);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('RÉSUMÉ DU PROJET', margin, currentY);
+  writeText('RÉSUMÉ DU PROJET', margin, currentY);
   currentY += 8;
 
   // Project details
@@ -113,34 +135,39 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   
   const siteTypeText = devisData.siteType === 'vitrine' ? 'Site vitrine' : 
                       devisData.siteType === 'ecommerce' ? 'E-commerce' : 'Application web';
-  pdf.text(`Type de site: ${siteTypeText}`, margin + 5, currentY + 5);
+  writeText(`Type de site: ${siteTypeText}`, margin + 5, currentY + 5);
   
   const designText = devisData.designType === 'custom' ? 'Design sur-mesure' : 'Template adapté';
-  pdf.text(`Design: ${designText}`, margin + 5, currentY + 12);
+  writeText(`Design: ${designText}`, margin + 5, currentY + 12);
   
   if (devisData.technology) {
     const techText = devisData.technology === 'no-preference' ? 'Pas de préférence' : devisData.technology;
-    pdf.text(`Technologie: ${techText}`, margin + 5, currentY + 19);
+    writeText(`Technologie: ${techText}`, margin + 5, currentY + 19);
   }
 
   if (devisData.maintenance && devisData.maintenance !== 'none') {
     const maintenanceText = devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : '100 EUR HT / an';
-    pdf.text(`Maintenance & Hebergement: ${maintenanceText}`, margin + 5, currentY + 26);
+    writeText(`Maintenance & Hébergement: ${maintenanceText}`, margin + 5, currentY + 26);
+  } else {
+    // When no maintenance selected, indicate hosting installation is offered
+    writeText(`Installation d'hébergement: Installation sur votre hébergement (offert)`, margin + 5, currentY + 26);
   }
 
   currentY += 45;
 
   // Features Section if any
   if (devisData.features && devisData.features.length > 0) {
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('FONCTIONNALITES SPECIALES', margin, currentY);
+  pdf.setFontSize(12);
+  pdf.setFont('helvetica', 'bold');
+  writeText('FONCTIONNALITES SPECIALES', margin, currentY);
     currentY += 6;
 
-    devisData.features.forEach((feature) => {
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`\u2022 ${feature}`, margin + 5, currentY);
+    const uniqueFeatures = Array.from(new Set(devisData.features));
+
+    uniqueFeatures.forEach((feature) => {
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    writeText(`\u2022 ${feature}`, margin + 5, currentY);
       currentY += 5;
     });
     
@@ -154,14 +181,47 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
       currentY = margin;
     }
     
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('DESCRIPTION DETAILLEE', margin, currentY);
+  pdf.setFontSize(12);
+  pdf.setFont('helvetica', 'bold');
+  writeText('DESCRIPTION DETAILLEE', margin, currentY);
     currentY += 6;
 
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'normal');
-    currentY = addText(`"${devisData.projectDescription}"`, margin + 5, currentY, contentWidth - 10, 9);
+  pdf.setFontSize(9);
+  pdf.setFont('helvetica', 'normal');
+  currentY = addText(`"${safeText(devisData.projectDescription || '')}"`, margin + 5, currentY, contentWidth - 10, 9);
+    currentY += 6;
+  }
+  // Prestations incluses (liste simple)
+  if (currentY > 240) {
+    pdf.addPage();
+    currentY = margin;
+  }
+  pdf.setFontSize(12);
+  pdf.setFont('helvetica', 'bold');
+  writeText('PRESTATIONS INCLUSES', margin, currentY);
+  currentY += 6;
+
+  pdf.setFontSize(10);
+  pdf.setFont('helvetica', 'normal');
+  const inclusions = [
+    'Analyse et configuration technique adaptée au projet',
+    `Mise en place du design (${designText})`,
+    'Intégration des contenus fournis par le client',
+    'Optimisation responsive (mobile et tablette)',
+    'Mise en conformité RGPD (base)'
+  ];
+
+  inclusions.forEach((inc) => {
+    writeText(`\u2022 ${inc}`, margin + 5, currentY);
+    currentY += 5;
+  });
+
+  if (devisData.maintenance && devisData.maintenance !== 'none') {
+    const mText = devisData.maintenance === 'monthly' ? '10 EUR HT mensuel' : '100 EUR HT annuel';
+  writeText(`\u2022 Maintenance technique et hébergement (${mText})`, margin + 5, currentY);
+    currentY += 6;
+  } else {
+  writeText(`\u2022 Installation d'hébergement : Installation sur votre hébergement (offert)`, margin + 5, currentY);
     currentY += 6;
   }
 
@@ -173,7 +233,7 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
 
   pdf.setFontSize(12);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('CONDITIONS FINANCIERES', margin, currentY);
+  writeText('CONDITIONS FINANCIERES', margin, currentY);
   currentY += 6;
 
   // Total price box
@@ -185,7 +245,7 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   pdf.setFontSize(16);
   pdf.setFont('helvetica', 'bold');
   pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-  pdf.text(`Total du projet: ${devisData.total} EUR HT`, margin + 5, currentY + 8);
+  writeText(`Total du projet: ${formatPrice(devisData.total)} EUR HT`, margin + 5, currentY + 8);
 
   currentY += 25;
 
@@ -193,19 +253,19 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   pdf.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
   pdf.setFontSize(11);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('Modalites de paiement:', margin, currentY);
+  writeText('Modalites de paiement:', margin, currentY);
   currentY += 6;
 
   pdf.setFontSize(9);
   pdf.setFont('helvetica', 'normal');
-  pdf.text(`\u2022 Acompte a la signature: 30% (${Math.round(devisData.total * 0.3)} EUR)`, margin + 5, currentY);
+  writeText(`\u2022 Acompte a la signature: 30% (${formatPrice(roundToNearestTen(devisData.total * 0.3))} EUR)`, margin + 5, currentY);
   currentY += 5;
-  pdf.text(`\u2022 Solde a la livraison: 70% (${Math.round(devisData.total * 0.7)} EUR)`, margin + 5, currentY);
+  writeText(`\u2022 Solde a la livraison: 70% (${formatPrice(roundToNearestTen(devisData.total * 0.7))} EUR)`, margin + 5, currentY);
   currentY += 8;
 
   if (devisData.maintenance && devisData.maintenance !== 'none') {
     const maintenanceText = devisData.maintenance === 'monthly' ? 'mensuelle (10 EUR HT / mois)' : 'annuelle (100 EUR HT / an)';
-    pdf.text(`\u2022 Maintenance: facturation ${maintenanceText}`, margin + 5, currentY);
+  writeText(`\u2022 Maintenance: facturation ${maintenanceText}`, margin + 5, currentY);
     currentY += 8;
   }
 
@@ -223,23 +283,28 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   pdf.setFontSize(11);
   pdf.setFont('helvetica', 'bold');
   pdf.setTextColor(146, 64, 14);
-  pdf.text('DOCUMENT NON CONTRACTUEL', margin + 5, currentY + 6);
+  writeText('DOCUMENT NON CONTRACTUEL', margin + 5, currentY + 6);
 
   pdf.setFontSize(8);
   pdf.setFont('helvetica', 'normal');
   pdf.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
   currentY = addText(
-    'Ce document est une pre-etude indicative. Il ne constitue pas un devis legal. Le prestataire vous enverra un devis officiel apres validation du projet.',
+    safeText('Ce document est une pre-etude indicative. Il ne constitue pas un devis legal. Le prestataire vous enverra un devis officiel apres validation du projet.'),
     margin + 5,
     currentY + 10,
     contentWidth - 10,
     8
   );
 
-  // Footer
+  // Footer (remonter légèrement pour éviter d'être trop bas sur la page)
   pdf.setFontSize(8);
   pdf.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
-  pdf.text('contact@mattheo-termine.fr | https://mattheo-termine.fr', margin, pageHeight - 10);
+  writeText('contact@mattheo-termine.fr | https://mattheo-termine.fr', margin, pageHeight - 16);
+}
+
+// Round numbers to the nearest 10 (e.g., 1374 -> 1370, 3206 -> 3210)
+function roundToNearestTen(n: number) {
+  return Math.round(n / 10) * 10;
 }
 
 function DevisValidationContent() {
@@ -581,17 +646,31 @@ function DevisValidationContent() {
                   </div>
                 )}
 
-                {devisData.maintenance && (
-                  <div style={{ 
+                {devisData.maintenance === 'none' ? (
+                  <div style={{
+                    backgroundColor: '#f8fafc',
+                    padding: '12px',
+                    borderRadius: '6px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <p style={{ margin: '0', fontSize: '13px' }}>
+                      <strong style={{ color: '#1e40af' }}>💡 Installation d&lsquo;hébergement :</strong><br />
+                      <span style={{ fontSize: '14px', color: '#1a1a1a' }}>
+                        Installation sur votre hébergement (offert)
+                      </span>
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{
                     backgroundColor: '#ecfdf5',
                     padding: '12px',
                     borderRadius: '6px',
                     border: '1px solid #10b981'
                   }}>
                     <p style={{ margin: '0', fontSize: '13px' }}>
-                      <strong style={{ color: '#059669' }}>🔧 Maintenance & Hebergement :</strong><br />
+                      <strong style={{ color: '#059669' }}>🔧 Maintenance & Hébergement :</strong><br />
                       <span style={{ fontSize: '14px', color: '#1a1a1a' }}>
-                        Inclus (49 EUR HT / mois)
+                        {devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : '100 EUR HT / an'}
                       </span>
                     </p>
                   </div>
@@ -620,58 +699,16 @@ function DevisValidationContent() {
                 borderRadius: '8px',
                 border: '1px solid #e2e8f0'
               }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div style={{ 
-                    backgroundColor: '#ffffff',
-                    padding: '12px',
-                    borderRadius: '6px',
-                    border: '1px solid #e2e8f0'
-                  }}>
-                    <ul style={{ margin: '0', paddingLeft: '16px', fontSize: '13px', color: '#1a1a1a', listStyle: 'none' }}>
-                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
-                        Analyse et configuration technique adaptée au projet
-                      </li>
-                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
-                        Mise en place du design ({devisData.designType === 'custom' ? 'sur-mesure' : 'template adapté'})
-                      </li>
-                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
-                        Intégration des contenus fournis par le client
-                      </li>
-                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
-                        Optimisation responsive (mobile et tablette)
-                      </li>
-                    </ul>
-                  </div>
-                  <div style={{ 
-                    backgroundColor: '#ffffff',
-                    padding: '12px',
-                    borderRadius: '6px',
-                    border: '1px solid #e2e8f0'
-                  }}>
-                    <ul style={{ margin: '0', paddingLeft: '16px', fontSize: '13px', color: '#1a1a1a', listStyle: 'none' }}>
-                      <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
-                        Mise en conformité RGPD (base)
-                      </li>
-                      {devisData.features && devisData.features.length > 0 && devisData.features.map((feature, index) => (
-                        <li key={index} style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
-                          <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
-                          {feature}
-                        </li>
-                      ))}
-                      {devisData.maintenance && (
-                        <li style={{ margin: '6px 0', display: 'flex', alignItems: 'flex-start' }}>
-                          <span style={{ color: '#10b981', marginRight: '8px', fontSize: '14px' }}>✅</span>
-                          Maintenance technique et hébergement
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                </div>
+                <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', color: '#1a1a1a' }}>
+                  <li style={{ margin: '8px 0' }}> - Analyse et configuration technique adaptée au projet</li>
+                  <li style={{ margin: '8px 0' }}> - Mise en place du design ({devisData.designType === 'custom' ? 'sur-mesure' : 'template adapté'})</li>
+                  <li style={{ margin: '8px 0' }}> - Intégration des contenus fournis par le client</li>
+                  <li style={{ margin: '8px 0' }}> - Optimisation responsive (mobile et tablette)</li>
+                  <li style={{ margin: '8px 0' }}> - Mise en conformité RGPD (base)</li>
+                  {devisData.maintenance && devisData.maintenance !== 'none' && (
+                    <li style={{ margin: '8px 0' }}> - Maintenance technique et hébergement ({devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : '100 EUR HT / an'})</li>
+                  )}
+                </ul>
               </div>
             </div>
             <div style={{ margin: '20px 0', height: '1px', backgroundColor: '#e2e8f0' }}></div>
@@ -756,7 +793,7 @@ function DevisValidationContent() {
                         padding: '4px 8px',
                         borderRadius: '4px'
                       }}>
-                        49 EUR / mois
+                        {devisData.maintenance === 'monthly' ? '10 EUR / mois' : '100 EUR / an'}
                       </span>
                     </div>
                   )}
@@ -791,7 +828,7 @@ function DevisValidationContent() {
                       1️⃣ Acompte a la signature
                     </p>
                     <p style={{ margin: '4px 0 0 0', fontSize: '16px', fontWeight: '700', color: '#1a1a1a' }}>
-                      30% ({Math.round(devisData.total * 0.3)} EUR)
+                      30% ({roundToNearestTen(devisData.total * 0.3)} EUR)
                     </p>
                   </div>
                   <div style={{ 
@@ -804,7 +841,7 @@ function DevisValidationContent() {
                       2️⃣ Solde a la livraison
                     </p>
                     <p style={{ margin: '4px 0 0 0', fontSize: '16px', fontWeight: '700', color: '#1a1a1a' }}>
-                      70% ({Math.round(devisData.total * 0.7)} EUR)
+                      70% ({roundToNearestTen(devisData.total * 0.7)} EUR)
                     </p>
                   </div>
                 </div>

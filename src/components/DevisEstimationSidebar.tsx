@@ -45,7 +45,7 @@ const featureOptions = [
   {
     id: "admin-panel",
     label: "Tableau de bord administrateur",
-    price: 600,
+    price: 500,
   },
 ];
 const pricingModel = {

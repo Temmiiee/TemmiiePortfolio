@@ -82,18 +82,18 @@ export default function DevisPage() {
   React.useEffect(() => {
     // Pricing aligné avec le Sidebar
     const pricingModel = {
-      siteType: { vitrine: 350, ecommerce: 1200, webapp: 2500 },
-      designType: { template: 200, custom: 800 },
+      siteType: { vitrine: 350, ecommerce: 800, webapp: 2000 },
+      designType: { template: 200, custom: 500 },
     } as const;
     const featureOptions = [
       { id: "blog", label: "Intégration d'un blog / système d'actualités", price: 300 },
       { id: "gallery", label: "Galerie d'images / Portfolio avancé", price: 250 },
       { id: "newsletter", label: "Système d'inscription à la newsletter", price: 150 },
-      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 450 },
+      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 400 },
       { id: "analytics", label: "Intégration et configuration d'analytics", price: 80 },
-      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 500 },
+      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 400 },
       { id: "third-party-integration", label: "Intégration de service tiers (API, etc.)", price: 400 },
-      { id: "admin-panel", label: "Tableau de bord administrateur", price: 600 },
+      { id: "admin-panel", label: "Tableau de bord administrateur", price: 500 },
     ] as const;
 
     const featuresSelected = formValues.features ?? [];
@@ -110,8 +110,8 @@ export default function DevisPage() {
       if (fo) total += fo.price;
     }
 
-    const featuresLabels = featuresSelected
-      .map((id) => featureOptions.find((f) => f.id === id)?.label || id);
+    const featuresLabels = Array.from(new Set(featuresSelected
+      .map((id) => featureOptions.find((f) => f.id === id)?.label || id)));
 
     const devisData = {
       siteType: formValues.siteType,
@@ -142,19 +142,19 @@ export default function DevisPage() {
 
     // Pricing local (identique au sidebar)
     const pricingModel = {
-      siteType: { vitrine: 350, ecommerce: 1200, webapp: 2500 },
-      designType: { template: 200, custom: 800 },
+      siteType: { vitrine: 350, ecommerce: 800, webapp: 2000 },
+      designType: { template: 200, custom: 500 },
       maintenance: { none: 0, monthly: 10, annually: 100 } as const,
     } as const;
     const featureOptions = [
       { id: "blog", label: "Intégration d'un blog / système d'actualités", price: 300 },
       { id: "gallery", label: "Galerie d'images / Portfolio avancé", price: 250 },
       { id: "newsletter", label: "Système d'inscription à la newsletter", price: 150 },
-      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 450 },
+      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 400 },
       { id: "analytics", label: "Intégration et configuration d'analytics", price: 80 },
-      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 500 },
+      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 400 },
       { id: "third-party-integration", label: "Intégration de service tiers (API, etc.)", price: 400 },
-      { id: "admin-panel", label: "Tableau de bord administrateur", price: 600 },
+      { id: "admin-panel", label: "Tableau de bord administrateur", price: 500 },
     ] as const;
 
     const featuresSelected = formValues.features ?? [];
@@ -175,8 +175,8 @@ export default function DevisPage() {
     // La maintenance est affichée séparément; ne pas l'inclure au total HT de base
 
     // Mappe les ids en libellés lisibles
-    const featuresLabels = featuresSelected
-      .map((id) => featureOptions.find((f) => f.id === id)?.label || id);
+    const featuresLabels = Array.from(new Set(featuresSelected
+      .map((id) => featureOptions.find((f) => f.id === id)?.label || id)));
 
     const devisData = {
       siteType: formValues.siteType,
@@ -202,14 +202,14 @@ export default function DevisPage() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 px-4 md:px-8 py-8 md:py-16">
+    <div className="flex flex-col lg:flex-row gap-4 px-4 md:px-8 py-8 md:py-16">
       <div className="flex-1">
         <Suspense fallback={<div>Chargement du formulaire...</div>}>
           <QuoteCalculatorWrapper onFormChange={handleFormChange} />
         </Suspense>
       </div>
       {/* Sidebar sticky pour l'estimation */}
-      <div className="w-full lg:w-80 lg:ml-8">
+      <div className="w-full lg:w-72 lg:ml-4">
         {(() => {
           const emailValid = !!formValues.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email);
           const nameValid = !!formValues.name && formValues.name.trim().length > 0;

@@ -68,7 +68,7 @@ const featureOptions = [
   {
     id: "multi-langue",
     label: "Configuration pour un site multilingue",
-    price: 450,
+    price: 400,
   },
   {
     id: "analytics",
@@ -78,7 +78,7 @@ const featureOptions = [
   {
     id: "user-accounts",
     label: "Espace utilisateur / authentification",
-    price: 500,
+    price: 400,
   },
   {
     id: "third-party-integration",
@@ -88,19 +88,22 @@ const featureOptions = [
   {
     id: "admin-panel",
     label: "Tableau de bord administrateur",
-    price: 600,
+    price: 500,
   },
 ];
+
+// Sorted copy for UI: show features from highest to lowest price
+const sortedFeatureOptions = [...featureOptions].sort((a, b) => b.price - a.price);
 
 const pricingModel = {
   siteType: {
     vitrine: 350,
-    ecommerce: 1200,
-    webapp: 2500,
+    ecommerce: 800,
+    webapp: 2000,
   },
   designType: {
     template: 200,
-    custom: 800,
+    custom: 500,
   },
   features: featureOptions.reduce((acc, feature) => {
     acc[feature.id] = feature.price;
@@ -259,7 +262,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
         <FormField
           control={form.control}
           name="siteType"
@@ -446,8 +449,8 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
               <FormLabel className="text-lg font-semibold">3. Fonctionnalités additionnelles</FormLabel>
               <FormDescription>Cochez toutes les fonctionnalités que vous souhaitez intégrer.</FormDescription>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {featureOptions.map((item) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {sortedFeatureOptions.map((item) => {
                 // Fixed: Use formValues from useWatch instead of form.getValues() to prevent infinite re-renders
                 const forcedIncluded = formValues.siteType === "webapp" && item.id === "user-accounts";
                 const displayPrice = forcedIncluded ? 0 : item.price;
@@ -515,7 +518,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                   </div>
                 </FormItem>
 
-                <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all durée-200 cursor-pointer", field.value === "monthly" ? "border-primary bg-primary/5" : "border-border")}>
+                <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer", field.value === "monthly" ? "border-primary bg-primary/5" : "border-border")}>
                   <FormControl><RadioGroupItem value="monthly" className="sr-only" /></FormControl>
                   <FormLabel className="font-normal w-full cursor-pointer flex items-center justify-between gap-3">
                     <span className="font-bold min-w-0 pr-2">Mensuelle</span>
@@ -535,7 +538,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                   </div>
                 </FormItem>
 
-                <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all durée-200 cursor-pointer", field.value === "annually" ? "border-primary bg-primary/5" : "border-border")}>
+                <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer", field.value === "annually" ? "border-primary bg-primary/5" : "border-border")}>
                   <FormControl><RadioGroupItem value="annually" className="sr-only" /></FormControl>
                   <FormLabel className="font-normal w-full cursor-pointer flex items-center justify-between gap-3">
                     <span className="font-bold min-w-0 pr-2">Annuelle</span>
@@ -636,7 +639,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
           <h3 className="text-lg font-semibold">7. Vos coordonnées</h3>
           <FormDescription>Ces informations sont nécessaires pour établir le devis formel.</FormDescription>
         </div>
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col md:flex-row gap-4">
           <FormField control={form.control} name="name" render={({ field }) => (
             <FormItem className="flex-1">
               <FormLabel>Votre nom <span className="text-red-500">*</span></FormLabel>
