@@ -10,11 +10,11 @@ import { shouldLog } from '@/lib/config';
 import { useToast } from '@/hooks/use-toast';
 
 interface DevisData {
-  siteType: string;
-  designType: string;
-  technology?: string;
+  siteType: "vitrine" | "ecommerce" | "webapp";
+  designType: "template" | "custom";
+  technology?: "react" | "vue" | "nextjs" | "wordpress" | "no-preference";
   features: string[];
-  maintenance?: boolean;
+  maintenance?: "none" | "monthly" | "annually";
   projectDescription?: string;
   clientInfo: {
     name: string;
@@ -123,8 +123,9 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
     pdf.text(`Technologie: ${techText}`, margin + 5, currentY + 19);
   }
 
-  if (devisData.maintenance) {
-    pdf.text('Maintenance & Hebergement: Inclus (49 EUR HT/mois)', margin + 5, currentY + 26);
+  if (devisData.maintenance && devisData.maintenance !== 'none') {
+    const maintenanceText = devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : '100 EUR HT / an';
+    pdf.text(`Maintenance & Hebergement: ${maintenanceText}`, margin + 5, currentY + 26);
   }
 
   currentY += 45;
@@ -202,8 +203,9 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   pdf.text(`\u2022 Solde a la livraison: 70% (${Math.round(devisData.total * 0.7)} EUR)`, margin + 5, currentY);
   currentY += 8;
 
-  if (devisData.maintenance) {
-    pdf.text('\u2022 Maintenance: facturation mensuelle selon convenance', margin + 5, currentY);
+  if (devisData.maintenance && devisData.maintenance !== 'none') {
+    const maintenanceText = devisData.maintenance === 'monthly' ? 'mensuelle (10 EUR HT / mois)' : 'annuelle (100 EUR HT / an)';
+    pdf.text(`\u2022 Maintenance: facturation ${maintenanceText}`, margin + 5, currentY);
     currentY += 8;
   }
 
@@ -579,7 +581,7 @@ function DevisValidationContent() {
                   </div>
                 )}
 
-                {devisData.maintenance && (
+                {devisData.maintenance && devisData.maintenance !== 'none' && (
                   <div style={{ 
                     backgroundColor: '#ecfdf5',
                     padding: '12px',
@@ -589,7 +591,7 @@ function DevisValidationContent() {
                     <p style={{ margin: '0', fontSize: '13px' }}>
                       <strong style={{ color: '#059669' }}>🔧 Maintenance & Hebergement :</strong><br />
                       <span style={{ fontSize: '14px', color: '#1a1a1a' }}>
-                        Inclus (49 EUR HT / mois)
+                        {devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : '100 EUR HT / an'}
                       </span>
                     </p>
                   </div>
@@ -733,7 +735,7 @@ function DevisValidationContent() {
                     </span>
                   </div>
                   
-                  {devisData.maintenance && (
+                  {devisData.maintenance && devisData.maintenance !== 'none' && (
                     <div style={{ 
                       display: 'flex', 
                       justifyContent: 'space-between', 
@@ -754,7 +756,7 @@ function DevisValidationContent() {
                         padding: '4px 8px',
                         borderRadius: '4px'
                       }}>
-                        49 EUR / mois
+                        {devisData.maintenance === 'monthly' ? '10 EUR / mois' : '100 EUR / an'}
                       </span>
                     </div>
                   )}

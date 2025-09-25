@@ -25,7 +25,7 @@ const featureOptions = [
   {
     id: "multi-langue",
     label: "Configuration pour un site multilingue",
-    price: 450,
+    price: 200,
   },
   {
     id: "analytics",
@@ -35,7 +35,7 @@ const featureOptions = [
   {
     id: "user-accounts",
     label: "Espace utilisateur / authentification",
-    price: 500,
+    price: 400,
   },
   {
     id: "third-party-integration",
@@ -51,12 +51,12 @@ const featureOptions = [
 const pricingModel = {
   siteType: {
     vitrine: 350,
-    ecommerce: 1200,
-    webapp: 2500,
+    ecommerce: 800,
+    webapp: 2000,
   },
   designType: {
     template: 200,
-    custom: 800,
+    custom: 500,
   },
   features: featureOptions.reduce((acc, feature) => {
     acc[feature.id] = feature.price;

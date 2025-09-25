@@ -68,7 +68,7 @@ const featureOptions = [
   {
     id: "multi-langue",
     label: "Configuration pour un site multilingue",
-    price: 450,
+    price: 200,
   },
   {
     id: "analytics",
@@ -78,7 +78,7 @@ const featureOptions = [
   {
     id: "user-accounts",
     label: "Espace utilisateur / authentification",
-    price: 500,
+    price: 400,
   },
   {
     id: "third-party-integration",
@@ -95,12 +95,12 @@ const featureOptions = [
 const pricingModel = {
   siteType: {
     vitrine: 350,
-    ecommerce: 1200,
-    webapp: 2500,
+    ecommerce: 800,
+    webapp: 2000,
   },
   designType: {
     template: 200,
-    custom: 800,
+    custom: 500,
   },
   features: featureOptions.reduce((acc, feature) => {
     acc[feature.id] = feature.price;
@@ -233,7 +233,6 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
     formValues.projectDescription,
     onFormChange
   ]);
-
   const onSubmit = (data: FormValues) => {
     const devisData = {
       siteType: data.siteType,
@@ -260,7 +259,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ml-12">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto">
         <FormField
           control={form.control}
           name="siteType"
@@ -273,6 +272,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                 <RadioGroup
                   onValueChange={(value) => {
                     field.onChange(value);
+                    notifyParent({ siteType: value as FormValues["siteType"] });
                   }}
                   value={field.value}
                   className="flex flex-col space-y-2"
@@ -281,7 +281,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                     {/* Site Vitrine */}
                     <FormItem
                       className={cn(
-                        "flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer",
+                        "flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer focus-within:ring-2 focus-within:ring-primary/40",
                         field.value === "vitrine" ? "border-primary bg-primary/5" : "border-border"
                       )}
                     >
@@ -301,6 +301,11 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                             "w-4 h-4 rounded-full border-2 relative",
                             field.value === "vitrine" ? "border-primary bg-primary" : "border-muted-foreground"
                           )}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => { field.onChange("vitrine"); notifyParent({ siteType: "vitrine" }); }}
+                          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); field.onChange("vitrine"); notifyParent({ siteType: "vitrine" }); } }}
+                          aria-label="Sélectionner Site Vitrine"
                         >
                           <div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "vitrine" ? "opacity-100" : "opacity-0")}></div>
                         </div>
@@ -310,7 +315,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                     {/* E-commerce */}
                     <FormItem
                       className={cn(
-                        "flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer",
+                        "flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer focus-within:ring-2 focus-within:ring-primary/40",
                         field.value === "ecommerce" ? "border-primary bg-primary/5" : "border-border"
                       )}
                     >
@@ -325,7 +330,14 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                         </span>
                       </FormLabel>
                       <div className="ml-auto">
-                        <div className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "ecommerce" ? "border-primary bg-primary" : "border-muted-foreground")}>
+                        <div
+                          className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "ecommerce" ? "border-primary bg-primary" : "border-muted-foreground")}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => { field.onChange("ecommerce"); notifyParent({ siteType: "ecommerce" }); }}
+                          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); field.onChange("ecommerce"); notifyParent({ siteType: "ecommerce" }); } }}
+                          aria-label="Sélectionner E-commerce"
+                        >
                           <div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "ecommerce" ? "opacity-100" : "opacity-0")}></div>
                         </div>
                       </div>
@@ -334,7 +346,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                   {/* Application Web */}
                   <FormItem
                     className={cn(
-                      "flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer",
+                      "flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer focus-within:ring-2 focus-within:ring-primary/40",
                       field.value === "webapp" ? "border-primary bg-primary/5" : "border-border"
                     )}
                   >
@@ -349,7 +361,14 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                       </span>
                     </FormLabel>
                     <div className="ml-auto">
-                      <div className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "webapp" ? "border-primary bg-primary" : "border-muted-foreground")}>
+                      <div
+                        className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "webapp" ? "border-primary bg-primary" : "border-muted-foreground")}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => { field.onChange("webapp"); notifyParent({ siteType: "webapp" }); }}
+                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); field.onChange("webapp"); notifyParent({ siteType: "webapp" }); } }}
+                        aria-label="Sélectionner Application Web"
+                      >
                         <div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "webapp" ? "opacity-100" : "opacity-0")}></div>
                       </div>
                     </div>
@@ -368,8 +387,8 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
             <FormItem className="space-y-3">
               <FormLabel className="text-lg font-semibold">2. Quel type de design souhaitez-vous ?</FormLabel>
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
-                  <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer", field.value === "template" ? "border-primary bg-primary/5" : "border-border")}>
+                <RadioGroup onValueChange={(value) => { field.onChange(value); notifyParent({ designType: value as FormValues["designType"] }); }} value={field.value} className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
+                  <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer focus-within:ring-2 focus-within:ring-primary/40", field.value === "template" ? "border-primary bg-primary/5" : "border-border")}>
                     <FormControl><RadioGroupItem value="template" className="sr-only" /></FormControl>
                     <FormLabel className="font-normal w-full cursor-pointer">
                       <span className="font-bold block">Design basé sur un template</span>
@@ -379,13 +398,20 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                       </span>
                     </FormLabel>
                     <div className="ml-auto">
-                      <div className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "template" ? "border-primary bg-primary" : "border-muted-foreground")}>
+                      <div
+                        className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "template" ? "border-primary bg-primary" : "border-muted-foreground")}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => { field.onChange("template"); notifyParent({ designType: "template" }); }}
+                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); field.onChange("template"); notifyParent({ designType: "template" }); } }}
+                        aria-label="Sélectionner Design template"
+                      >
                         <div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "template" ? "opacity-100" : "opacity-0")}></div>
                       </div>
                     </div>
                   </FormItem>
 
-                  <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer", field.value === "custom" ? "border-primary bg-primary/5" : "border-border")}>
+                  <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer focus-within:ring-2 focus-within:ring-primary/40", field.value === "custom" ? "border-primary bg-primary/5" : "border-border")}>
                     <FormControl><RadioGroupItem value="custom" className="sr-only" /></FormControl>
                     <FormLabel className="font-normal w-full cursor-pointer">
                       <span className="font-bold block">Design sur mesure</span>
@@ -395,7 +421,14 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                       </span>
                     </FormLabel>
                     <div className="ml-auto">
-                      <div className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "custom" ? "border-primary bg-primary" : "border-muted-foreground")}>
+                      <div
+                        className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "custom" ? "border-primary bg-primary" : "border-muted-foreground")}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => { field.onChange("custom"); notifyParent({ designType: "custom" }); }}
+                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); field.onChange("custom"); notifyParent({ designType: "custom" }); } }}
+                        aria-label="Sélectionner Design custom"
+                      >
                         <div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "custom" ? "opacity-100" : "opacity-0")}></div>
                       </div>
                     </div>
@@ -461,32 +494,68 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
             <FormLabel className="text-lg font-semibold">4. Maintenance & Hébergement (Optionnel)</FormLabel>
             <FormDescription>Souscrivez à l&apos;offre de maintenance pour la tranquillité d&apos;esprit.</FormDescription>
             <FormControl>
-              <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
+              <RadioGroup onValueChange={(value) => { field.onChange(value); notifyParent({ maintenance: value as FormValues["maintenance"] }); }} value={field.value} className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
                 <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer", field.value === "none" ? "border-primary bg-primary/5" : "border-border")}>
                   <FormControl><RadioGroupItem value="none" className="sr-only" /></FormControl>
-                  <FormLabel className="font-normal w-full cursor-pointer flex items-center justify-between">
-                    <span className="font-bold">J&apos;installe sur votre hébergement</span>
-                    <span className="text-sm text-muted-foreground ml-auto">Offert</span>
+                  <FormLabel className="font-normal w-full cursor-pointer flex items-center justify-between gap-3">
+                    <span className="font-bold min-w-0 pr-2">J&apos;installe sur votre hébergement</span>
+                    <span className="text-sm text-muted-foreground ml-auto shrink-0 whitespace-nowrap">Offert</span>
                   </FormLabel>
-                  <div className="ml-auto"><div className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "none" ? "border-primary bg-primary" : "border-muted-foreground")}><div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "none" ? "opacity-100" : "opacity-0")}></div></div></div>
+                  <div className="ml-auto">
+                    <div
+                      className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "none" ? "border-primary bg-primary" : "border-muted-foreground")}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => { field.onChange("none"); notifyParent({ maintenance: "none" }); }}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); field.onChange("none"); notifyParent({ maintenance: "none" }); } }}
+                      aria-label="Sélectionner maintenance aucune"
+                    >
+                      <div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "none" ? "opacity-100" : "opacity-0")}></div>
+                    </div>
+                  </div>
                 </FormItem>
 
-                <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer", field.value === "monthly" ? "border-primary bg-primary/5" : "border-border")}>
+                <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all durée-200 cursor-pointer", field.value === "monthly" ? "border-primary bg-primary/5" : "border-border")}>
                   <FormControl><RadioGroupItem value="monthly" className="sr-only" /></FormControl>
-                  <FormLabel className="font-normal w-full cursor-pointer flex items-center justify-between">
-                    <span className="font-bold">Mensuelle</span>
-                    <span className="text-sm font-semibold text-primary ml-auto">{pricingModel.maintenance.monthly}€ / mois</span>
+                  <FormLabel className="font-normal w-full cursor-pointer flex items-center justify-between gap-3">
+                    <span className="font-bold min-w-0 pr-2">Mensuelle</span>
+                    <span className="ml-auto shrink-0 whitespace-nowrap text-xs sm:text-sm font-semibold text-primary">{pricingModel.maintenance.monthly}€ / mois</span>
                   </FormLabel>
-                  <div className="ml-auto"><div className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "monthly" ? "border-primary bg-primary" : "border-muted-foreground")}><div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "monthly" ? "opacity-100" : "opacity-0")}></div></div></div>
+                  <div className="ml-auto">
+                    <div
+                      className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "monthly" ? "border-primary bg-primary" : "border-muted-foreground")}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => { field.onChange("monthly"); notifyParent({ maintenance: "monthly" }); }}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); field.onChange("monthly"); notifyParent({ maintenance: "monthly" }); } }}
+                      aria-label="Sélectionner maintenance mensuelle"
+                    >
+                      <div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "monthly" ? "opacity-100" : "opacity-0")}></div>
+                    </div>
+                  </div>
                 </FormItem>
 
-                <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer", field.value === "annually" ? "border-primary bg-primary/5" : "border-border")}>
+                <FormItem className={cn("flex items-center space-x-3 space-y-0 flex-1 border rounded-md p-4 hover:shadow-md transition-all durée-200 cursor-pointer", field.value === "annually" ? "border-primary bg-primary/5" : "border-border")}>
                   <FormControl><RadioGroupItem value="annually" className="sr-only" /></FormControl>
-                  <FormLabel className="font-normal w-full cursor-pointer flex items-center justify-between">
-                    <span className="font-bold">Annuelle (économisez 20€/an)</span>
-                    <span className="text-sm font-semibold text-primary ml-auto">{pricingModel.maintenance.annually}€ / an</span>
+                  <FormLabel className="font-normal w-full cursor-pointer flex items-center justify-between gap-3">
+                    <span className="font-bold min-w-0 pr-2">Annuelle</span>
+                    <span className="ml-auto shrink-0 whitespace-nowrap flex items-center gap-2 text-xs sm:text-sm">
+                      <span className="line-through text-muted-foreground">120€ / an</span>
+                      <span className="font-semibold text-primary">{pricingModel.maintenance.annually}€ / an</span>
+                    </span>
                   </FormLabel>
-                  <div className="ml-auto"><div className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "annually" ? "border-primary bg-primary" : "border-muted-foreground")}><div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "annually" ? "opacity-100" : "opacity-0")}></div></div></div>
+                  <div className="ml-auto">
+                    <div
+                      className={cn("w-4 h-4 rounded-full border-2 relative", field.value === "annually" ? "border-primary bg-primary" : "border-muted-foreground")}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => { field.onChange("annually"); notifyParent({ maintenance: "annually" }); }}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); field.onChange("annually"); notifyParent({ maintenance: "annually" }); } }}
+                      aria-label="Sélectionner maintenance annuelle"
+                    >
+                      <div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === "annually" ? "opacity-100" : "opacity-0")}></div>
+                    </div>
+                  </div>
                 </FormItem>
               </RadioGroup>
             </FormControl>
@@ -499,12 +568,60 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
             <FormLabel className="text-lg font-semibold">6. Quelle technologie préférez-vous ?</FormLabel>
             <FormDescription>Si vous n&apos;avez pas de préférence, je choisirai l&apos;outil le plus adapté à votre projet.</FormDescription>
             <FormControl>
-              <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col space-y-2 md:grid md:grid-cols-3 md:gap-4 md:space-y-0">
-                {["react","vue","nextjs","wordpress","no-preference"].map((tech) => (
-                  <FormItem key={tech} className={cn("flex items-center space-x-3 space-y-0 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer", field.value === tech ? "border-primary bg-primary/5" : "border-border")}>
-                    <FormControl><RadioGroupItem value={tech} className="sr-only" /></FormControl>
-                    <FormLabel className="font-normal w-full cursor-pointer">{tech === "no-preference" ? "Pas de préférences" : tech.charAt(0).toUpperCase() + tech.slice(1)}</FormLabel>
-                    <div className="ml-auto"><div className={cn("w-4 h-4 rounded-full border-2 relative", field.value === tech ? "border-primary bg-primary" : "border-muted-foreground")}><div className={cn("absolute inset-1 rounded-full bg-white transition-opacity duration-200", field.value === tech ? "opacity-100" : "opacity-0")}></div></div></div>
+              <RadioGroup onValueChange={(value) => { field.onChange(value); notifyParent({ technology: value as FormValues["technology"] }); }} value={field.value} className="flex flex-col space-y-2 md:grid md:grid-cols-3 md:gap-4 md:space-y-0">
+                {[
+                  "react",
+                  "vue",
+                  "nextjs",
+                  "wordpress",
+                  "no-preference",
+                ].map((tech) => (
+                  <FormItem
+                    key={tech}
+                    className={cn(
+                      "flex items-center space-x-3 space-y-0 border rounded-md p-4 hover:shadow-md transition-all duration-200 cursor-pointer focus-within:ring-2 focus-within:ring-primary/40",
+                      field.value === tech ? "border-primary bg-primary/5" : "border-border"
+                    )}
+                  >
+                    <FormControl>
+                      <RadioGroupItem value={tech} className="sr-only" />
+                    </FormControl>
+                    <FormLabel className="font-normal w-full cursor-pointer">
+                      {tech === "no-preference"
+                        ? "Pas de préférences"
+                        : tech.charAt(0).toUpperCase() + tech.slice(1)}
+                    </FormLabel>
+                    <div className="ml-auto">
+                      <div
+                        className={cn(
+                          "w-4 h-4 rounded-full border-2 relative",
+                          field.value === tech
+                            ? "border-primary bg-primary"
+                            : "border-muted-foreground"
+                        )}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => {
+                          field.onChange(tech);
+                          notifyParent({ technology: tech as FormValues["technology"] });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            field.onChange(tech);
+                            notifyParent({ technology: tech as FormValues["technology"] });
+                          }
+                        }}
+                        aria-label={`Sélectionner ${tech}`}
+                      >
+                        <div
+                          className={cn(
+                            "absolute inset-1 rounded-full bg-white transition-opacity duration-200",
+                            field.value === tech ? "opacity-100" : "opacity-0"
+                          )}
+                        ></div>
+                      </div>
+                    </div>
                   </FormItem>
                 ))}
               </RadioGroup>
@@ -524,7 +641,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
             <FormItem className="flex-1">
               <FormLabel>Votre nom <span className="text-red-500">*</span></FormLabel>
               <FormControl>
-                <Input placeholder="Votre nom" {...field} />
+                <Input placeholder="Votre nom" required aria-required="true" autoComplete="name" {...field} onChange={(e) => { field.onChange(e); notifyParent({ name: e.target.value }); }} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -534,7 +651,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
             <FormItem className="flex-1">
               <FormLabel>Votre email <span className="text-red-500">*</span></FormLabel>
               <FormControl>
-                <Input type="email" placeholder="Votre email" {...field} />
+                <Input type="email" placeholder="Votre email" required aria-required="true" autoComplete="email" inputMode="email" {...field} onChange={(e) => { field.onChange(e); notifyParent({ email: e.target.value }); }} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -544,7 +661,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
         <FormField control={form.control} name="company" render={({ field }) => (
           <FormItem>
             <FormLabel>Nom de votre entreprise (Optionnel)</FormLabel>
-            <FormControl><Input placeholder="Nom de votre entreprise" {...field} /></FormControl>
+            <FormControl><Input placeholder="Nom de votre entreprise" autoComplete="organization" {...field} onChange={(e) => { field.onChange(e); notifyParent({ company: e.target.value }); }} /></FormControl>
             <FormMessage />
           </FormItem>
         )} />
@@ -552,7 +669,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
         <FormField control={form.control} name="phone" render={({ field }) => (
           <FormItem>
             <FormLabel>Numéro de téléphone (Optionnel)</FormLabel>
-            <FormControl><Input type="tel" placeholder="Numéro de téléphone" {...field} /></FormControl>
+            <FormControl><Input type="tel" placeholder="Numéro de téléphone" autoComplete="tel" inputMode="tel" {...field} onChange={(e) => { field.onChange(e); notifyParent({ phone: e.target.value }); }} /></FormControl>
             <FormMessage />
           </FormItem>
         )} />
@@ -567,18 +684,19 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
         <FormField control={form.control} name="projectDescription" render={({ field }) => (
           <FormItem>
             <FormLabel>Décrivez votre projet</FormLabel>
-            <FormControl><Textarea placeholder="Quels sont vos objectifs ? Qui est votre cible ? Avez-vous des exemples de sites que vous aimez ?" className="min-h-[150px]" {...field} /></FormControl>
+            <FormControl><Textarea placeholder="Quels sont vos objectifs ? Qui est votre cible ? Avez-vous des exemples de sites que vous aimez ?" className="min-h-[150px]" maxLength={2000} {...field} onChange={(e) => { field.onChange(e); notifyParent({ projectDescription: e.target.value }); }} /></FormControl>
             <FormMessage />
           </FormItem>
         )} />
 
         <FormField control={form.control} name="files" render={({ field }) => {
-          const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+            const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
             e.preventDefault();
             setIsDragActive(false);
             const files = Array.from(e.dataTransfer.files);
-            field.onChange(files);
+              field.onChange(files);
             setFileNames(files.map((f) => f.name));
+              notifyParent({ files: files as unknown as FormValues["files"] });
           };
 
           const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsDragActive(true); };
@@ -587,6 +705,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
             const files = Array.from(e.target.files ?? []);
             field.onChange(files);
             setFileNames(files.map((f) => f.name));
+            notifyParent({ files: files as unknown as FormValues["files"] });
           };
           const handleClick = () => fileInputRef.current?.click();
           const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } };
@@ -605,6 +724,10 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                   <input ref={fileInputRef} type="file" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.zip" onChange={handleChange} className="sr-only" aria-hidden="true" />
                   {fileNames.length > 0 && (
                     <div className="mt-4 w-full">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-muted-foreground">{fileNames.length} fichier{fileNames.length > 1 ? "s" : ""} sélectionné{fileNames.length > 1 ? "s" : ""} (max 3)</span>
+                        <button type="button" className="text-sm text-primary hover:underline" onClick={(e) => { e.stopPropagation(); field.onChange(undefined); setFileNames([]); notifyParent({ files: undefined }); }}>Effacer</button>
+                      </div>
                       <ul className="text-sm space-y-1">
                         {fileNames.map((name, idx) => (
                           <li key={idx} className="flex items-center gap-2 text-foreground">

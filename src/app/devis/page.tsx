@@ -9,7 +9,7 @@ import { DevisEstimationSidebar } from "@/components/DevisEstimationSidebar";
 type LocalFormValues = {
   siteType: "vitrine" | "ecommerce" | "webapp";
   designType: "template" | "custom";
-  maintenance: boolean; // ici on gère comme boolean localement
+  maintenance: "none" | "monthly" | "annually";
   name: string;
   email: string;
   company: string;
@@ -26,7 +26,7 @@ export default function DevisPage() {
   const [formValues, setFormValues] = React.useState<LocalFormValues>({
     siteType: "vitrine",
     designType: "template",
-    maintenance: false,
+    maintenance: "none",
     name: "",
     email: "",
     company: "",
@@ -55,11 +55,10 @@ export default function DevisPage() {
   }, []);
 
   const handleFormChange = useCallback((values: QuoteFormValues) => {
-    const maintenanceBoolean = values.maintenance !== "none";
     const next: LocalFormValues = {
       siteType: values.siteType,
       designType: values.designType,
-      maintenance: maintenanceBoolean,
+      maintenance: values.maintenance,
       name: values.name,
       email: values.email,
       company: values.company || "",
@@ -79,6 +78,62 @@ export default function DevisPage() {
     });
   }, [areLocalValuesEqual]);
 
+  // Sauvegarde automatique du devis à chaque changement pertinent
+  React.useEffect(() => {
+    // Pricing aligné avec le Sidebar
+    const pricingModel = {
+      siteType: { vitrine: 350, ecommerce: 800, webapp: 2000 },
+      designType: { template: 200, custom: 400 },
+    } as const;
+    const featureOptions = [
+      { id: "blog", label: "Intégration d'un blog / système d'actualités", price: 300 },
+      { id: "gallery", label: "Galerie d'images / Portfolio avancé", price: 250 },
+      { id: "newsletter", label: "Système d'inscription à la newsletter", price: 150 },
+      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 200 },
+      { id: "analytics", label: "Intégration et configuration d'analytics", price: 80 },
+      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 400 },
+      { id: "third-party-integration", label: "Intégration de service tiers (API, etc.)", price: 400 },
+      { id: "admin-panel", label: "Tableau de bord administrateur", price: 600 },
+    ] as const;
+
+    const featuresSelected = formValues.features ?? [];
+    let total = 0;
+    if (formValues.siteType in pricingModel.siteType) {
+      total += pricingModel.siteType[formValues.siteType];
+    }
+    if (formValues.designType in pricingModel.designType) {
+      total += pricingModel.designType[formValues.designType];
+    }
+    for (const id of featuresSelected) {
+      if (formValues.siteType === "webapp" && id === "user-accounts") continue;
+      const fo = featureOptions.find((f) => f.id === id);
+      if (fo) total += fo.price;
+    }
+
+    const featuresLabels = featuresSelected
+      .map((id) => featureOptions.find((f) => f.id === id)?.label || id);
+
+    const devisData = {
+      siteType: formValues.siteType,
+      designType: formValues.designType,
+      technology: formValues.technology,
+      features: featuresLabels,
+      maintenance: formValues.maintenance,
+      projectDescription: formValues.projectDescription,
+      clientInfo: {
+        name: formValues.name,
+        email: formValues.email,
+        company: formValues.company,
+        phone: formValues.phone,
+      },
+      total,
+    };
+
+    try {
+      localStorage.setItem("devisData", JSON.stringify(devisData));
+    } catch {}
+  }, [formValues]);
+
   // Fonction de validation: construit les données, les enregistre et redirige
   const handleValidate = () => {
     const emailValid = !!formValues.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email);
@@ -89,15 +144,15 @@ export default function DevisPage() {
     const pricingModel = {
       siteType: { vitrine: 350, ecommerce: 1200, webapp: 2500 },
       designType: { template: 200, custom: 800 },
-      maintenance: 49,
+      maintenance: { none: 0, monthly: 10, annually: 100 } as const,
     } as const;
     const featureOptions = [
       { id: "blog", label: "Intégration d'un blog / système d'actualités", price: 300 },
       { id: "gallery", label: "Galerie d'images / Portfolio avancé", price: 250 },
       { id: "newsletter", label: "Système d'inscription à la newsletter", price: 150 },
-      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 450 },
+      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 200 },
       { id: "analytics", label: "Intégration et configuration d'analytics", price: 80 },
-      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 500 },
+      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 400 },
       { id: "third-party-integration", label: "Intégration de service tiers (API, etc.)", price: 400 },
       { id: "admin-panel", label: "Tableau de bord administrateur", price: 600 },
     ] as const;
@@ -117,6 +172,7 @@ export default function DevisPage() {
       const fo = featureOptions.find((f) => f.id === id);
       if (fo) total += fo.price;
     }
+    // La maintenance est affichée séparément; ne pas l'inclure au total HT de base
 
     // Mappe les ids en libellés lisibles
     const featuresLabels = featuresSelected
@@ -163,7 +219,7 @@ export default function DevisPage() {
               siteType={formValues.siteType}
               designType={formValues.designType}
               features={formValues.features ?? []}
-              maintenance={formValues.maintenance ? "monthly" : "annually"}
+              maintenance={formValues.maintenance}
               onValidate={handleValidate}
               canValidate={canValidate}
             />
