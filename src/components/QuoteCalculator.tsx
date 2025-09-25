@@ -68,7 +68,7 @@ const featureOptions = [
   {
     id: "multi-langue",
     label: "Configuration pour un site multilingue",
-    price: 200,
+    price: 450,
   },
   {
     id: "analytics",
@@ -78,7 +78,7 @@ const featureOptions = [
   {
     id: "user-accounts",
     label: "Espace utilisateur / authentification",
-    price: 400,
+    price: 500,
   },
   {
     id: "third-party-integration",
@@ -95,12 +95,12 @@ const featureOptions = [
 const pricingModel = {
   siteType: {
     vitrine: 350,
-    ecommerce: 800,
-    webapp: 2000,
+    ecommerce: 1200,
+    webapp: 2500,
   },
   designType: {
     template: 200,
-    custom: 500,
+    custom: 800,
   },
   features: featureOptions.reduce((acc, feature) => {
     acc[feature.id] = feature.price;
@@ -194,45 +194,45 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
   }) as ReturnType<typeof useForm<FormValues>>;
 
   const formValues = useWatch({ control: form.control }) as FormValues;
-  const isFirstRunRef = React.useRef(true);
-  const lastSerializedRef = React.useRef<string | null>(null);
+  const lastNotifiedSerializedRef = React.useRef<string | null>(null);
 
-  // Use a controlled approach to call the parent callback only when needed
+  const onFormChangeRef = React.useRef<typeof onFormChange | undefined>(onFormChange);
   React.useEffect(() => {
-    if (!onFormChange) return;
+    onFormChangeRef.current = onFormChange;
+  }, [onFormChange]);
 
-    const serialized = serializeRelevant(formValues);
-    
-    if (isFirstRunRef.current) {
-      isFirstRunRef.current = false;
-      lastSerializedRef.current = serialized;
-      return;
-    }
+  // Initialise la notif à l'état courant sans appeler le parent
+  React.useEffect(() => {
+    lastNotifiedSerializedRef.current = serializeRelevant(form.getValues() as FormValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    if (lastSerializedRef.current === serialized) {
-      return;
-    }
+  // Notification parent coalescée pour éviter les re-montages rapides (Radix refs)
+  const notifyTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingPartialRef = React.useRef<Partial<FormValues> | null>(null);
 
-    lastSerializedRef.current = serialized;
-    
-    try {
-      onFormChange(formValues);
-    } catch (err) {
-      console.error("[QuoteCalculator] Erreur lors de l'appel onFormChange", err);
-    }
-  }, [
-    formValues.siteType,
-    formValues.designType,
-    formValues.features,
-    formValues.maintenance,
-    formValues.name,
-    formValues.email,
-    formValues.company,
-    formValues.phone,
-    formValues.technology,
-    formValues.projectDescription,
-    onFormChange
-  ]);
+  function notifyParent(partial?: Partial<FormValues>) {
+    pendingPartialRef.current = { ...(pendingPartialRef.current || {}), ...(partial || {}) };
+    if (notifyTimerRef.current) return;
+    notifyTimerRef.current = setTimeout(() => {
+      const partialToApply = pendingPartialRef.current || {};
+      pendingPartialRef.current = null;
+      notifyTimerRef.current = null;
+
+      if (!onFormChangeRef.current) return;
+      const current = form.getValues() as FormValues;
+      const next = { ...current, ...partialToApply } as FormValues;
+      const serialized = serializeRelevant(next);
+      if (lastNotifiedSerializedRef.current === serialized) return;
+      lastNotifiedSerializedRef.current = serialized;
+      try {
+        onFormChangeRef.current(next);
+      } catch (err) {
+        console.error("[QuoteCalculator] Erreur lors de l'appel onFormChange", err);
+      }
+    }, 0);
+  }
+
   const onSubmit = (data: FormValues) => {
     const devisData = {
       siteType: data.siteType,
@@ -440,38 +440,39 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
           )}
         />
 
-        <FormField control={form.control} name="features" render={({ field }) => {
-          return (
-            <FormItem>
-              <div className="mb-4">
-                <FormLabel className="text-lg font-semibold">3. Fonctionnalités additionnelles</FormLabel>
-                <FormDescription>Cochez toutes les fonctionnalités que vous souhaitez intégrer.</FormDescription>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {featureOptions.map((item) => {
-                  // Use formValues from useWatch instead of form.getValues() to avoid re-render loops
-                  const forcedIncluded = formValues.siteType === "webapp" && item.id === "user-accounts";
-                  const displayPrice = forcedIncluded ? 0 : item.price;
-                  const info = forcedIncluded ? "(inclus d'office)" : "";
-                  const isChecked = field.value?.includes(item.id) || forcedIncluded;
-                  
-                  return (
-                    <div key={item.id} className={cn("flex flex-row items-start space-x-3 space-y-0 border rounded-md p-4 cursor-pointer hover:shadow-md transition-all duration-200", isChecked ? "border-primary bg-primary/5" : "border-border")} onClick={() => {
-                      if (forcedIncluded) return;
-                      const currentFeatures = field.value || [];
-                      const isCurrentlyChecked = currentFeatures.includes(item.id);
-                      if (isCurrentlyChecked) {
-                        // Remove the feature
-                        field.onChange(currentFeatures.filter((value) => value !== item.id));
-                      } else {
-                        // Add the feature
-                        field.onChange([...currentFeatures, item.id]);
-                      }
-                    }}>
+        <FormField control={form.control} name="features" render={() => (
+          <FormItem>
+            <div className="mb-4">
+              <FormLabel className="text-lg font-semibold">3. Fonctionnalités additionnelles</FormLabel>
+              <FormDescription>Cochez toutes les fonctionnalités que vous souhaitez intégrer.</FormDescription>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {featureOptions.map((item) => {
+                // Fixed: Use formValues from useWatch instead of form.getValues() to prevent infinite re-renders
+                const forcedIncluded = formValues.siteType === "webapp" && item.id === "user-accounts";
+                const displayPrice = forcedIncluded ? 0 : item.price;
+                const info = forcedIncluded ? "(inclus d'office)" : "";
+                
+                return (
+                  <FormField key={item.id} control={form.control} name="features" render={({ field }) => (
+                    <FormItem key={item.id} className={cn("flex flex-row items-center space-x-3 border rounded-md p-4 hover:shadow-md transition-all duration-200 space-y-0", (field.value?.includes(item.id) || forcedIncluded) ? "border-primary bg-primary/5" : "border-border")}>
                       <FormControl>
-                        <Checkbox checked={isChecked} disabled={forcedIncluded} className="pointer-events-none" />
+                        <Checkbox
+                          checked={field.value?.includes(item.id) || forcedIncluded}
+                          onCheckedChange={(checked) => {
+                            if (forcedIncluded) return;
+                            const isChecked = !!checked;
+                            const current = field.value || [];
+                            const nextFeatures = isChecked
+                              ? Array.from(new Set([...(current as string[]), item.id]))
+                              : (current as string[]).filter((v) => v !== item.id);
+                            field.onChange(nextFeatures);
+                            notifyParent({ features: nextFeatures });
+                          }}
+                          disabled={forcedIncluded}
+                        />
                       </FormControl>
-                      <div className="font-normal w-full cursor-pointer">
+                      <div className="font-normal w-full mt-0">
                         <div className="flex justify-between items-start">
                           <span>{item.label}</span>
                           <span className="text-muted-foreground text-right ml-4">
@@ -480,14 +481,13 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
                           </span>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <FormMessage />
-            </FormItem>
-          );
-        }} />
+                    </FormItem>
+                  )} /> );
+              })}
+            </div>
+            <FormMessage />
+          </FormItem>
+        )} />
 
         <FormField control={form.control} name="maintenance" render={({ field }) => (
           <FormItem className="space-y-3">

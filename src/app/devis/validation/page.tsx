@@ -581,7 +581,7 @@ function DevisValidationContent() {
                   </div>
                 )}
 
-                {devisData.maintenance && devisData.maintenance !== 'none' && (
+                {devisData.maintenance && (
                   <div style={{ 
                     backgroundColor: '#ecfdf5',
                     padding: '12px',
@@ -591,7 +591,7 @@ function DevisValidationContent() {
                     <p style={{ margin: '0', fontSize: '13px' }}>
                       <strong style={{ color: '#059669' }}>🔧 Maintenance & Hebergement :</strong><br />
                       <span style={{ fontSize: '14px', color: '#1a1a1a' }}>
-                        {devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : '100 EUR HT / an'}
+                        Inclus (49 EUR HT / mois)
                       </span>
                     </p>
                   </div>
@@ -735,7 +735,7 @@ function DevisValidationContent() {
                     </span>
                   </div>
                   
-                  {devisData.maintenance && devisData.maintenance !== 'none' && (
+                  {devisData.maintenance && (
                     <div style={{ 
                       display: 'flex', 
                       justifyContent: 'space-between', 
@@ -756,7 +756,7 @@ function DevisValidationContent() {
                         padding: '4px 8px',
                         borderRadius: '4px'
                       }}>
-                        {devisData.maintenance === 'monthly' ? '10 EUR / mois' : '100 EUR / an'}
+                        49 EUR / mois
                       </span>
                     </div>
                   )}

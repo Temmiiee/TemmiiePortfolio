@@ -37,7 +37,7 @@ export default function DevisPage() {
     phone: "",
   });
 
-  const areLocalValuesEqual = useCallback((a: LocalFormValues, b: LocalFormValues) => {
+  const areLocalValuesEqual = (a: LocalFormValues, b: LocalFormValues) => {
     if (a.siteType !== b.siteType) return false;
     if (a.designType !== b.designType) return false;
     if (a.maintenance !== b.maintenance) return false;
@@ -52,7 +52,7 @@ export default function DevisPage() {
     if (fa.length !== fb.length) return false;
     for (let i = 0; i < fa.length; i++) if (fa[i] !== fb[i]) return false;
     return true;
-  }, []);
+  };
 
   const handleFormChange = useCallback((values: QuoteFormValues) => {
     const next: LocalFormValues = {
@@ -76,22 +76,22 @@ export default function DevisPage() {
       }
       return next;
     });
-  }, [areLocalValuesEqual]);
+  }, []);
 
   // Sauvegarde automatique du devis à chaque changement pertinent
   React.useEffect(() => {
     // Pricing aligné avec le Sidebar
     const pricingModel = {
-      siteType: { vitrine: 350, ecommerce: 800, webapp: 2000 },
-      designType: { template: 200, custom: 400 },
+      siteType: { vitrine: 350, ecommerce: 1200, webapp: 2500 },
+      designType: { template: 200, custom: 800 },
     } as const;
     const featureOptions = [
       { id: "blog", label: "Intégration d'un blog / système d'actualités", price: 300 },
       { id: "gallery", label: "Galerie d'images / Portfolio avancé", price: 250 },
       { id: "newsletter", label: "Système d'inscription à la newsletter", price: 150 },
-      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 200 },
+      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 450 },
       { id: "analytics", label: "Intégration et configuration d'analytics", price: 80 },
-      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 400 },
+      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 500 },
       { id: "third-party-integration", label: "Intégration de service tiers (API, etc.)", price: 400 },
       { id: "admin-panel", label: "Tableau de bord administrateur", price: 600 },
     ] as const;
@@ -150,9 +150,9 @@ export default function DevisPage() {
       { id: "blog", label: "Intégration d'un blog / système d'actualités", price: 300 },
       { id: "gallery", label: "Galerie d'images / Portfolio avancé", price: 250 },
       { id: "newsletter", label: "Système d'inscription à la newsletter", price: 150 },
-      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 200 },
+      { id: "multi-langue", label: "Configuration pour un site multilingue", price: 450 },
       { id: "analytics", label: "Intégration et configuration d'analytics", price: 80 },
-      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 400 },
+      { id: "user-accounts", label: "Espace utilisateur / authentification", price: 500 },
       { id: "third-party-integration", label: "Intégration de service tiers (API, etc.)", price: 400 },
       { id: "admin-panel", label: "Tableau de bord administrateur", price: 600 },
     ] as const;
