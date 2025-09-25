@@ -37,7 +37,7 @@ export default function DevisPage() {
     phone: "",
   });
 
-  const areLocalValuesEqual = (a: LocalFormValues, b: LocalFormValues) => {
+  const areLocalValuesEqual = useCallback((a: LocalFormValues, b: LocalFormValues) => {
     if (a.siteType !== b.siteType) return false;
     if (a.designType !== b.designType) return false;
     if (a.maintenance !== b.maintenance) return false;
@@ -52,7 +52,7 @@ export default function DevisPage() {
     if (fa.length !== fb.length) return false;
     for (let i = 0; i < fa.length; i++) if (fa[i] !== fb[i]) return false;
     return true;
-  };
+  }, []);
 
   const handleFormChange = useCallback((values: QuoteFormValues) => {
     const maintenanceBoolean = values.maintenance !== "none";
@@ -77,7 +77,7 @@ export default function DevisPage() {
       }
       return next;
     });
-  }, []);
+  }, [areLocalValuesEqual]);
 
   // Fonction de validation: construit les données, les enregistre et redirige
   const handleValidate = () => {

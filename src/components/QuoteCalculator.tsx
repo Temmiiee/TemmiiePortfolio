@@ -404,7 +404,7 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
           )}
         />
 
-        <FormField control={form.control} name="features" render={() => (
+        <FormField control={form.control} name="features" render={({ field }) => (
           <FormItem>
             <div className="mb-4">
               <FormLabel className="text-lg font-semibold">3. Fonctionnalités additionnelles</FormLabel>
@@ -412,32 +412,39 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {featureOptions.map((item) => {
-                // Fixed: Use formValues from useWatch instead of form.getValues() to prevent infinite re-renders
-                const forcedIncluded = formValues.siteType === "webapp" && item.id === "user-accounts";
+                // Use field.value for checking features instead of formValues to prevent re-render loops
+                const siteType = form.getValues("siteType");
+                const forcedIncluded = siteType === "webapp" && item.id === "user-accounts";
                 const displayPrice = forcedIncluded ? 0 : item.price;
                 const info = forcedIncluded ? "(inclus d'office)" : "";
+                const isChecked = field.value?.includes(item.id) || forcedIncluded;
+                
+                const handleFeatureToggle = () => {
+                  if (forcedIncluded) return;
+                  const currentFeatures = field.value || [];
+                  const isCurrentlyChecked = currentFeatures.includes(item.id);
+                  const updatedFeatures = isCurrentlyChecked 
+                    ? currentFeatures.filter((value) => value !== item.id)
+                    : [...currentFeatures, item.id];
+                  field.onChange(updatedFeatures);
+                };
                 
                 return (
-                  <FormField key={item.id} control={form.control} name="features" render={({ field }) => (
-                    <FormItem key={item.id} className={cn("flex flex-row items-start space-x-3 space-y-0 border rounded-md p-4 cursor-pointer hover:shadow-md transition-all duration-200", (field.value?.includes(item.id) || forcedIncluded) ? "border-primary bg-primary/5" : "border-border")} onClick={() => {
-                      if (forcedIncluded) return;
-                      const isChecked = field.value?.includes(item.id);
-                      field.onChange(isChecked ? field.value?.filter((value) => value !== item.id) : [...(field.value || []), item.id]);
-                    }}>
-                      <FormControl>
-                        <Checkbox checked={field.value?.includes(item.id) || forcedIncluded} onCheckedChange={() => {}} disabled={forcedIncluded} className="pointer-events-none" />
-                      </FormControl>
-                      <FormLabel className="font-normal w-full cursor-pointer">
-                        <div className="flex justify-between items-start">
-                          <span>{item.label}</span>
-                          <span className="text-muted-foreground text-right ml-4">
-                            {displayPrice}€
-                            {info && (<span className="text-primary block text-xs font-semibold">{info}</span>)}
-                          </span>
-                        </div>
-                      </FormLabel>
-                    </FormItem>
-                  )} /> );
+                  <div key={item.id} className={cn("flex flex-row items-start space-x-3 space-y-0 border rounded-md p-4 cursor-pointer hover:shadow-md transition-all duration-200", isChecked ? "border-primary bg-primary/5" : "border-border")} onClick={handleFeatureToggle}>
+                    <FormControl>
+                      <Checkbox checked={isChecked} disabled={forcedIncluded} className="pointer-events-none" />
+                    </FormControl>
+                    <div className="font-normal w-full cursor-pointer">
+                      <div className="flex justify-between items-start">
+                        <span>{item.label}</span>
+                        <span className="text-muted-foreground text-right ml-4">
+                          {displayPrice}€
+                          {info && (<span className="text-primary block text-xs font-semibold">{info}</span>)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
               })}
             </div>
             <FormMessage />
