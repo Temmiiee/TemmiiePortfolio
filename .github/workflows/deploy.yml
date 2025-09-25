@@ -1,60 +1,24 @@
-name: Deploy to OVH
+name: Deploy to OVH VPS
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch: # Permet le déclenchement manuel
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production # Environnement de protection
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v0.1.9
         with:
           host: ${{ secrets.SERVER_IP }}
-          username: deploy
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          timeout: 60s
-          command_timeout: 10m
           script: |
-            set -e
-            echo "🚀 Starting deployment..."
-            
             cd /var/www/TemmiiePortfolio
-            echo "📂 Current directory: $(pwd)"
-            
-            echo "🔄 Pulling latest changes..."
-            git pull origin main
-            
-            echo "📦 Installing dependencies..."
-            npm install --production --frozen-lockfile
-            
-            echo "🔨 Building application..."
+            git fetch --all
+            git reset --hard origin/main
+            npm install
             npm run build
-            
-            echo "🔄 Restarting PM2..."
-            pm2 restart ecosystem.config.js --update-env
-            pm2 save
-            
-            echo "📊 PM2 Status:"
-            pm2 status portfolio
-            
-            echo "✅ Deployment completed successfully!"
-
-      - name: Verify deployment
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: deploy
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          timeout: 30s
-          script: |
-            # Vérifier que l'application répond
-            sleep 5
-            curl -f -s -o /dev/null https://mattheo-termine.fr || exit 1
-            echo "✅ Application is responding correctly!"
+            pm2 restart portfolio || pm2 start ecosystem.config.js
