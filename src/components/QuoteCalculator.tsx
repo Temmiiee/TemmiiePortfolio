@@ -1,5 +1,4 @@
 "use client";
-// Wrapper pour usage dans une Suspense boundary
 import { useSearchParams } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -22,10 +21,6 @@ import { Textarea } from "./ui/textarea";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// ====================================================================
-// 1. SCHÉMA DE VALIDATION ET TYPES
-// ====================================================================
-
 const formSchema = z.object({
   siteType: z.enum(
     ["vitrine", "ecommerce", "webapp"],
@@ -36,7 +31,6 @@ const formSchema = z.object({
     "Veuillez sélectionner un type de design."
   ),
   features: z.array(z.string()).optional(),
-  // MISE À JOUR : maintenance est maintenant un enum pour les options de prix
   maintenance: z.enum(["none", "monthly", "annually"]).default("none"),
   projectDescription: z.string().optional(),
   files: z.any().optional(),
@@ -58,10 +52,6 @@ export type FormValues = z.infer<typeof formSchema>;
 export interface QuoteCalculatorProps {
   onFormChange?: (values: FormValues) => void;
 }
-
-// ====================================================================
-// 2. DONNÉES DE PRIX ET OPTIONS
-// ====================================================================
 
 const featureOptions = [
   {
@@ -116,17 +106,13 @@ const pricingModel = {
     acc[feature.id] = feature.price;
     return acc;
   }, {} as Record<string, number>),
-  // NOUVEAU : Prix de maintenance mensuel et annuel
   maintenance: {
     none: 0,
-    monthly: 10, // 10€ / mois
-    annually: 100, // 100€ / an
+    monthly: 10,
+    annually: 100,
   },
 };
 
-// Removed unused areFormValuesEqual function - it was never used and contributed to code bloat
-
-// util: sérialise seulement les champs pertinents pour comparaison stable
 function serializeRelevant(v: FormValues) {
   const features = Array.isArray(v.features) ? [...v.features].sort() : [];
   return JSON.stringify({
@@ -140,13 +126,8 @@ function serializeRelevant(v: FormValues) {
     technology: v.technology,
     projectDescription: v.projectDescription ?? "",
     features,
-    // files intentionally excluded
   });
 }
-
-// ====================================================================
-// 3. COMPOSANT PRINCIPAL
-// ====================================================================
 
 export function QuoteCalculatorWrapper(
   props: Omit<QuoteCalculatorProps, "searchParams">
@@ -187,7 +168,6 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
         ? (params.designType as FormValues["designType"])
         : "template",
     features: Array.isArray(params.features) ? params.features : [],
-    // MISE À JOUR : Gestion des valeurs par défaut pour 'maintenance'
     maintenance:
       params.maintenance === "monthly" || params.maintenance === "annually"
         ? (params.maintenance as FormValues["maintenance"])
@@ -213,20 +193,16 @@ export const QuoteCalculator = React.memo(function QuoteCalculator({
     defaultValues,
   }) as ReturnType<typeof useForm<FormValues>>;
 
-  // Utiliser useWatch au lieu de form.watch pour éviter les boucles infinies
   const formValues = useWatch({ control: form.control }) as FormValues;
   const isFirstRunRef = React.useRef(true);
 
-  // stocker la dernière callback pour éviter de recréer l'effet quand la ref change
   const onFormChangeRef = React.useRef<typeof onFormChange | undefined>(onFormChange);
   React.useEffect(() => {
     onFormChangeRef.current = onFormChange;
   }, [onFormChange]);
 
-  // dernière sérialisation envoyée au parent
   const lastSerializedRef = React.useRef<string | null>(null);
 
-  // Simplified useEffect - removed form.formState dependency to prevent infinite loops
   React.useEffect(() => {
     if (!onFormChangeRef.current) {
       return;

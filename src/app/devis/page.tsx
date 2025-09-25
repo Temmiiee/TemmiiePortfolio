@@ -37,7 +37,6 @@ export default function DevisPage() {
     phone: "",
   });
 
-  // Helper: compare seulement les champs pertinents pour éviter mises à jour inutiles
   const areLocalValuesEqual = (a: LocalFormValues, b: LocalFormValues) => {
     if (a.siteType !== b.siteType) return false;
     if (a.designType !== b.designType) return false;
@@ -52,13 +51,10 @@ export default function DevisPage() {
     const fb = Array.isArray(b.features) ? [...b.features].sort() : [];
     if (fa.length !== fb.length) return false;
     for (let i = 0; i < fa.length; i++) if (fa[i] !== fb[i]) return false;
-    // on ignore files dans cette comparaison (peuvent changer souvent)
     return true;
   };
 
-  // stable callback pour éviter de re-créer la fonction à chaque rendu du parent
   const handleFormChange = useCallback((values: QuoteFormValues) => {
-    // map maintenance enum -> boolean local
     const maintenanceBoolean = values.maintenance !== "none";
     const next: LocalFormValues = {
       siteType: values.siteType,

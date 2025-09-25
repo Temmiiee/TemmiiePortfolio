@@ -55,6 +55,10 @@ Thumbs.db
 # logs
 logs
 *.log
+audit-results.json
+ts-check.log
+lint-results.log
+WORKFLOW_TRIGGER.md
 
 # runtime data
 pids
