@@ -19,7 +19,7 @@ export const config = {
 
   // Configuration des emails
   email: {
-    from: process.env.SMTP_FROM || 'noreply@mattheo-termine.fr',
+    from: process.env.SMTP_FROM || 'mattheotermine104@gmail.com', // Utiliser une adresse vérifiée
     admin: 'mattheotermine104@gmail.com',
     smtp: {
       host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
