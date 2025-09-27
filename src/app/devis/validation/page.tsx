@@ -359,16 +359,10 @@ function DevisValidationContent() {
     if (!devisData) return;
     setIsSubmitting(true);
     try {
-      console.log('=== DEBUT ENVOI DEVIS ===');
-      console.log('DevisData:', devisData);
-      console.log('DevisNumber:', devisNumber);
-      
       // Generate PDF programmatically for clean output
       const pdf = new jsPDF('p', 'mm', 'a4');
       generateDevisPDF(pdf, devisData, devisNumber);
       const pdfBlob = pdf.output('blob');
-      
-      console.log('PDF généré, taille:', pdfBlob.size, 'bytes');
       
       // Send PDF via email to provider
       const formData = new FormData();
@@ -376,50 +370,34 @@ function DevisValidationContent() {
       formData.append('devisData', JSON.stringify(devisData));
       formData.append('devisNumber', devisNumber);
       
-      console.log('FormData préparée, envoi vers API...');
-      
       const response = await fetch('/api/send-devis', {
         method: 'POST',
         body: formData,
       });
       
-      console.log('Réponse reçue - Status:', response.status, 'StatusText:', response.statusText);
-      
       // Lire la réponse même en cas d'erreur pour debug
       let responseData;
       try {
         responseData = await response.json();
-        console.log('Réponse JSON:', responseData);
       } catch (jsonError) {
-        console.error('Erreur parsing JSON:', jsonError);
         const responseText = await response.text();
-        console.log('Réponse brute:', responseText);
         throw new Error(`Erreur serveur (${response.status}): ${responseText}`);
       }
       
       if (response.ok) {
-        console.log('✅ Devis envoyé avec succès');
         toast({
           title: "Succès",
           description: "Votre demande de projet a été envoyée avec succès !",
         });
         router.push('/devis/confirmation');
       } else {
-        console.error('❌ Erreur API:', responseData);
         throw new Error(responseData.error || `Erreur serveur (${response.status})`);
       }
     } catch (error) {
-      console.error('=== ERREUR ENVOI DEVIS ===');
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
-      const errorName = error instanceof Error ? error.constructor.name : 'Unknown';
-      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
-      
-      console.error('Type:', errorName);
-      console.error('Message:', errorMessage);
-      console.error('Stack:', errorStack);
       
       if (shouldLog()) {
-        console.error('Erreur complète:', error);
+        console.error('Erreur envoi devis:', error);
       }
       
       toast({

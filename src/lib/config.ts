@@ -37,10 +37,10 @@ export const config = {
   // Configuration des timeouts
   timeouts: {
     email: {
-      connection: 10000, // Réduction de 15s à 10s
-      socket: 10000,     // Réduction de 15s à 10s
-      greeting: 5000,    // Réduction de 10s à 5s
-      retries: 1,
+      connection: 30000,
+      socket: 30000,
+      greeting: 10000,
+      retries: 2,
     },
   },
 
