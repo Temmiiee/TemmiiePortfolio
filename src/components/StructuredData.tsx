@@ -10,7 +10,7 @@ export function StructuredData() {
       "Spécialiste en création de sites web modernes, accessibles (normes RGAA) et optimisés SEO. Expert en Next.js, React, WordPress et développement web sur mesure.",
     url: "https://mattheo-termine.fr",
     image: "https://mattheo-termine.fr/images/mattheo-termine-photo.png",
-    email: "contact@mattheo-termine.fr",
+    email: "mattheotermine104@gmail.com",
     sameAs: [
       "https://github.com/Temmiiee",
       "https://linkedin.com/in/mattheo-termine", // Replace with actual LinkedIn
@@ -65,7 +65,7 @@ export function StructuredData() {
     url: "https://mattheo-termine.fr",
     image: "https://mattheo-termine.fr/og-image.svg",
     logo: "https://mattheo-termine.fr/icon",
-    email: "contact@mattheo-termine.fr",
+    email: "mattheotermine104@gmail.com",
     provider: {
       "@type": "Person",
       name: "Matthéo Termine",

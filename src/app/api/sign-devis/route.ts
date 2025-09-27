@@ -304,7 +304,7 @@ export async function POST(request: NextRequest) {
           </div>
 
           <div class="footer">
-            <p>contact@mattheo-termine.fr | www.mattheo-termine.fr</p>
+            <p>mattheotermine104@gmail.com | www.mattheo-termine.fr</p>
             <p>Signature horodatée: ${new Date(signedAt).toISOString()}</p>
           </div>
         </div>

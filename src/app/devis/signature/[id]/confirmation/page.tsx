@@ -141,7 +141,7 @@ export default function SignatureConfirmationPage() {
           </Button>
           
           <Button size="lg" asChild>
-            <Link href={`mailto:contact@mattheo-termine.fr?subject=Devis%20%23${devisId}%20-%20Question`}>
+            <Link href={`mailto:mattheotermine104@gmail.com?subject=Devis%20%23${devisId}%20-%20Question`}>
               <Mail className="mr-2 h-5 w-5" />
               Contacter Matthéo
             </Link>
@@ -152,10 +152,10 @@ export default function SignatureConfirmationPage() {
           <p className="text-sm text-foreground/60">
             Une question sur votre projet ? N&apos;hésitez pas à contacter Matthéo directement à{' '}
             <a 
-              href="mailto:contact@mattheo-termine.fr" 
+              href="mailto:mattheotermine104@gmail.com" 
               className="text-primary hover:underline"
             >
-              contact@mattheo-termine.fr
+              mattheotermine104@gmail.com
             </a>
           </p>
         </div>

@@ -148,8 +148,8 @@ export default function PolitiqueConfidentialite() {
             </ul>
             <p>
               Pour exercer vos droits, contactez-nous à : 
-              <a href="mailto:contact@mattheo-termine.fr" className="text-primary hover:underline ml-1">
-                contact@mattheo-termine.fr
+              <a href="mailto:mattheotermine104@gmail.com" className="text-primary hover:underline ml-1">
+                mattheotermine104@gmail.com
               </a>
             </p>
           </section>
@@ -172,7 +172,7 @@ export default function PolitiqueConfidentialite() {
             <div className="bg-muted p-4 rounded-lg mt-4">
               <p><strong>Matthéo Termine</strong></p>
               <p>Intégrateur Web Freelance</p>
-              <p>Email : contact@mattheo-termine.fr</p>
+              <p>Email : mattheotermine104@gmail.com</p>
             </div>
             <p className="mt-4">
               Vous avez également le droit de déposer une plainte auprès de la CNIL 

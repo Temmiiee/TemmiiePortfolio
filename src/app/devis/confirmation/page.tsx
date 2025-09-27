@@ -110,7 +110,7 @@ export default function DevisConfirmationPage() {
           </Button>
           
           <Button size="lg" asChild>
-            <Link href="mailto:contact@mattheo-termine.fr?subject=Devis%20%23{devisNumber}">
+            <Link href="mailto:mattheotermine104@gmail.com?subject=Devis%20%23{devisNumber}">
               <Mail className="mr-2 h-5 w-5" />
               Contacter directement
             </Link>
@@ -121,10 +121,10 @@ export default function DevisConfirmationPage() {
           <p className="text-sm text-foreground/60">
             Une question ? N&apos;hésitez pas à contacter Matthéo directement à{' '}
             <a 
-              href="mailto:contact@mattheo-termine.fr" 
+              href="mailto:mattheotermine104@gmail.com" 
               className="text-primary hover:underline"
             >
-              contact@mattheo-termine.fr
+              mattheotermine104@gmail.com
             </a>
           </p>
         </div>

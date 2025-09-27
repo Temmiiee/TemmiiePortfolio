@@ -4,7 +4,7 @@ export const config = {
   company: {
     name: 'Matthéo Termine',
     email: 'mattheotermine104@gmail.com',
-    contactEmail: 'contact@mattheo-termine.fr',
+    contactEmail: 'mattheotermine104@gmail.com', // Changé vers l'adresse qui fonctionne
     website: 'www.mattheo-termine.fr',
     title: 'Développeur Web Freelance',
     siret: '991 804 493 00013',

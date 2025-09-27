@@ -302,7 +302,7 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   // Footer (remonter légèrement pour éviter d'être trop bas sur la page)
   pdf.setFontSize(8);
   pdf.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
-  writeText('contact@mattheo-termine.fr | https://mattheo-termine.fr', margin, pageHeight - 16);
+  writeText('mattheotermine104@gmail.com | https://mattheo-termine.fr', margin, pageHeight - 16);
 }
 
 // Round numbers to the nearest 10 (e.g., 1374 -> 1370, 3206 -> 3210)
@@ -471,7 +471,7 @@ function DevisValidationContent() {
                   <p style={{ margin: '2px 0', color: '#fff', fontWeight: '500' }}>Matthéo Termine</p>
                   <p style={{ margin: '2px 0', color: '#fff' }}>Intégrateur Web Freelance</p>
                   <p style={{ margin: '2px 0', color: '#fff' }}>SIRET: 991 804 493 00013</p>
-                  <p style={{ margin: '2px 0', color: '#fff' }}>📧 contact@mattheo-termine.fr</p>
+                  <p style={{ margin: '2px 0', color: '#fff' }}>📧 mattheotermine104@gmail.com</p>
                   <p style={{ margin: '2px 0', color: '#fff' }}>🌐 https://mattheo-termine.fr</p>
                 </div>
               </div>
