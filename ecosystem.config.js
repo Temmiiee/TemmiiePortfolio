@@ -15,8 +15,14 @@ module.exports = {
       NODE_ENV: 'production',
       PORT: 3000,
       NEXT_PUBLIC_BASE_URL: 'https://mattheo-termine.fr',
-
       TZ: 'Europe/Paris',
+      SMTP_HOST: process.env.SMTP_HOST || 'smtp.gmail.com',
+      SMTP_PORT: process.env.SMTP_PORT || '587',
+      SMTP_USER: process.env.SMTP_USER,
+      SMTP_PASS: process.env.SMTP_PASS,
+      SMTP_FROM: process.env.SMTP_FROM,
+      GOOGLE_SITE_VERIFICATION: process.env.GOOGLE_SITE_VERIFICATION,
+      NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID || 'G-B54DKYN6DV',
     },
 
     error_file: '/home/deploy/logs/portfolio-error.log',

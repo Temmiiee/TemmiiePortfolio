@@ -146,7 +146,8 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   }
 
   if (devisData.maintenance && devisData.maintenance !== 'none') {
-    const maintenanceText = devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : '100 EUR HT / an';
+    const maintenanceText = devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : 
+                           devisData.maintenance === 'annually' ? '100 EUR HT / an' : '';
     writeText(`Maintenance & Hébergement: ${maintenanceText}`, margin + 5, currentY + 26);
   } else {
     // When no maintenance selected, indicate hosting installation is offered
@@ -217,7 +218,8 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   });
 
   if (devisData.maintenance && devisData.maintenance !== 'none') {
-    const mText = devisData.maintenance === 'monthly' ? '10 EUR HT mensuel' : '100 EUR HT annuel';
+    const mText = devisData.maintenance === 'monthly' ? '10 EUR HT mensuel' : 
+                  devisData.maintenance === 'annually' ? '100 EUR HT annuel' : '';
   writeText(`\u2022 Maintenance technique et hébergement (${mText})`, margin + 5, currentY);
     currentY += 6;
   } else {
@@ -264,7 +266,8 @@ function generateDevisPDF(pdf: jsPDF, devisData: DevisData, devisNumber: string)
   currentY += 8;
 
   if (devisData.maintenance && devisData.maintenance !== 'none') {
-    const maintenanceText = devisData.maintenance === 'monthly' ? 'mensuelle (10 EUR HT / mois)' : 'annuelle (100 EUR HT / an)';
+    const maintenanceText = devisData.maintenance === 'monthly' ? 'mensuelle (10 EUR HT / mois)' : 
+                           devisData.maintenance === 'annually' ? 'annuelle (100 EUR HT / an)' : '';
   writeText(`\u2022 Maintenance: facturation ${maintenanceText}`, margin + 5, currentY);
     currentY += 8;
   }
@@ -670,7 +673,8 @@ function DevisValidationContent() {
                     <p style={{ margin: '0', fontSize: '13px' }}>
                       <strong style={{ color: '#059669' }}>🔧 Maintenance & Hébergement :</strong><br />
                       <span style={{ fontSize: '14px', color: '#1a1a1a' }}>
-                        {devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : '100 EUR HT / an'}
+                        {devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : 
+                         devisData.maintenance === 'annually' ? '100 EUR HT / an' : ''}
                       </span>
                     </p>
                   </div>
@@ -706,7 +710,7 @@ function DevisValidationContent() {
                   <li style={{ margin: '8px 0' }}> - Optimisation responsive (mobile et tablette)</li>
                   <li style={{ margin: '8px 0' }}> - Mise en conformité RGPD (base)</li>
                   {devisData.maintenance && devisData.maintenance !== 'none' && (
-                    <li style={{ margin: '8px 0' }}> - Maintenance technique et hébergement ({devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : '100 EUR HT / an'})</li>
+                    <li style={{ margin: '8px 0' }}> - Maintenance technique et hébergement ({devisData.maintenance === 'monthly' ? '10 EUR HT / mois' : devisData.maintenance === 'annually' ? '100 EUR HT / an' : ''})</li>
                   )}
                 </ul>
               </div>
@@ -771,8 +775,8 @@ function DevisValidationContent() {
                       {devisData.total} EUR
                     </span>
                   </div>
-                  
-                  {devisData.maintenance && (
+
+                  {devisData.maintenance !== 'none' && (
                     <div style={{ 
                       display: 'flex', 
                       justifyContent: 'space-between', 
@@ -793,7 +797,8 @@ function DevisValidationContent() {
                         padding: '4px 8px',
                         borderRadius: '4px'
                       }}>
-                        {devisData.maintenance === 'monthly' ? '10 EUR / mois' : '100 EUR / an'}
+                        {devisData.maintenance === 'monthly' ? '10 EUR / mois' : 
+                         devisData.maintenance === 'annually' ? '100 EUR / an' : ''}
                       </span>
                     </div>
                   )}
@@ -845,7 +850,7 @@ function DevisValidationContent() {
                     </p>
                   </div>
                 </div>
-                {devisData.maintenance && (
+                {devisData.maintenance !== 'none' && (
                   <div style={{ 
                     marginTop: '12px',
                     backgroundColor: '#ffffff',
@@ -853,9 +858,6 @@ function DevisValidationContent() {
                     borderRadius: '6px',
                     border: '1px solid #eab308'
                   }}>
-                    <p style={{ margin: '0', fontSize: '13px', fontWeight: '600', color: '#92400e' }}>
-                      🔄 Maintenance : facturation mensuelle ou annuelle selon convenance
-                    </p>
                   </div>
                 )}
               </div>
