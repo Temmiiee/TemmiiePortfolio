@@ -428,58 +428,47 @@ const AboutSection = () => {
 };
 
 const HeroSection = () => {
-  // États initialisés pour correspondre au rendu serveur (tous visibles)
-  const [isMounted, setIsMounted] = useState(false);
-  const [nameVisible, setNameVisible] = useState(true); // Changé de false à true
-  const [titleVisible, setTitleVisible] = useState(true); // Changé de false à true
-  const [subtitleVisible, setSubtitleVisible] = useState(true); // Changé de false à true
-  const [descriptionVisible, setDescriptionVisible] = useState(true); // Changé de false à true
-  const [buttonsVisible, setButtonsVisible] = useState(true); // Changé de false à true
-  const [typingText, setTypingText] = useState("Intégrateur web"); // Texte complet par défaut
-  const [showCursor, setShowCursor] = useState(false); // Pas de curseur par défaut
+  const [animationStep, setAnimationStep] = useState(0);
+  const [typingText, setTypingText] = useState("");
+  const [showCursor, setShowCursor] = useState(false);
 
-  const fullText = "Intégrateur web";
+  const fullText = "Intégrateur web freelance";
 
   useEffect(() => {
-    setIsMounted(true);
-
-    // Reset les états pour l'animation côté client uniquement
-    setNameVisible(false);
-    setTitleVisible(false);
-    setSubtitleVisible(false);
-    setDescriptionVisible(false);
-    setButtonsVisible(false);
-    setTypingText("");
-    setShowCursor(true);
-
-    const timers = [
-      setTimeout(() => setNameVisible(true), 200),
-      setTimeout(() => setTitleVisible(true), 800),
-      setTimeout(() => setSubtitleVisible(true), 2000),
-      setTimeout(() => setDescriptionVisible(true), 2400),
-      setTimeout(() => setButtonsVisible(true), 2800),
+    // Smooth startup animation sequence
+    const animationSequence = [
+      () => setAnimationStep(1), // Name appears
+      () => setAnimationStep(2), // Subtitle starts
+      () => setAnimationStep(3), // Description appears
+      () => setAnimationStep(4), // Button appears
     ];
+
+    const timers = animationSequence.map(
+      (fn, index) => setTimeout(fn, (index + 1) * 500) // Smoother timing
+    );
 
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  // Animation de typing pour le sous-titre
+  // Smooth typing animation
   useEffect(() => {
-    if (!isMounted || !titleVisible) return;
+    if (animationStep < 2) return;
 
+    setShowCursor(true);
     let currentIndex = 0;
+
     const typingInterval = setInterval(() => {
       if (currentIndex <= fullText.length) {
         setTypingText(fullText.slice(0, currentIndex));
         currentIndex++;
       } else {
         clearInterval(typingInterval);
-        setTimeout(() => setShowCursor(false), 1000);
+        setTimeout(() => setShowCursor(false), 1500);
       }
-    }, 80);
+    }, 60); // Faster typing
 
     return () => clearInterval(typingInterval);
-  }, [titleVisible, fullText, isMounted]);
+  }, [animationStep, fullText]);
 
   return (
     <section
@@ -495,43 +484,28 @@ const HeroSection = () => {
         className="container mx-auto px-4 text-center relative z-10"
         suppressHydrationWarning
       >
-        {/* Nom principal avec animation */}
+        {/* Nom principal avec animation fluide */}
         <h1
           id="hero-title"
-          className="text-5xl md:text-7xl lg:text-8xl font-bold mb-4 text-foreground drop-shadow-2xl whitespace-nowrap"
-          suppressHydrationWarning
-          style={{
-            opacity: isMounted ? (nameVisible ? 1 : 0) : 1,
-            transform: isMounted
-              ? nameVisible
-                ? "translateY(0px)"
-                : "translateY(32px)"
-              : "translateY(0px)",
-            transitionProperty: "all",
-            transitionDuration: "1000ms",
-            transitionTimingFunction: "ease-out",
-          }}
+          className={cn(
+            "text-5xl md:text-7xl lg:text-8xl font-bold mb-4 text-foreground drop-shadow-2xl whitespace-nowrap transition-all duration-1000 ease-out",
+            animationStep >= 1
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-8"
+          )}
         >
-          <span
-            className="hero-title-enhanced inline-block"
-            suppressHydrationWarning
-          >
+          <span className="hero-title-enhanced inline-block">
             {"Matthéo\u00A0Termine".split("").map((char, index) => (
               <span
                 key={`name-${index}`}
-                className="inline-block"
-                suppressHydrationWarning
+                className={cn(
+                  "inline-block transition-all duration-700 ease-out",
+                  animationStep >= 1
+                    ? "opacity-100 translate-y-0 rotate-0"
+                    : "opacity-0 translate-y-12 rotate-12"
+                )}
                 style={{
-                  opacity: isMounted ? (nameVisible ? 1 : 0) : 1,
-                  transform: isMounted
-                    ? nameVisible
-                      ? "translateY(0px) rotate(0deg)"
-                      : "translateY(48px) rotate(12deg)"
-                    : "translateY(0px) rotate(0deg)",
-                  transitionProperty: "all",
-                  transitionDuration: "700ms",
-                  transitionTimingFunction: "ease-out",
-                  transitionDelay: `${index * 80 + 200}ms`,
+                  transitionDelay: `${index * 50 + 100}ms`,
                 }}
               >
                 {char === " " ? "\u00A0" : char}
@@ -540,47 +514,35 @@ const HeroSection = () => {
           </span>
         </h1>
 
-        {/* Sous-titre avec effet de typing */}
+        {/* Sous-titre avec effet de typing amélioré */}
         <div
-          className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 flex items-center justify-center"
-          suppressHydrationWarning
-          style={{
-            opacity: isMounted ? (titleVisible ? 1 : 0) : 1,
-            transform: isMounted
-              ? titleVisible
-                ? "translateY(0px)"
-                : "translateY(24px)"
-              : "translateY(0px)",
-            transitionProperty: "all",
-            transitionDuration: "800ms",
-            transitionTimingFunction: "ease-out",
-          }}
+          className={cn(
+            "text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 flex items-center justify-center transition-all duration-800 ease-out",
+            animationStep >= 2
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-6"
+          )}
         >
-          <span
-            className="text-primary whitespace-nowrap"
-            suppressHydrationWarning
-          >
+          <span className="text-primary whitespace-nowrap">
             {typingText.replace(/\s/g, "\u00A0")}
-            {showCursor && <span className="animate-pulse">|</span>}
+            {showCursor && (
+              <span className="animate-pulse text-primary">|</span>
+            )}
           </span>
         </div>
 
-        {/* Description */}
+        {/* Description principale */}
         <p
-          className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed px-4"
-          suppressHydrationWarning
+          className={cn(
+            "text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed px-4 transition-all duration-800 ease-out",
+            animationStep >= 3
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-6"
+          )}
           style={{
-            opacity: isMounted ? (subtitleVisible ? 1 : 0) : 1,
-            transform: isMounted
-              ? subtitleVisible
-                ? "translateY(0px)"
-                : "translateY(24px)"
-              : "translateY(0px)",
-            transitionProperty: "all",
-            transitionDuration: "800ms",
-            transitionTimingFunction: "ease-out",
             wordBreak: "keep-all",
             overflowWrap: "break-word",
+            transitionDelay: "200ms",
           }}
         >
           Création de sites&nbsp;web modernes, performants et&nbsp;accessibles
@@ -589,41 +551,31 @@ const HeroSection = () => {
 
         {/* Sous-description */}
         <p
-          className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed px-4"
-          suppressHydrationWarning
+          className={cn(
+            "text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed px-4 transition-all duration-800 ease-out",
+            animationStep >= 3
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-6"
+          )}
           style={{
-            opacity: isMounted ? (descriptionVisible ? 1 : 0) : 1,
-            transform: isMounted
-              ? descriptionVisible
-                ? "translateY(0px)"
-                : "translateY(24px)"
-              : "translateY(0px)",
-            transitionProperty: "all",
-            transitionDuration: "800ms",
-            transitionTimingFunction: "ease-out",
             wordBreak: "keep-all",
             overflowWrap: "break-word",
+            transitionDelay: "400ms",
           }}
         >
-          Spécialisé dans le&nbsp;développement web&nbsp;sur‑mesure, je souhaite
-          accompagner les&nbsp;entreprises et&nbsp;particuliers dans
+          Spécialisé dans le&nbsp;développement web&nbsp;sur‑mesure,
+          j&apos;accompagne les&nbsp;entreprises et&nbsp;particuliers dans
           la&nbsp;création de&nbsp;leur identité&nbsp;numérique.
         </p>
 
         <div
-          className="flex justify-center px-4 will-change-transform"
-          suppressHydrationWarning
-          style={{
-            opacity: isMounted ? (buttonsVisible ? 1 : 0) : 1,
-            transform: isMounted
-              ? buttonsVisible
-                ? "translateY(0px)"
-                : "translateY(24px)"
-              : "translateY(0px)",
-            transitionProperty: "all",
-            transitionDuration: "800ms",
-            transitionTimingFunction: "ease-out",
-          }}
+          className={cn(
+            "flex justify-center px-4 transition-all duration-800 ease-out",
+            animationStep >= 4
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-6"
+          )}
+          style={{ transitionDelay: "600ms" }}
         >
           {/* BOUTON DEVIS TEMPORAIREMENT MASQUÉ */}
           {/*

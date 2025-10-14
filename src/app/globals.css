@@ -588,4 +588,87 @@ img {
   .animate-slow-bounce {
     display: none !important;
   }
+}/* =======
+======================================================================
+   STARTUP ANIMATION IMPROVEMENTS
+   ============================================================================= */
+
+/* Ensure smooth startup with no flash */
+html:not(.theme-loaded) {
+  background-color: #0a0a1a !important;
+  color: #e2e8f0 !important;
+}
+
+/* Smooth body fade-in */
+body {
+  opacity: 0;
+  animation: smoothFadeIn 0.5s ease-out 0.1s forwards;
+}
+
+@keyframes smoothFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Hero section startup animations */
+.hero-section {
+  /* Ensure proper stacking and smooth rendering */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Improved animation performance */
+.hero-title-enhanced span {
+  will-change: transform, opacity;
+}
+
+/* Prevent layout shift during animations */
+.hero-section h1,
+.hero-section div,
+.hero-section p {
+  min-height: fit-content;
+}
+
+/* Smooth typing cursor */
+.animate-pulse {
+  animation: smoothPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes smoothPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Ensure dark mode elements are properly styled from start */
+html.dark {
+  background-color: #0a0a1a !important;
+  color-scheme: dark !important;
+}
+
+html.dark body {
+  background: linear-gradient(
+    to bottom,
+    #0a0a1a 0%,
+    #0f0f23 30%,
+    #1a1a2e 60%,
+    #0d1117 100%
+  ) !important;
+}
+
+/* Prevent any white flash on navigation */
+html.dark .hero-section {
+  background: transparent !important;
+}
+
+/* Optimize animations for better performance */
+@media (prefers-reduced-motion: no-preference) {
+  .transition-all {
+    transition-property: opacity, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }

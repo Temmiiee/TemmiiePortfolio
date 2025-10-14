@@ -158,7 +158,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={cn(ptSans.variable, spaceGrotesk.variable, "scroll-smooth")}
+      className={cn(ptSans.variable, spaceGrotesk.variable, "scroll-smooth dark")}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
@@ -208,29 +208,38 @@ export default function RootLayout({
             __html: `
             (function() {
               try {
-                // Production-ready theme initialization with dark mode as default
-                var theme = localStorage.getItem('theme');
-                var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                // BULLETPROOF dark mode as default - executed immediately
                 var html = document.documentElement;
+                var theme = null;
                 
-                // Default to dark mode for new users
+                try {
+                  theme = localStorage.getItem('theme');
+                } catch (e) {
+                  // localStorage might not be available
+                }
+                
+                // ALWAYS start with dark mode
+                html.classList.add('dark');
+                html.style.backgroundColor = '#0a0a1a';
+                html.style.colorScheme = 'dark';
+                
+                // Only switch to light if explicitly requested
                 if (theme === 'light') {
                   html.classList.remove('dark');
                   html.style.backgroundColor = '#ffffff';
-                } else {
-                  // Dark mode for: explicit dark, system dark, or no preference (new users)
-                  html.classList.add('dark');
-                  html.style.backgroundColor = '#0a0a1a';
+                  html.style.colorScheme = 'light';
                 }
                 
-                // Mark as loaded to prevent flash
-                html.classList.add('dark-loaded');
+                // Prevent any flash
+                html.classList.add('theme-loaded');
                 
               } catch (e) {
-                // Bulletproof fallback - always default to dark mode
-                document.documentElement.classList.add('dark');
-                document.documentElement.style.backgroundColor = '#0a0a1a';
-                document.documentElement.classList.add('dark-loaded');
+                // Ultimate fallback - ALWAYS dark mode
+                var html = document.documentElement;
+                html.classList.add('dark');
+                html.style.backgroundColor = '#0a0a1a';
+                html.style.colorScheme = 'dark';
+                html.classList.add('theme-loaded');
               }
             })();
           `,
