@@ -1,6 +1,6 @@
 // Production Service Worker for Matthéo Termine Portfolio
-const CACHE_NAME = 'mattheo-termine-v2';
-const STATIC_CACHE = 'static-v2';
+const CACHE_NAME = 'mattheo-termine-v3';
+const STATIC_CACHE = 'static-v3';
 
 // Only cache truly static assets - NOT Next.js chunks
 const urlsToCache = [
@@ -43,69 +43,92 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - Network first strategy with proper error handling
+// Fetch event - Minimal intervention strategy
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
+  
+  try {
+    const url = new URL(request.url);
 
-  // Skip cross-origin requests
-  if (url.origin !== location.origin) {
-    return;
-  }
+    // Skip cross-origin requests - let browser handle them
+    if (url.origin !== location.origin) {
+      return;
+    }
 
-  // Skip Next.js internal requests and chunks
-  if (
-    url.pathname.startsWith('/_next/') ||
-    url.pathname.includes('hot-update') ||
-    url.pathname.includes('webpack')
-  ) {
-    // Let Next.js handle its own resources - don't cache or intercept
-    return;
-  }
+    // CRITICAL: Don't intercept Next.js chunks, JS, CSS, or API routes
+    // Let the browser handle these directly without SW intervention
+    if (
+      url.pathname.startsWith('/_next/') ||
+      url.pathname.startsWith('/api/') ||
+      url.pathname.includes('hot-update') ||
+      url.pathname.includes('webpack') ||
+      url.pathname.endsWith('.js') ||
+      url.pathname.endsWith('.css') ||
+      url.pathname.endsWith('.map')
+    ) {
+      // Don't intercept at all - let browser fetch normally
+      return;
+    }
 
-  // Network-first strategy for everything else
-  event.respondWith(
-    fetch(request)
-      .then((response) => {
-        // Only cache successful responses
-        if (response && response.status === 200) {
-          // Clone the response before caching
-          const responseToCache = response.clone();
-          
-          // Only cache GET requests for static assets
-          if (request.method === 'GET' && 
-              (url.pathname.match(/\.(png|jpg|jpeg|svg|gif|ico|pdf|woff|woff2)$/) || 
-               url.pathname === '/')) {
-            caches.open(STATIC_CACHE).then((cache) => {
-              cache.put(request, responseToCache);
-            });
-          }
-        }
-        return response;
-      })
-      .catch((error) => {
-        // On network failure, try to serve from cache
-        return caches.match(request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          
-          // If not in cache and it's a navigation request, return cached homepage
-          if (request.mode === 'navigate') {
-            return caches.match('/').then((homeResponse) => {
-              return homeResponse || new Response('Offline - Please check your connection', {
-                status: 503,
-                statusText: 'Service Unavailable',
-                headers: new Headers({
-                  'Content-Type': 'text/plain'
-                })
+    // Only handle static assets and HTML pages
+    const isStaticAsset = url.pathname.match(/\.(png|jpg|jpeg|svg|gif|ico|pdf|woff|woff2|webp)$/);
+    const isHTMLPage = request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html');
+
+    if (!isStaticAsset && !isHTMLPage) {
+      // Don't intercept other types of requests
+      return;
+    }
+
+    // Network-first strategy for static assets and pages
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Only cache successful responses
+          if (response && response.status === 200 && request.method === 'GET') {
+            // Clone the response before caching
+            const responseToCache = response.clone();
+            
+            // Cache static assets and homepage
+            if (isStaticAsset || url.pathname === '/') {
+              caches.open(STATIC_CACHE).then((cache) => {
+                cache.put(request, responseToCache).catch(() => {
+                  // Silently fail if caching doesn't work
+                });
               });
-            });
+            }
           }
-          
-          // For other requests, throw the error
-          throw error;
-        });
-      })
-  );
+          return response;
+        })
+        .catch(() => {
+          // On network failure, try to serve from cache
+          return caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            
+            // If not in cache and it's a navigation request, return cached homepage
+            if (isHTMLPage) {
+              return caches.match('/').then((homeResponse) => {
+                return homeResponse || new Response('Offline - Please check your connection', {
+                  status: 503,
+                  statusText: 'Service Unavailable',
+                  headers: new Headers({
+                    'Content-Type': 'text/plain'
+                  })
+                });
+              });
+            }
+            
+            // For other requests, return a basic error response
+            return new Response('Network error', {
+              status: 408,
+              statusText: 'Request Timeout'
+            });
+          });
+        })
+    );
+  } catch (error) {
+    // If anything goes wrong, don't intercept the request
+    return;
+  }
 });
