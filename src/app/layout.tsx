@@ -391,11 +391,20 @@ export default function RootLayout({
                     
                     // Register the new minimal service worker after a short delay
                     setTimeout(function() {
-                      navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                        // Force update check
-                        registration.update();
+                      navigator.serviceWorker.register('/sw.js', { 
+                        updateViaCache: 'none' // Éviter les problèmes de cache
+                      }).then(function(registration) {
+                        // Vérifier les mises à jour périodiquement
+                        setInterval(function() {
+                          registration.update().catch(function() {
+                            // Ignorer les erreurs silencieusement
+                          });
+                        }, 60000); // Vérifier toutes les minutes
                       }).catch(function(error) {
-                        // Silent fail in production
+                        // Log l'erreur pour le debugging mais ne pas bloquer
+                        if (process.env.NODE_ENV === 'development') {
+                          console.error('Service Worker registration failed:', error);
+                        }
                       });
                     }, 1000);
                   });

@@ -1,33 +1,36 @@
 // Minimal Service Worker - Only for offline fallback
-// Version 4 - No caching of dynamic content
-const CACHE_NAME = 'mattheo-termine-v4';
+// Version 5 - Optimisé pour éviter les erreurs de mise à jour
+const CACHE_NAME = 'mattheo-termine-v5';
 
 // Install - skip waiting immediately
 self.addEventListener('install', (event) => {
+  // Skip waiting pour activer immédiatement le nouveau SW
   self.skipWaiting();
+  // Ne pas attendre l'installation
+  event.waitUntil(self.skipWaiting());
 });
 
 // Activate - clean up old caches and take control immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys()
-      .then((cacheNames) => {
+    Promise.all([
+      // Nettoyer les anciens caches
+      caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            // Delete all old caches
             if (cacheName !== CACHE_NAME) {
               return caches.delete(cacheName);
             }
           })
         );
+      }),
+      // Prendre le contrôle immédiatement
+      self.clients.claim().catch(() => {
+        // Ignorer les erreurs silencieusement
       })
-      .then(() => self.clients.claim())
+    ])
   );
 });
 
-// Fetch - MINIMAL intervention, only for offline support
-self.addEventListener('fetch', (event) => {
-  // Don't intercept anything - let all requests go through normally
-  // This prevents any caching issues with Next.js
-  return;
-});
+// Fetch handler removed - no-op fetch handlers cause performance overhead
+// All requests will go through normally without service worker interception
