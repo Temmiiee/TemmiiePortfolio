@@ -9,7 +9,6 @@ export function StructuredData() {
     description:
       "Spécialiste en création de sites web modernes, accessibles (normes RGAA) et optimisés SEO. Expert en Next.js, React, WordPress et développement web sur mesure.",
     url: "https://mattheo-termine.fr",
-    image: "https://mattheo-termine.fr/images/mattheo-termine-photo.png",
     email: "mattheotermine104@gmail.com",
     sameAs: [
       "https://github.com/Temmiiee",
