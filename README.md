@@ -24,7 +24,27 @@ A modern, accessible website for Matthéo Termine, a freelance web integrator sp
 - **Email:** Nodemailer
 - **PDF Generation:** jsPDF
 - **Analytics:** Google Analytics 4
-- **Deployment:** Vercel / Custom VPS
+- **Hosting:** Cloudflare Pages
+
+## 🚀 Quick Start
+
+```bash
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Open [http://localhost:9002](http://localhost:9002)
+
+## 🌐 Deployment (Cloudflare Pages)
+
+**Build settings:**
+
+- Build command: `npm run build`
+- Build output: `.next`
+- Node version: `20`
+
+**Environment variables:** See `.env.example`
 
 ## 📄 License
 
