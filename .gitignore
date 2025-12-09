@@ -122,3 +122,8 @@ eslint-report.json
 
 # Warp AI configuration
 WARP.md
+
+# Cloudflare
+.wrangler/
+wrangler.toml.local
+.dev.vars

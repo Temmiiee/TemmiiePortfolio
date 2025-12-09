@@ -1,0 +1,6 @@
+# Configuration Cloudflare Pages pour le portfolio Next.js
+name = "mattheo-termine-portfolio"
+compatibility_date = "2025-12-09"
+
+# Configuration Pages avec Next.js
+pages_build_output_dir = ".next"
