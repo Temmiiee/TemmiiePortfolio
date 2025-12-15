@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-// Commented out Google Fonts for build environment compatibility
-// import { PT_Sans, Space_Grotesk } from 'next/font/google';
+import { PT_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import "@/styles/accessibility.css";
 import { cn } from "@/lib/utils";
@@ -15,34 +14,20 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Link from "next/link";
 
-// Fallback font configuration for build environment
-const ptSans = {
-  variable: "--font-body",
-  style: { fontFamily: "system-ui, sans-serif" },
-};
-
-const spaceGrotesk = {
-  variable: "--font-space-grotesk",
-  style: { fontFamily: "system-ui, sans-serif" },
-};
-
-// Uncomment below and comment out the fallback fonts above when Google Fonts connectivity is available:
-/*
 const ptSans = PT_Sans({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-body',
-  display: 'swap',
-  fallback: ['system-ui', 'sans-serif'],
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-body",
+  display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
-  fallback: ['system-ui', 'sans-serif'],
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
-*/
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://mattheo-termine.fr"),
@@ -211,29 +196,6 @@ export default function RootLayout({
         <link rel="canonical" href="https://mattheo-termine.fr" />
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/theme-init.js" />
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-          :root {
-            --font-pt-sans: ${ptSans.style.fontFamily};
-            --font-space-grotesk: ${spaceGrotesk.style.fontFamily};
-          }
-          /* Éviter le flash de couleur incorrecte - mode sombre par défaut */
-          html {
-            background-color: #0a0a1a;
-            color-scheme: dark light;
-          }
-          html.dark {
-            background-color: #0a0a1a;
-            color-scheme: dark;
-          }
-          html:not(.dark) {
-            background-color: #ffffff;
-            color-scheme: light;
-          }
-        `,
-          }}
-        />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         <LanguageProvider>
