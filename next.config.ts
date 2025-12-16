@@ -6,9 +6,6 @@ const nextConfig: NextConfig = {
     qualities: [75, 80, 85, 90],
   },
   productionBrowserSourceMaps: false,
-  webpack: (config) => {
-    return config;
-  },
 };
 
 export default nextConfig;

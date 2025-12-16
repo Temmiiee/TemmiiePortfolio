@@ -14,7 +14,6 @@ export const config = {
   urls: {
     production: "https://mattheo-termine.fr",
     development: "http://localhost:3000",
-    admin: "/admin/devis",
   },
 
   // Configuration des emails
@@ -48,12 +47,6 @@ export const config = {
   limits: {
     maxEmailConnections: 5,
     maxEmailMessages: 100,
-  },
-
-  // Configuration des fichiers
-  files: {
-    dataDir: "data",
-    devisFile: "devis.json",
   },
 
   // Configuration Google Analytics

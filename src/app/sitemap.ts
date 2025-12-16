@@ -16,9 +16,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'yearly',
       priority: 0.5,
     },
-    // Note: Les sections #services, #projets, #tarifs, #contact sont des ancres
-    // de la page d'accueil, pas des pages séparées. Elles ne doivent pas être
-    // dans le sitemap pour éviter les erreurs "Page avec redirection" et
-    // "Autre page avec balise canonique correcte"
   ]
 }

@@ -1,6 +1,6 @@
 (function() {
   try {
-    // BULLETPROOF dark mode as default - executed immediately
+    // dark mode as default - executed immediately
     var html = document.documentElement;
     var theme = null;
     
@@ -26,7 +26,7 @@
     html.classList.add('theme-loaded');
     
   } catch (e) {
-    // Ultimate fallback - ALWAYS dark mode
+    // fallback - ALWAYS dark mode
     var html = document.documentElement;
     html.classList.add('dark');
     html.style.backgroundColor = '#0a0a1a';

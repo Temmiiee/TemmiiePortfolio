@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Home, ArrowLeft, Search, Sparkles } from 'lucide-react'
+import { Home, Search, Sparkles } from 'lucide-react'
 
 export default function NotFound() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -171,35 +171,6 @@ export default function NotFound() {
               </span>
             </motion.button>
           </Link>
-        </motion.div>
-
-        {/* Helpful links */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-          className="mt-16 pt-8 border-t border-border/50"
-        >
-          <p className="text-sm text-muted-foreground mb-4">Vous cherchez peut-être :</p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            {[
-              { href: '/#services', label: 'Mes services' },
-              { href: '/#projets', label: 'Mes projets' },
-              { href: '/#tarifs', label: 'Tarifs' },
-              { href: '/politique-confidentialite', label: 'Politique de confidentialité' },
-            ].map((link, index) => (
-              <Link key={index} href={link.href}>
-                <motion.span
-                  className="inline-flex items-center gap-1 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-sm font-medium transition-colors duration-200"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <ArrowLeft className="w-3 h-3" />
-                  {link.label}
-                </motion.span>
-              </Link>
-            ))}
-          </div>
         </motion.div>
 
         {/* Fun fact */}

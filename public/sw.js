@@ -1,4 +1,3 @@
-// Minimal Service Worker - Only for offline fallback
 // Version 5 - Optimisé pour éviter les erreurs de mise à jour
 const CACHE_NAME = 'mattheo-termine-v5';
 
@@ -31,6 +30,3 @@ self.addEventListener('activate', (event) => {
     ])
   );
 });
-
-// Fetch handler removed - no-op fetch handlers cause performance overhead
-// All requests will go through normally without service worker interception

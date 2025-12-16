@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: "%s | Matthéo Termine – Intégrateur Web Freelance",
   },
   description:
-    "Matthéo Termine, intégrateur web freelance expert en création de sites modernes, accessibles (normes RGAA) et optimisés SEO. Services : sites vitrines, applications web, WordPress. Devis gratuit.",
+    "Matthéo Termine, intégrateur web freelance expert en création de sites modernes, accessibles (normes RGAA) et optimisés SEO. Services : sites vitrines, applications web, WordPress.",
   keywords: [
     "intégrateur web freelance",
     "développeur web France",
@@ -63,7 +63,6 @@ export const metadata: Metadata = {
   referrer: "origin-when-cross-origin",
   icons: {
     icon: "/icon",
-    apple: "/apple-icon",
     shortcut: "/favicon.ico",
   },
   manifest: "/manifest.webmanifest",
@@ -164,7 +163,6 @@ export default function RootLayout({
         {/* Explicit icon links for better browser compatibility (especially Firefox) */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" sizes="32x32" href="/icon" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon" />
         <link rel="shortcut icon" href="/favicon.ico" />
 
         {/* Production optimizations */}
