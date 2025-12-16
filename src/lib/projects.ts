@@ -1,5 +1,5 @@
 import { CodeXml, Cpu, Database, type LucideIcon } from "lucide-react";
-import { WordpressIcon } from "@/components/icons/WordpressIcon";
+import { WordpressIcon } from "@/components/icons";
 
 export type Technology = {
   name: string;

@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: "%s | Matthéo Termine – Intégrateur Web Freelance",
   },
   description:
-    "Matthéo Termine, intégrateur web freelance expert en création de sites modernes, accessibles (normes RGAA) et optimisés SEO. Services : sites vitrines, applications web, WordPress. Devis gratuit.",
+    "Matthéo Termine, intégrateur web freelance expert en création de sites modernes, accessibles (normes RGAA) et optimisés SEO. Services : sites vitrines, applications web, WordPress.",
   keywords: [
     "intégrateur web freelance",
     "développeur web France",

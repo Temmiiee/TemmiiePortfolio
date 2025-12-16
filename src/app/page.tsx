@@ -22,7 +22,7 @@ import { ContactForm } from "@/components/ContactForm";
 import { StructuredData } from "@/components/StructuredData";
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { WordpressIcon } from "@/components/icons/WordpressIcon";
+import { WordpressIcon } from "@/components/icons";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { InteractiveGalaxy } from "@/components/InteractiveGalaxy";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -80,85 +80,6 @@ const processSteps = [
       "Je mets votre site en ligne sur l’hébergement choisi (le vôtre ou celui que je gère pour vous), et je veille à ce qu’il soit sécurisé, rapide et accessible dès sa mise en service.",
   },
 ];
-
-/* ============================================
-   SYSTÈME DE DEVIS - TEMPORAIREMENT DÉSACTIVÉ
-   ============================================ */
-/*
-const pricingPlans = [
-  {
-    title: "Site Vitrine Classique",
-    price: "À partir de 550€",
-    description:
-      "Site vitrine avec design basé sur un template personnalisé. Idéal pour présenter vos services et informations simplement, quelle que soit la structure du site.",
-    features: [
-      "Design moderne et responsive (template personnalisé)",
-      "Formulaire de contact fonctionnel",
-      "Optimisation SEO de base",
-      "Mise en ligne sur votre hébergement",
-      "Accompagnement pour la prise en main du site",
-    ],
-    cta: "Choisir cette offre",
-    featured: false,
-    link: "/devis?siteType=vitrine&designType=template",
-    headerClass:
-      "bg-pricing-basic text-pricing-basic-foreground border-b border-border",
-  },
-  {
-    title: "Site Sur-Mesure / Landing Page",
-    price: "À partir de 1150€",
-    description:
-      "Site sur-mesure ou landing page avec design unique, adapté à la complexité et aux besoins spécifiques de votre projet (structure, fonctionnalités, animations, etc.).",
-    features: [
-      "Design 100% sur-mesure",
-      "Animations et sections personnalisées",
-      "Intégration de contenu (textes, images)",
-      "Optimisation SEO avancée",
-      "Support prioritaire",
-    ],
-    cta: "Choisir cette offre",
-    featured: true,
-    link: "/devis?siteType=vitrine&designType=custom",
-    headerClass: "bg-pricing-premium text-pricing-premium-foreground",
-  },
-  {
-    title: "Application Web",
-    price: "À partir de 2500€",
-    description:
-      "Solution complète pour les projets complexes nécessitant des fonctionnalités sur mesure (SaaS, plateforme...).",
-    features: [
-      "Espace utilisateur (connexion, etc.)",
-      "Fonctionnalités sur-mesure",
-      "Base de données",
-      "Déploiement sur votre hébergement",
-      "Maintenance mensuelle en option",
-      "Accompagnement dédié",
-    ],
-    cta: "Choisir cette offre",
-    featured: false,
-    link: "/devis?siteType=webapp",
-    headerClass: "bg-pricing-pro text-pricing-pro-foreground",
-  },
-  {
-    title: "Solution Sur-Mesure",
-    price: "Sur devis",
-    description:
-      "Un projet unique ? Discutons-en pour construire la solution parfaitement adaptée à vos ambitions.",
-    features: [
-      "Analyse approfondie de vos besoins",
-      "Développement de fonctionnalités spécifiques",
-      "Intégration de services tiers (API, etc.)",
-      "Espace d'administration personnalisé",
-      "Accompagnement et support dédiés",
-    ],
-    cta: "Demander un devis",
-    featured: false,
-    link: "/devis",
-    headerClass:
-      "bg-pricing-enterprise text-pricing-enterprise-foreground border-b border-border",
-  },
-];
-*/
 
 const AnimatedSection = ({
   children,
@@ -566,57 +487,6 @@ const HeroSection = () => {
           )}
           style={{ transitionDelay: "600ms" }}
         >
-          {/* BOUTON DEVIS TEMPORAIREMENT MASQUÉ */}
-          {/*
-          <Button 
-            asChild 
-            size="lg" 
-            className="group bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 whitespace-nowrap shadow-enhanced interactive-element focus-visible min-h-[44px]"
-          >
-            <Link 
-              href="/devis" 
-              className="inline-flex items-center justify-center gap-2"
-              aria-label="Demander un devis gratuit pour votre projet web"
-            >
-              <span className="transition-transform duration-300 group-hover:scale-105">Demander un&nbsp;devis gratuit</span>
-              <svg 
-                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </Button>
-          */}
-          {/* BOUTON RÉALISATIONS TEMPORAIREMENT MASQUÉ */}
-          {/*
-          <Button 
-            asChild 
-            variant="outline" 
-            size="lg" 
-            className="group px-8 py-3 whitespace-nowrap shadow-enhanced interactive-element focus-visible min-h-[44px]"
-          >
-            <Link 
-              href="#projects" 
-              className="inline-flex items-center justify-center gap-2"
-              aria-label="Découvrir mes réalisations et projets"
-            >
-              <span className="transition-transform duration-300 group-hover:scale-105">Voir mes&nbsp;réalisations</span>
-              <svg 
-                className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-1" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </Link>
-          </Button>
-          */}
 
           {/* Indicateur de scroll principal - version discrète */}
           <div className="flex flex-col items-center gap-4 mt-12">
@@ -675,14 +545,6 @@ export default function Home() {
   const [processVisible, setProcessVisible] = useState<boolean[]>(
     new Array(processSteps.length).fill(true)
   );
-  /* DEVIS - TEMPORAIREMENT DÉSACTIVÉ */
-  // Variables factices pour éviter les erreurs de compilation
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pricingPlans: any[] = [];
-  const [pricingVisible] = useState<boolean[]>([]);
-  const pricingObserverRef = { current: null as HTMLDivElement | null };
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const pricingIntersecting = false;
 
   // Hooks pour déclencher les animations des sections
   const { ref: servicesObserverRef, isIntersecting: servicesIntersecting } =
@@ -699,15 +561,6 @@ export default function Home() {
       triggerOnce: true,
     });
 
-  /* DEVIS - TEMPORAIREMENT DÉSACTIVÉ
-  const { ref: pricingObserverRef, isIntersecting: pricingIntersecting } =
-    useIntersectionObserver({
-      threshold: 0.2,
-      rootMargin: "-50px 0px -100px 0px",
-      triggerOnce: true,
-    });
-  */
-
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -720,7 +573,7 @@ export default function Home() {
 
       services.forEach((_, index) => {
         setTimeout(() => {
-          setServicesVisible((prev) => {
+          setServicesVisible((prev: boolean[]) => {
             const newState = [...prev];
             newState[index] = true;
             return newState;
@@ -737,7 +590,7 @@ export default function Home() {
 
       processSteps.forEach((_, index) => {
         setTimeout(() => {
-          setProcessVisible((prev) => {
+          setProcessVisible((prev: boolean[]) => {
             const newState = [...prev];
             newState[index] = true;
             return newState;
@@ -747,24 +600,21 @@ export default function Home() {
     }
   }, [processIntersecting, isMounted]);
 
-  /* DEVIS - TEMPORAIREMENT DÉSACTIVÉ
-  useEffect(() => {
-    if (isMounted && pricingIntersecting) {
-      // Reset pour l'animation
-      setPricingVisible(new Array(pricingPlans.length).fill(false));
+  // Stubs pour la section tarifs (préservés pour compatibilité après suppression)
+  type PricingPlan = {
+    featured?: boolean;
+    title?: string;
+    headerClass?: string;
+    price?: string;
+    description?: string;
+    features?: string[];
+    link?: string;
+    cta?: string;
+  };
 
-      pricingPlans.forEach((_, index) => {
-        setTimeout(() => {
-          setPricingVisible((prev) => {
-            const newState = [...prev];
-            newState[index] = true;
-            return newState;
-          });
-        }, index * 150);
-      });
-    }
-  }, [pricingIntersecting, isMounted]);
-  */
+  const pricingObserverRef = React.createRef<HTMLDivElement>();
+  const pricingPlans: PricingPlan[] = [];
+  const pricingVisible: boolean[] = [];
 
   return (
     <>
@@ -1153,7 +1003,7 @@ export default function Home() {
                         role="list"
                         aria-label={`Fonctionnalités de l'offre ${plan.title}`}
                       >
-                        {plan.features.map((feature: string, featureIndex: number) => (
+                        {plan.features?.map((feature: string, featureIndex: number) => (
                           <li
                             key={featureIndex}
                             className="flex items-start gap-3"
@@ -1196,7 +1046,7 @@ export default function Home() {
                           variant={plan.featured ? "default" : "secondary"}
                         >
                           <Link
-                            href={plan.link}
+                            href={plan.link ?? '#'}
                             aria-label={`${plan.cta} - Offre ${plan.title} à ${plan.price}`}
                             className="flex items-center justify-center gap-2 px-4 py-2"
                           >
@@ -1296,22 +1146,6 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-                  {/* Temporairement retiré */}
-                {/* <div
-                  className="flex items-start gap-4 interactive-element p-4 rounded-lg hover:bg-primary/5 transition-colors duration-300"
-                  role="listitem"
-                >
-                  <CheckCircle2
-                    className="w-6 h-6 text-primary mt-1 flex-shrink-0"
-                    aria-hidden="true"
-                  />
-                  <div>
-                    <h3 className="font-semibold mb-2">Devis gratuit</h3>
-                    <p className="text-muted-foreground">
-                      Obtenez une estimation détaillée sans engagement
-                    </p>
-                  </div>
-                </div> */}
               </div>
             </AnimatedDiv>
 

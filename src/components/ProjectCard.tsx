@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
 import type { Project } from "@/lib/projects";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/primitives";
 import { useTranslation } from "@/hooks/useTranslation";
 
 type ProjectCardProps = {
