@@ -103,7 +103,7 @@ export function CookieBanner() {
                   </div>
                 </div>
                 
-                <p className="text-xs text-muted-foreground">
+                {/* <p className="text-xs text-muted-foreground">
                   {t('cookies.learnMore')} {' '}
                   <Link 
                     href="/politique-confidentialite" 
@@ -115,7 +115,7 @@ export function CookieBanner() {
                   >
                     {t('footer.privacy')}
                   </Link>
-                </p>
+                </p> */}
               </>
             ) : (
               <>
@@ -198,7 +198,7 @@ export function CookieBanner() {
                   </Button>
                 </div>
                 
-                <p className="text-xs text-muted-foreground">
+                {/* <p className="text-xs text-muted-foreground">
                   <Link 
                     href="/politique-confidentialite" 
                     className="text-primary hover:underline"
@@ -211,7 +211,7 @@ export function CookieBanner() {
                   </Link>
                   {' • '}
                   {t('cookies.savedFor')}
-                </p>
+                </p> */}
               </>
             )}
           </CardContent>

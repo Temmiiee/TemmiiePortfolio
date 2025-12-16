@@ -281,56 +281,6 @@ const AboutSection = () => {
                   {t('about.p4')}
                 </p>
               </div>
-
-              {/* Bouton CV avec animation */}
-              <div
-                className={cn(
-                  "mt-8 md:mt-10",
-                  isIntersecting
-                    ? "animate-scale-in animate-delay-800"
-                    : "opacity-0"
-                )}
-              >
-                <Button
-                  asChild
-                  size="lg"
-                  className="group relative overflow-hidden bg-primary hover:bg-primary/90 text-primary-foreground shadow-enhanced transition-all duration-300 hover:scale-105 px-4 whitespace-nowrap focus-enhanced interactive-element w-full sm:w-auto"
-                >
-                  <Link
-                    href="/cv-mattheo-termine.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={t('a11y.downloadCV')}
-                    className="flex items-center justify-center gap-3 px-6 py-3 relative z-10 min-h-[44px]"
-                  >
-                    <span className="transition-transform duration-300 group-hover:-translate-y-0.5 text-sm sm:text-base">
-                      <span className="hidden sm:inline">
-                        {t('about.downloadCV')}
-                      </span>
-                      <span className="sm:hidden">{t('about.downloadCVShort')}</span>
-                    </span>
-                    {/* Icône de téléchargement améliorée */}
-                    <svg
-                      className="w-5 h-5 transition-all duration-300 group-hover:translate-y-0.5 group-hover:scale-110 will-change-transform"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                      role="img"
-                    >
-                      <title>Icône de téléchargement</title>
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                    {/* Effet de brillance au hover */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out will-change-transform"></div>
-                  </Link>
-                </Button>
-              </div>
             </div>
           </div>
         </div>
