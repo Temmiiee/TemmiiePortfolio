@@ -18,51 +18,45 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useTranslation } from "@/hooks/useTranslation";
 
+// Create Zod schema for form validation
 const createFormSchema = (t: (key: string) => string) => z.object({
-  name: z.string().min(2, {
-    message: t('contact.validation.name'),
-  }),
-  email: z.string().email({
-    message: t('contact.validation.email'),
-  }),
-  message: z.string().min(10, {
-    message: t('contact.validation.message'),
-  }),
+  name: z.string().min(2, { message: t("contact.validation.name") }),
+  email: z.string().email({ message: t("contact.validation.email") }),
+  message: z.string().min(10, { message: t("contact.validation.message") }),
 });
 
-type FormData = {
-  name: string;
-  email: string;
-  message: string;
-};
+type FormData = z.infer<ReturnType<typeof createFormSchema>>;
 
+// Submit to Formspree endpoint
 async function submitAction(data: FormData) {
   try {
-    const response = await fetch('/api/contact', {
-      method: 'POST',
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("message", data.message);
+
+    const response = await fetch("https://formspree.io/f/mkgdlyoo", {
+      method: "POST",
+      body: formData,
       headers: {
-        'Content-Type': 'application/json',
+        Accept: "application/json",
       },
-      body: JSON.stringify({
-        name: data.name,
-        email: data.email,
-        message: data.message,
-      }),
     });
 
     const result = await response.json();
 
-    if (!response.ok) {
-      throw new Error(result.error || `Erreur HTTP: ${response.status}`);
+    if (!response.ok || result.error) {
+      throw new Error(result.error || "Erreur lors de l'envoi du formulaire.");
     }
 
-    return { success: true, message: result.message || "Message envoyé avec succès !" };
-    
+    return { success: true, message: "Message envoyé avec succès !" };
   } catch (error) {
-    console.error('Erreur lors de l\'envoi:', error);
-    return { 
-      success: false, 
-      message: error instanceof Error ? error.message : "Une erreur est survenue lors de l'envoi." 
+    console.error("Erreur lors de l'envoi:", error);
+    return {
+      success: false,
+      message: error instanceof Error
+        ? error.message
+        : "Une erreur est survenue lors de l'envoi.",
     };
   }
 }
@@ -71,7 +65,8 @@ export function ContactForm() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const formSchema = createFormSchema(t);
-  const form = useForm<z.infer<typeof formSchema>>({
+
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -80,17 +75,17 @@ export function ContactForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormData) {
     const result = await submitAction(values);
     if (result.success) {
       toast({
-        title: t('contact.successTitle'),
+        title: t("contact.successTitle"),
         description: result.message,
       });
       form.reset();
     } else {
       toast({
-        title: t('contact.errorTitle'),
+        title: t("contact.errorTitle"),
         description: result.message,
         variant: "destructive",
       });
@@ -98,59 +93,91 @@ export function ContactForm() {
   }
 
   return (
-    <Card>
+    <section aria-labelledby="contact-form-title" className="max-w-xl mx-auto">
+      <Card>
         <CardHeader>
-            <CardTitle id="form-title" className="font-headline text-2xl">{t('contact.formTitle')}</CardTitle>
-            <CardDescription>{t('contact.formDescription')}</CardDescription>
+          <CardTitle id="contact-form-title" className="font-headline text-2xl">
+            {t("contact.formTitle")}
+          </CardTitle>
+          <CardDescription>{t("contact.formDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
-            <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" aria-labelledby="form-title">
-                <FormField
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Name Field */}
+              <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>{t('contact.name')}</FormLabel>
+                  <FormItem>
+                    <FormLabel htmlFor="name">{t("contact.name")}</FormLabel>
                     <FormControl>
-                        <Input placeholder={t('contact.placeholder.name')} {...field} />
+                      <Input
+                        id="name"
+                        placeholder={t("contact.placeholder.name")}
+                        {...field}
+                        aria-required="true"
+                      />
                     </FormControl>
                     <FormMessage />
-                    </FormItem>
+                  </FormItem>
                 )}
-                />
-                <FormField
+              />
+
+              {/* Email Field */}
+              <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>{t('contact.email')}</FormLabel>
+                  <FormItem>
+                    <FormLabel htmlFor="email">{t("contact.email")}</FormLabel>
                     <FormControl>
-                        <Input placeholder={t('contact.placeholder.email')} {...field} type="email" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder={t("contact.placeholder.email")}
+                        {...field}
+                        aria-required="true"
+                      />
                     </FormControl>
                     <FormMessage />
-                    </FormItem>
+                  </FormItem>
                 )}
-                />
-                <FormField
+              />
+
+              {/* Message Field */}
+              <FormField
                 control={form.control}
                 name="message"
                 render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>{t('contact.message')}</FormLabel>
+                  <FormItem>
+                    <FormLabel htmlFor="message">{t("contact.message")}</FormLabel>
                     <FormControl>
-                        <Textarea placeholder={t('contact.placeholder.message')} className="min-h-[120px]" {...field} />
+                      <Textarea
+                        id="message"
+                        placeholder={t("contact.placeholder.message")}
+                        className="min-h-[120px]"
+                        {...field}
+                        aria-required="true"
+                      />
                     </FormControl>
                     <FormMessage />
-                    </FormItem>
+                  </FormItem>
                 )}
-                />
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? t('contact.sending') : t('contact.send')}
-                </Button>
+              />
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={form.formState.isSubmitting}
+                aria-busy={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? t("contact.sending") : t("contact.send")}
+              </Button>
             </form>
-            </Form>
+          </Form>
         </CardContent>
-    </Card>
+      </Card>
+    </section>
   );
 }
