@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Home, Search, Sparkles } from 'lucide-react'
+import { useTranslation } from '@/hooks/useTranslation'
 
 export default function NotFound() {
+  const { t } = useTranslation()
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -119,15 +121,15 @@ export default function NotFound() {
           <div className="flex items-center justify-center gap-2 mb-4">
             <Sparkles className="w-6 h-6 text-primary animate-pulse" />
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
-              Page introuvable
+              {t('notFound.title')}
             </h2>
             <Sparkles className="w-6 h-6 text-primary animate-pulse" />
           </div>
           
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Oups ! Il semblerait que cette page se soit perdue dans le cyberespace.
+            {t('notFound.description')}
             <br />
-            <span className="text-primary font-medium">Pas de panique</span>, je vais vous aider à retrouver votre chemin.
+            <span className="text-primary font-medium">{t('notFound.noPanic')}</span>{t('notFound.helpText')}
           </p>
         </motion.div>
 
@@ -148,7 +150,7 @@ export default function NotFound() {
             >
               <span className="relative z-10 flex items-center gap-2">
                 <Home className="w-5 h-5" />
-                Retour à l&apos;accueil
+                {t('notFound.backHome')}
               </span>
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600"
@@ -167,7 +169,7 @@ export default function NotFound() {
             >
               <span className="flex items-center gap-2">
                 <Search className="w-5 h-5" />
-                Me contacter
+                {t('notFound.contactMe')}
               </span>
             </motion.button>
           </Link>
@@ -181,9 +183,7 @@ export default function NotFound() {
           className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20 backdrop-blur-sm"
         >
           <p className="text-sm text-muted-foreground italic">
-            💡 <span className="font-semibold text-foreground">Le saviez-vous ?</span> L&apos;erreur 404 tire son nom du numéro de la salle au CERN 
-            où se trouvait le premier serveur web. Quand une page n&apos;était pas trouvée, 
-            il fallait littéralement aller dans la salle 404 !
+            💡 <span className="font-semibold text-foreground">{t('notFound.funFact')}</span> {t('notFound.funFactText')}
           </p>
         </motion.div>
       </div>

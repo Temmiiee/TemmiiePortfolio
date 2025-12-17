@@ -4,13 +4,15 @@ export const translations = {
   fr: {
     // Navigation
     'nav.home': 'Accueil',
-    'nav.about': 'À propos',
+    'nav.services': 'Services',
     'nav.projects': 'Projets',
+    'nav.process': 'Processus',
+    'nav.about': 'À propos',
     'nav.contact': 'Contact',
     
     // Hero
     'hero.title': 'Matthéo Termine',
-    'hero.subtitle': 'Intégrateur web',
+    'hero.subtitle': 'Intégrateur web freelance',
     'hero.description': 'Création de sites web modernes, performants et accessibles pour développer votre présence en ligne',
     'hero.subdescription': 'Spécialisé dans le développement web sur‑mesure, j\'accompagne les entreprises et particuliers dans la création de leur identité numérique.',
     'hero.discover': 'Découvrir',
@@ -36,18 +38,27 @@ export const translations = {
     
     // Services
     'services.title': 'Mes Services',
-    'services.subtitle': 'Expertise technique et solutions web avancées',
-    'services.custom.title': 'Sites web sur-mesure',
-    'services.custom.desc': 'Next.js, React, TypeScript. Design unique et architecture moderne pour une UX exceptionnelle.',
+    'services.subtitle': 'Solutions web sur-mesure alliant performance, accessibilité et innovation technologique',
+    'services.custom.title': 'Développement Web Sur-Mesure',
+    'services.custom.desc': 'Applications web modernes avec Next.js, React et TypeScript. Architecture scalable et performance optimisée pour une expérience utilisateur exceptionnelle.',
     'services.wordpress.title': 'Solutions WordPress',
-    'services.wordpress.desc': 'Thèmes personnalisés, plugins sur-mesure et optimisation complète de l\'écosystème.',
+    'services.wordpress.desc': 'Thèmes personnalisés, plugins sur-mesure et optimisation complète pour des sites WordPress performants et sécurisés.',
     'services.performance.title': 'Performance & SEO',
-    'services.performance.desc': 'Core Web Vitals <2s, balisage structuré et stratégies SEO pour dominer Google.',
+    'services.performance.desc': 'Optimisation Core Web Vitals et stratégies SEO avancées.',
     'services.accessibility.title': 'Accessibilité RGAA',
-    'services.accessibility.desc': 'Conformité RGAA 4.1 et WCAG 2.1 AA pour un web inclusif et légalement conforme.',
+    'services.accessibility.desc': 'Conformité RGAA 4.1 et WCAG 2.1 AA garantie pour une accessibilité universelle.',
+    'services.stack.title': 'Stack Technologique',
+    'services.stack.desc': 'Technologies modernes et robustes pour des applications performantes et évolutives.',
+    'services.collaboration.title': 'Collaboration & Support',
+    'services.collaboration.desc': 'Accompagnement personnalisé et communication transparente tout au long du projet. Méthodologie agile avec livraisons itératives pour un résultat optimal et une collaboration efficace.',
+    'services.available': 'Disponible pour nouveaux projets',
+    'services.responseTime': 'Response time: < 24h',
+    'services.coreWebVitals': 'Core Web Vitals',
+    'services.lighthouseScore': 'Lighthouse Score',
+    'services.seoOptimization': 'SEO Optimization',
     
     // Process
-    'process.title': 'Mon Processus',
+    'process.title': 'Mon Processus de Travail',
     'process.subtitle': 'Une approche structurée pour votre réussite',
     'process.discovery.title': '1. Découverte',
     'process.discovery.desc': 'Nous discutons de vos objectifs, de votre cible et de vos besoins pour définir les contours de votre projet.',
@@ -57,6 +68,10 @@ export const translations = {
     'process.development.desc': 'Je transforme le design validé en un site web fonctionnel, performant et accessible.',
     'process.deployment.title': '4. Déploiement',
     'process.deployment.desc': 'Je mets votre site en ligne sur l\'hébergement choisi (le vôtre ou celui que je gère pour vous), et je veille à ce qu\'il soit sécurisé, rapide et accessible dès sa mise en service.',
+    
+    // Accessibility
+    'a11y.scrollToTop': 'Retourner en haut de la page',
+    'a11y.discoverServices': 'Découvrir mes services',
     
     // Contact
     'contact.title': 'Parlons de Votre Projet',
@@ -129,12 +144,24 @@ export const translations = {
     'contact.formDescription': 'Remplissez le formulaire ci-dessous.',
     'contact.successTitle': 'Succès !',
     'contact.errorTitle': 'Erreur',
+    
+    // 404 Page
+    'notFound.title': 'Page introuvable',
+    'notFound.description': 'Oups ! Il semblerait que cette page se soit perdue dans le cyberespace.',
+    'notFound.noPanic': 'Pas de panique',
+    'notFound.helpText': ', je vais vous aider à retrouver votre chemin.',
+    'notFound.backHome': 'Retour à l\'accueil',
+    'notFound.contactMe': 'Me contacter',
+    'notFound.funFact': 'Le saviez-vous ?',
+    'notFound.funFactText': 'L\'erreur 404 tire son nom du numéro de la salle au CERN où se trouvait le premier serveur web. Quand une page n\'était pas trouvée, il fallait littéralement aller dans la salle 404 !',
   },
   en: {
     // Navigation
     'nav.home': 'Home',
-    'nav.about': 'About',
+    'nav.services': 'Services',
     'nav.projects': 'Projects',
+    'nav.process': 'Process',
+    'nav.about': 'About',
     'nav.contact': 'Contact',
     
     // Hero
@@ -165,18 +192,27 @@ export const translations = {
     
     // Services
     'services.title': 'My Services',
-    'services.subtitle': 'Technical expertise and advanced web solutions',
-    'services.custom.title': 'Custom Websites',
-    'services.custom.desc': 'Next.js, React, TypeScript. Unique design and modern architecture for exceptional UX.',
+    'services.subtitle': 'Custom web solutions combining performance, accessibility and technological innovation',
+    'services.custom.title': 'Custom Web Development',
+    'services.custom.desc': 'Modern web applications with Next.js, React and TypeScript. Scalable architecture and optimized performance for exceptional user experience.',
     'services.wordpress.title': 'WordPress Solutions',
-    'services.wordpress.desc': 'Custom themes, bespoke plugins, and complete ecosystem optimization.',
+    'services.wordpress.desc': 'Custom themes, bespoke plugins and complete optimization for high-performance and secure WordPress sites.',
     'services.performance.title': 'Performance & SEO',
-    'services.performance.desc': 'Core Web Vitals <2s, structured markup, and SEO strategies to dominate Google.',
+    'services.performance.desc': 'Core Web Vitals optimization and advanced SEO strategies.',
     'services.accessibility.title': 'WCAG Accessibility',
-    'services.accessibility.desc': 'WCAG 2.1 AA compliance for an inclusive and legally compliant web.',
+    'services.accessibility.desc': 'WCAG 2.1 AA compliance guaranteed for universal accessibility.',
+    'services.stack.title': 'Technology Stack',
+    'services.stack.desc': 'Modern and robust technologies for high-performance and scalable applications.',
+    'services.collaboration.title': 'Collaboration & Support',
+    'services.collaboration.desc': 'Personalized support and transparent communication throughout the project. Agile methodology with iterative deliveries for optimal results and efficient collaboration.',
+    'services.available': 'Available for new projects',
+    'services.responseTime': 'Response time: < 24h',
+    'services.coreWebVitals': 'Core Web Vitals',
+    'services.lighthouseScore': 'Lighthouse Score',
+    'services.seoOptimization': 'SEO Optimization',
     
     // Process
-    'process.title': 'My Process',
+    'process.title': 'My Work Process',
     'process.subtitle': 'A structured approach to your success',
     'process.discovery.title': '1. Discovery',
     'process.discovery.desc': 'We discuss your goals, target audience, and needs to define the scope of your project.',
@@ -186,6 +222,10 @@ export const translations = {
     'process.development.desc': 'I transform the validated design into a functional, high-performance, and accessible website.',
     'process.deployment.title': '4. Deployment',
     'process.deployment.desc': 'I launch your site on the chosen hosting (yours or one I manage for you), ensuring it\'s secure, fast, and accessible from day one.',
+    
+    // Accessibility
+    'a11y.scrollToTop': 'Back to top',
+    'a11y.discoverServices': 'Discover my services',
     
     // Contact
     'contact.title': 'Let\'s Talk About Your Project',
@@ -258,6 +298,16 @@ export const translations = {
     'contact.formDescription': 'Fill out the form below.',
     'contact.successTitle': 'Success!',
     'contact.errorTitle': 'Error',
+    
+    // 404 Page
+    'notFound.title': 'Page Not Found',
+    'notFound.description': 'Oops! It looks like this page got lost in cyberspace.',
+    'notFound.noPanic': 'Don\'t panic',
+    'notFound.helpText': ', I\'ll help you find your way back.',
+    'notFound.backHome': 'Back to Home',
+    'notFound.contactMe': 'Contact Me',
+    'notFound.funFact': 'Did you know?',
+    'notFound.funFactText': 'The 404 error gets its name from the room number at CERN where the first web server was located. When a page wasn\'t found, you literally had to go to room 404!',
   },
 } as const;
 

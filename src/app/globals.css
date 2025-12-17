@@ -38,6 +38,24 @@
   will-change: opacity;
 }
 
+/* Optimisation pour éviter les re-rendus inutiles */
+.animation-complete {
+  will-change: auto;
+}
+
+/* Optimisation des fonts pour éviter le blocage */
+@font-face {
+  font-family: 'PT Sans';
+  font-display: optional;
+  src: local('PT Sans');
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-display: optional;
+  src: local('Space Grotesk');
+}
+
 /* Réduction des animations pour les utilisateurs qui préfèrent moins de mouvement */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -127,10 +145,51 @@ img {
   animation: slow-bounce 5s infinite;
 }
 
+/* Animation du curseur de typing améliorée */
+@keyframes typing-blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.typing-cursor {
+  display: inline-block;
+  font-weight: 300;
+  line-height: 1;
+  transform: translateZ(0);
+  will-change: opacity;
+  animation: typing-blink 1s ease-in-out infinite;
+}
+
+.typing-text {
+  display: inline-block;
+  white-space: nowrap;
+  transform: translateZ(0);
+  will-change: auto;
+  min-height: 1.2em;
+}
+
 /* Réduction encore plus importante pour prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-slow-bounce {
     animation: none;
+  }
+  
+  .typing-cursor {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  
+  .typing-text {
+    animation: none !important;
+  }
+  
+  /* Affichage immédiat du texte complet en mode réduit */
+  .hero-section .typing-text {
+    opacity: 1 !important;
   }
 }/* ==
 ===========================================================================
@@ -280,6 +339,119 @@ html:not(.dark) {
   }
 }
 
+/* 
+===========================
+TECH CARDS STYLES
+===========================
+*/
+
+.tech-card {
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(88, 28, 135, 0.1) 50%, rgba(15, 23, 42, 0.8) 100%);
+}
+
+.tech-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(59, 130, 246, 0.4), rgba(168, 85, 247, 0.4));
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+}
+
+/* Animation de brillance au hover */
+.tech-card:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shine 1.5s ease-in-out;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Badges de technologies avec glow */
+.tech-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-badge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  border-radius: inherit;
+  filter: blur(8px);
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.tech-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Performance cards avec indicateurs */
+.performance-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.performance-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.performance-card:hover::before {
+  opacity: 1;
+}
+
+/* Amélioration des métriques */
+.metric-item {
+  position: relative;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.metric-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(4px);
+}
+
+.metric-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 0;
+  background: #10b981;
+  transition: height 0.3s ease;
+}
+
+.metric-item:hover::before {
+  height: 60%;
+}
+
 /* =============================================================================
    INTERACTIVE ELEMENTS IMPROVEMENTS
    ============================================================================= */
@@ -385,33 +557,46 @@ html:not(.dark) .bg-background\/80 {
   .animate-subtle-pulse {
     animation: none !important;
   }
-}/* =======
-======================================================================
+}
+
+/*
+====================================================
    HERO TITLE IMPROVEMENTS FOR LIGHT MODE
-   ============================================================================= */
-
-/* Titre Hero adaptatif selon le thème */
+====================================================
+*/
 .hero-section h1 {
-  color: white;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-html:not(.dark) .hero-section h1 {
-  color: #0f172a;
-  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9), 0 4px 8px rgba(0, 0, 0, 0.15);
+  color: white !important;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6);
   font-weight: 800;
+  z-index: 20;
+  position: relative;
 }
 
-/* Amélioration du sous-titre en mode light */
+.hero-section .text-primary {
+  color: #a259ff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+.hero-section p {
+  color: white !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Mode light */
+html:not(.dark) .hero-section h1 {
+  color: #1a1a2e !important;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9), 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
 html:not(.dark) .hero-section .text-primary {
   color: #4c1d95 !important;
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
-/* Amélioration des descriptions en mode light */
-html:not(.dark) .hero-section .text-muted-foreground {
-  color: #475569 !important;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+html:not(.dark) .hero-section p {
+  color: #1e293b !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }/* Amél
 ioration de la flèche Découvrir en mode light */
 html:not(.dark) .hero-section button span {
@@ -591,6 +776,269 @@ html.dark body {
 /* Prevent any white flash on navigation */
 html.dark .hero-section {
   background: transparent !important;
+}
+
+/* Animations fluides pour la section hero */
+.hero-section .animate-fade-in {
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================================
+   ANIMATION TYPEWRITER ORIGINALE
+   ============================================================================ */
+
+.typewriter-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.typewriter-text {
+  display: inline-block;
+  position: relative;
+  z-index: 2;
+}
+
+/* Curseur clignotant avec effet de glow */
+.typewriter-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  color: hsl(var(--primary));
+  font-weight: 300;
+  animation: cursorBlink 1s ease-in-out infinite;
+  text-shadow: 
+    0 0 5px hsla(var(--primary), 0.8),
+    0 0 10px hsla(var(--primary), 0.6),
+    0 0 15px hsla(var(--primary), 0.4);
+}
+
+@keyframes cursorBlink {
+  0%, 50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  51%, 100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* Effet de glow qui suit le texte pendant la frappe */
+.typewriter-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsla(var(--primary), 0.3) 50%,
+    hsla(var(--primary), 0.6) 70%,
+    hsla(var(--primary), 0.8) 85%,
+    hsla(var(--primary), 1) 100%
+  );
+  border-radius: 4px;
+  filter: blur(8px);
+  opacity: 0.7;
+  transition: width 0.1s ease-out;
+  z-index: 1;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Animation synchronisée avec la frappe */
+.typewriter-text {
+  position: relative;
+}
+
+.typewriter-container {
+  padding: 0.25rem 0;
+  line-height: 1.4;
+}
+
+.typewriter-char {
+  display: inline-block;
+}
+
+/* Flash sur la nouvelle lettre tapée */
+.new-char-flash {
+  animation: newCharFlash 0.15s ease-out;
+}
+
+@keyframes newCharFlash {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+    text-shadow: 0 0 8px hsla(var(--primary), 0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+    text-shadow: 0 0 12px hsla(var(--primary), 1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+}
+
+/* Effet de frappe synchronisé avec le curseur */
+.typing-vibration {
+  animation: typewriterPunch 0.15s ease-out;
+}
+
+@keyframes typewriterPunch {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.02) translateX(1px);
+  }
+  60% {
+    transform: scale(0.98) translateX(-0.5px);
+  }
+  100% {
+    transform: scale(1) translateX(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    filter: blur(8px);
+    opacity: 0.7;
+  }
+  50% {
+    filter: blur(12px);
+    opacity: 0.9;
+  }
+}
+
+/* Animation de completion avec effet de particules */
+.typing-complete {
+  animation: typewriterComplete 0.8s ease-out forwards;
+}
+
+@keyframes typewriterComplete {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.05);
+  }
+  40% {
+    transform: scale(1.02);
+  }
+  60% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Effet de particules à la fin de l'animation */
+.typing-complete::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  width: 4px;
+  height: 4px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  animation: particleEffect 0.6s ease-out forwards;
+  box-shadow: 
+    8px 0 0 hsl(var(--primary)),
+    16px -4px 0 hsla(var(--primary), 0.8),
+    24px 4px 0 hsla(var(--primary), 0.6),
+    32px -2px 0 hsla(var(--primary), 0.4);
+}
+
+@keyframes particleEffect {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.8) translateX(20px);
+  }
+}
+
+/* Effet de brillance qui traverse le texte à la fin */
+.typing-complete .typewriter-text::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shineEffect 1.2s ease-out 0.3s forwards;
+}
+
+@keyframes shineEffect {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .typewriter-cursor {
+    margin-left: 1px;
+  }
+  
+  .typewriter-glow {
+    filter: blur(6px);
+  }
+}
+
+/* Respect des préférences d'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .typewriter-cursor {
+    animation: none;
+    opacity: 1;
+  }
+  
+  .typewriter-glow {
+    animation: none;
+    opacity: 0.5;
+  }
+  
+  .typing-complete {
+    animation: none;
+  }
+  
+  .typing-complete::after {
+    display: none;
+  }
+  
+  .typing-complete .typewriter-text::before {
+    display: none;
+  }
 }
 
 /* Optimize animations for better performance */

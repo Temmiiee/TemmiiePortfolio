@@ -14,7 +14,9 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 const navLinks = [
   { href: "#accueil", labelKey: "nav.home" },
+  { href: "#services", labelKey: "nav.services" },
   { href: "#projects", labelKey: "nav.projects" },
+  { href: "#processus", labelKey: "nav.process" },
   { href: "#a-propos", labelKey: "nav.about" },
   { href: "#contact", labelKey: "nav.contact" },
 ];
@@ -134,7 +136,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav id="navigation" className="hidden md:flex items-center gap-6" role="navigation" aria-label="Navigation principale">
+          <nav id="navigation" className="hidden md:flex items-center gap-6" role="navigation" aria-label={t('a11y.mainNav')}>
             {navLinks.map((link) => (
               <NavLink key={link.href} {...link} />
             ))}
@@ -148,19 +150,19 @@ export function Header() {
             <ThemeToggle />
             <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative" aria-label="Ouvrir le menu de navigation" aria-expanded={isSheetOpen} aria-controls="mobile-menu">
+                <Button variant="ghost" size="icon" className="relative" aria-label={t('a11y.openMenu')} aria-expanded={isSheetOpen} aria-controls="mobile-menu">
                   <div className={cn(
                     "transition-transform duration-300",
                     isSheetOpen ? "rotate-90" : "rotate-0"
                   )}>
                     <Menu className="h-6 w-6" />
                   </div>
-                  <span className="sr-only">Ouvrir le menu</span>
+                  <span className="sr-only">{t('a11y.openMenu')}</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80 sm:w-96">
                 <SheetHeader>
-                  <SheetTitle className="sr-only">Menu principal</SheetTitle>
+                  <SheetTitle className="sr-only">{t('a11y.mainMenu')}</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col h-full">
                   {/* Logo section in mobile menu */}
@@ -172,7 +174,7 @@ export function Header() {
                   </div>
 
                   {/* Navigation */}
-                  <nav id="mobile-menu" className="flex flex-col gap-2 pt-8 flex-1" role="navigation" aria-label="Navigation mobile">
+                  <nav id="mobile-menu" className="flex flex-col gap-2 pt-8 flex-1" role="navigation" aria-label={t('a11y.mobileNav')}>
                     {navLinks.map((link, index) => (
                       <div
                         key={link.href}
@@ -192,7 +194,7 @@ export function Header() {
                   {/* Footer section */}
                   <div className="pt-6 border-t border-border/50 text-center">
                     <p className="text-sm text-muted-foreground">
-                      Intégrateur Web
+                      {t('a11y.webDeveloper')}
                     </p>
                   </div>
                 </div>

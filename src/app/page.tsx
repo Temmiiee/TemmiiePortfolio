@@ -1,20 +1,17 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   CodeXml,
   Gauge,
-  Palette,
   Accessibility,
-  CheckCircle2,
   Search,
   Rocket,
   PencilRuler,
   Mail,
   MessageCircle,
+  ArrowUp,
+  ChevronDown,
 } from "lucide-react";
-import Link from "next/link";
 import { ProjectCard } from "@/components/ProjectCard";
 import { projects } from "@/lib/projects";
 import Image from "next/image";
@@ -27,150 +24,730 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { InteractiveGalaxy } from "@/components/InteractiveGalaxy";
 import { useTranslation } from "@/hooks/useTranslation";
 
-const services = [
-  {
-    icon: Palette,
-    title: "Sites web sur-mesure",
-    description:
-      "Next.js, React, TypeScript. Design unique et architecture moderne pour une UX exceptionnelle.",
-  },
-  {
-    icon: WordpressIcon,
-    title: "Solutions WordPress",
-    description:
-      "Thèmes personnalisés, plugins sur-mesure et optimisation complète de l'écosystème.",
-  },
-  {
-    icon: Gauge,
-    title: "Performance & SEO",
-    description:
-      "Core Web Vitals <2s, balisage structuré et stratégies SEO pour dominer Google.",
-  },
-  {
-    icon: Accessibility,
-    title: "Accessibilité RGAA",
-    description:
-      "Conformité RGAA 4.1 et WCAG 2.1 AA pour un web inclusif et légalement conforme.",
-  },
-];
-
-const processSteps = [
-  {
-    icon: Search,
-    title: "1. Découverte",
-    description:
-      "Nous discutons de vos objectifs, de votre cible et de vos besoins pour définir les contours de votre projet.",
-  },
-  {
-    icon: PencilRuler,
-    title: "2. Maquettage & Design",
-    description:
-      "Je conçois une maquette visuelle et un design sur-mesure qui reflètent votre identité de marque.",
-  },
-  {
-    icon: CodeXml,
-    title: "3. Développement",
-    description:
-      "Je transforme le design validé en un site web fonctionnel, performant et accessible.",
-  },
-  {
-    icon: Rocket,
-    title: "4. Déploiement",
-    description:
-      "Je mets votre site en ligne sur l’hébergement choisi (le vôtre ou celui que je gère pour vous), et je veille à ce qu’il soit sécurisé, rapide et accessible dès sa mise en service.",
-  },
-];
-
-const AnimatedSection = ({
-  children,
-  className,
-  id,
-  ...props
-}: {
-  children: React.ReactNode;
-  className?: string;
-  id: string;
-  "aria-labelledby"?: string;
-}) => {
-  const [isMounted, setIsMounted] = useState(false);
-  const { ref, isIntersecting } = useIntersectionObserver({
-    threshold: 0.2,
-    rootMargin: "-50px 0px -100px 0px",
-  });
+// Composant ScrollToTop
+const ScrollToTopButton = () => {
+  const { t } = useTranslation();
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    const toggleVisibility = () => {
+      setIsVisible(window.pageYOffset > 300);
+    };
+
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <button
+      onClick={scrollToTop}
+      className="fixed bottom-8 right-8 z-50 bg-primary text-primary-foreground p-3 rounded-full shadow-lg hover:bg-primary/90 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      aria-label={t("a11y.scrollToTop")}
+      type="button"
+    >
+      <ArrowUp className="w-5 h-5" />
+    </button>
+  );
+};
+
+// Section Hero refactorisée
+// Section Hero avec animation typewriter originale
+const HeroSection = () => {
+  const { t } = useTranslation();
+  const [isVisible, setIsVisible] = useState(false);
+  const [textVisible, setTextVisible] = useState(false);
+  const [typedText, setTypedText] = useState("");
+  const [showCursor, setShowCursor] = useState(false);
+  const [isTypingComplete, setIsTypingComplete] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [lastTypedLength, setLastTypedLength] = useState(0);
+
+  // Animation d'entrée et typewriter
+  useEffect(() => {
+    const timer1 = setTimeout(() => setIsVisible(true), 100);
+
+    // Démarrer l'animation typewriter après que le titre soit visible
+    const timer2 = setTimeout(() => {
+      setTextVisible(true);
+      setShowCursor(true);
+
+      // Animation typewriter
+      const fullText = t("hero.subtitle");
+      let currentIndex = 0;
+
+      const typeNextChar = () => {
+        if (currentIndex <= fullText.length) {
+          const newText = fullText.slice(0, currentIndex);
+          setTypedText(newText);
+          setLastTypedLength(newText.length);
+          setIsTyping(true);
+          setTimeout(() => setIsTyping(false), 120);
+          currentIndex++;
+
+          // Délai variable pour un effet plus naturel
+          const nextDelay =
+            currentIndex === fullText.length
+              ? 0
+              : fullText[currentIndex - 1] === " "
+                ? 120 // Pause après espace
+                : Math.random() * 40 + 60; // 60-100ms aléatoire
+
+          if (currentIndex <= fullText.length) {
+            setTimeout(typeNextChar, nextDelay);
+          } else {
+            setIsTypingComplete(true);
+            // Masquer le curseur après un délai
+            setTimeout(() => setShowCursor(false), 1500);
+          }
+        }
+      };
+
+      typeNextChar();
+    }, 800);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, [t]);
+
+  const scrollToServices = () => {
+    const servicesSection = document.querySelector("#services");
+    servicesSection?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <section
-      id={id}
-      ref={ref}
-      className={cn(className, "scroll-mt-20")}
-      suppressHydrationWarning
-      style={{
-        opacity: !isMounted ? 1 : isIntersecting ? 1 : 0.3,
-        transform: !isMounted
-          ? "translateY(0)"
-          : isIntersecting
-          ? "translateY(0)"
-          : "translateY(2rem)",
-        transitionProperty: "all",
-        transitionDuration: "1000ms",
-        transitionTimingFunction: "ease-out",
-      }}
-      {...props}
+      id="accueil"
+      className="hero-section relative min-h-[85vh] md:min-h-[95vh] flex items-center justify-center py-8 md:py-12 overflow-hidden"
+      role="banner"
+      aria-labelledby="hero-title"
     >
-      {children}
+      {/* Arrière-plan galaxie interactif */}
+      <InteractiveGalaxy />
+
+      <div className="container mx-auto px-4 text-center relative z-50">
+        {/* Nom principal */}
+        <h1
+          id="hero-title"
+          className={cn(
+            "text-5xl md:text-7xl lg:text-8xl font-bold mb-6 text-white transition-all duration-1000 ease-out",
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          )}
+          style={{
+            textShadow: "0 4px 8px rgba(0,0,0,0.5)",
+          }}
+        >
+          Matthéo Termine
+        </h1>
+
+        {/* Sous-titre avec animation typewriter */}
+        <div
+          className={cn(
+            "text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 leading-[1.4] transition-all duration-1000 ease-out",
+            textVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          )}
+          style={{ transitionDelay: "200ms" }}
+        >
+          <span
+            className={cn(
+              "text-primary inline-block relative typewriter-container",
+              isTypingComplete && "typing-complete"
+            )}
+            style={{ textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}
+          >
+            <span className={cn("typewriter-text", isTyping && "typing-vibration")}>
+              {typedText.split("").map((char, index) => (
+                <span
+                  key={index}
+                  className={cn(
+                    "typewriter-char",
+                    index === lastTypedLength - 1 && isTyping && "new-char-flash"
+                  )}
+                >
+                  {char === " " ? "\u00A0" : char}
+                </span>
+              ))}
+            </span>
+            {showCursor && <span className="typewriter-cursor">|</span>}
+            {/* Effet de glow qui suit le texte */}
+            <span
+              className="typewriter-glow"
+              style={{
+                width: `${(typedText.length / t("hero.subtitle").length) * 100}%`,
+              }}
+            />
+          </span>
+        </div>
+
+        {/* Description principale */}
+        <p
+          className={cn(
+            "text-xl md:text-2xl text-white mb-6 max-w-3xl mx-auto leading-relaxed px-4 transition-all duration-1000 ease-out",
+            textVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          )}
+          style={{
+            textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+            transitionDelay: "400ms",
+          }}
+        >
+          {t("hero.description")}
+        </p>
+
+        {/* Sous-description */}
+        <p
+          className={cn(
+            "text-lg text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed px-4 transition-all duration-1000 ease-out",
+            textVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          )}
+          style={{
+            textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+            transitionDelay: "600ms",
+          }}
+        >
+          {t("hero.subdescription")}
+        </p>
+
+        {/* Bouton découvrir */}
+        <div
+          className={cn(
+            "flex justify-center px-4 transition-all duration-1000 ease-out",
+            textVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-90"
+          )}
+          style={{ transitionDelay: "800ms" }}
+        >
+          <button
+            onClick={scrollToServices}
+            className="group flex flex-col items-center gap-3 bg-transparent border-none p-6 rounded-xl transition-all duration-500 hover:bg-white/10 hover:backdrop-blur-sm hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            aria-label={t("a11y.discoverServices")}
+            type="button"
+          >
+            <span className="text-white/80 text-base font-medium group-hover:text-white transition-all duration-500 group-hover:scale-105">
+              {t("hero.discover")}
+            </span>
+            <ChevronDown className="w-7 h-7 text-white/70 group-hover:text-white group-hover:scale-110 transition-all duration-500 drop-shadow-lg animate-bounce" />
+          </button>
+        </div>
+      </div>
     </section>
   );
 };
 
-const AnimatedDiv = ({
-  children,
-  className,
-  delay = 0,
-  ...props
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-} & React.HTMLAttributes<HTMLDivElement>) => {
-  const [isMounted, setIsMounted] = useState(false);
+const ServicesSection = () => {
+  const { t } = useTranslation();
+  const [servicesVisible, setServicesVisible] = useState<boolean[]>(new Array(6).fill(false));
+
   const { ref, isIntersecting } = useIntersectionObserver({
-    threshold: 0.3,
-    rootMargin: "-30px 0px -100px 0px",
+    threshold: 0.1,
+    rootMargin: "-50px 0px -100px 0px",
     triggerOnce: true,
   });
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    if (isIntersecting) {
+      // Animation
+      Array.from({ length: 6 }).forEach((_, index) => {
+        setTimeout(() => {
+          setServicesVisible((prev) => {
+            const newState = [...prev];
+            newState[index] = true;
+            return newState;
+          });
+        }, index * 200);
+      });
+    }
+  }, [isIntersecting]);
 
   return (
-    <div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      className={cn(className)}
-      suppressHydrationWarning
-      style={{
-        transitionDelay: `${delay}ms`,
-        transitionProperty: "all",
-        transitionDuration: "800ms",
-        transitionTimingFunction: "ease-out",
-        opacity: !isMounted ? 1 : isIntersecting ? 1 : 0,
-        transform: !isMounted
-          ? "translateY(0) scale(1)"
-          : isIntersecting
-          ? "translateY(0) scale(1)"
-          : "translateY(1.5rem) scale(0.95)",
-      }}
-      {...props}
+    <section
+      id="services"
+      ref={ref}
+      className="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
+      aria-labelledby="services-title"
     >
-      {children}
-    </div>
+      <div className="container mx-auto px-4">
+        {/* En-tête moderne */}
+        <div
+          className={cn(
+            "text-center mb-20 transition-all duration-800 ease-out",
+            isIntersecting ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          )}
+        >
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="w-2 h-2 rounded-full bg-green-400"></div>
+            <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
+            <div className="w-2 h-2 rounded-full bg-red-400"></div>
+            <span className="text-gray-400 font-mono text-sm ml-4">services.portfolio</span>
+          </div>
+
+          <h2
+            id="services-title"
+            className="text-4xl md:text-5xl font-bold mb-6 text-white"
+            style={{ textShadow: "0 4px 8px rgba(0,0,0,0.3)" }}
+          >
+            {t("services.title")}
+          </h2>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            {t("services.subtitle")}
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-min">
+            <div
+              className={cn(
+                "lg:col-span-8 tech-card group relative overflow-hidden rounded-2xl border border-blue-500/20 p-8 hover:border-blue-500/40 transition-all duration-700 ease-out",
+                servicesVisible[0]
+                  ? "opacity-100 translate-y-0 scale-100"
+                  : "opacity-0 translate-y-8 scale-95"
+              )}
+              style={{ transitionDelay: "0ms" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-cyan-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <span className="ml-auto text-sm text-gray-400 font-mono">development.tsx</span>
+                </div>
+
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                    <CodeXml className="w-6 h-6 text-blue-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">{t("services.custom.title")}</h3>
+                </div>
+
+                <p className="text-gray-300 mb-6 leading-relaxed text-lg">
+                  {t("services.custom.desc")}
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                  <span className="tech-badge px-4 py-2 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium border border-blue-500/30">
+                    Next.js 15
+                  </span>
+                  <span className="tech-badge px-4 py-2 bg-cyan-500/20 text-cyan-300 rounded-full text-sm font-medium border border-cyan-500/30">
+                    React 18
+                  </span>
+                  <span className="tech-badge px-4 py-2 bg-blue-600/20 text-blue-300 rounded-full text-sm font-medium border border-blue-600/30">
+                    TypeScript
+                  </span>
+                  <span className="tech-badge px-4 py-2 bg-indigo-500/20 text-indigo-300 rounded-full text-sm font-medium border border-indigo-500/30">
+                    Tailwind CSS
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={cn(
+                "lg:col-span-4 performance-card group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-green-900/20 to-slate-900 border border-green-500/20 p-6 hover:border-green-500/40 transition-all duration-700 ease-out",
+                servicesVisible[1]
+                  ? "opacity-100 translate-y-0 scale-100"
+                  : "opacity-0 translate-y-8 scale-95"
+              )}
+              style={{ transitionDelay: "200ms" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-green-600/5 via-transparent to-emerald-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <span className="ml-auto text-xs text-gray-400 font-mono">performance.js</span>
+                </div>
+
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">
+                    <Gauge className="w-5 h-5 text-green-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t("services.performance.title")}
+                  </h3>
+                </div>
+
+                <p className="text-gray-300 mb-4 leading-relaxed text-sm">
+                  {t("services.performance.desc")}
+                </p>
+
+                <div className="space-y-2">
+                  <div className="metric-item flex justify-between items-center">
+                    <span className="text-gray-300 text-xs">{t("services.coreWebVitals")}</span>
+                    <span className="text-green-400 font-mono text-xs">&lt; 2s</span>
+                  </div>
+                  <div className="metric-item flex justify-between items-center">
+                    <span className="text-gray-300 text-xs">{t("services.lighthouseScore")}</span>
+                    <span className="text-green-400 font-mono text-xs">&gt; 95</span>
+                  </div>
+                  <div className="metric-item flex justify-between items-center">
+                    <span className="text-gray-300 text-xs">{t("services.seoOptimization")}</span>
+                    <span className="text-green-400 font-mono text-xs">100%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Ligne 2: WordPress (7) + Accessibilité (5) = 12 colonnes */}
+            {/* Solutions WordPress - Carte élargie (span 7) */}
+            <div
+              className={cn(
+                "lg:col-span-7 tech-card group relative overflow-hidden rounded-2xl border border-purple-500/20 p-6 hover:border-purple-500/40 transition-all duration-700 ease-out",
+                servicesVisible[2]
+                  ? "opacity-100 translate-y-0 scale-100"
+                  : "opacity-0 translate-y-8 scale-95"
+              )}
+              style={{ transitionDelay: "400ms" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/5 via-transparent to-pink-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <span className="ml-auto text-sm text-gray-400 font-mono">wordpress.php</span>
+                </div>
+
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                    <WordpressIcon className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">{t("services.wordpress.title")}</h3>
+                </div>
+
+                <p className="text-gray-300 mb-4 leading-relaxed">{t("services.wordpress.desc")}</p>
+
+                <div className="flex flex-wrap gap-2">
+                  <span className="tech-badge px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs font-medium border border-purple-500/30">
+                    Custom Themes
+                  </span>
+                  <span className="tech-badge px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full text-xs font-medium border border-pink-500/30">
+                    Plugins
+                  </span>
+                  <span className="tech-badge px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-medium border border-indigo-500/30">
+                    Optimization
+                  </span>
+                  <span className="tech-badge px-3 py-1 bg-violet-500/20 text-violet-300 rounded-full text-xs font-medium border border-violet-500/30">
+                    Security
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={cn(
+                "lg:col-span-5 tech-card group relative overflow-hidden rounded-2xl border border-orange-500/20 p-6 hover:border-orange-500/40 transition-all duration-700 ease-out",
+                servicesVisible[3]
+                  ? "opacity-100 translate-y-0 scale-100"
+                  : "opacity-0 translate-y-8 scale-95"
+              )}
+              style={{ transitionDelay: "600ms" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-600/5 via-transparent to-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <span className="ml-auto text-xs text-gray-400 font-mono">
+                    accessibility.a11y
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                    <Accessibility className="w-5 h-5 text-orange-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t("services.accessibility.title")}
+                  </h3>
+                </div>
+
+                <p className="text-gray-300 mb-4 leading-relaxed text-sm">
+                  {t("services.accessibility.desc")}
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                  <span className="tech-badge px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-xs font-medium border border-orange-500/30">
+                    RGAA 4.1
+                  </span>
+                  <span className="tech-badge px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-xs font-medium border border-red-500/30">
+                    WCAG 2.1 AA
+                  </span>
+                  <span className="tech-badge px-3 py-1 bg-amber-500/20 text-amber-300 rounded-full text-xs font-medium border border-amber-500/30">
+                    Audit A11Y
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Ligne 3: Stack Tech (5) + Collaboration (7) = 12 colonnes */}
+            {/* Stack Technologique - Carte élargie (span 5) */}
+            <div
+              className={cn(
+                "lg:col-span-5 tech-card group relative overflow-hidden rounded-2xl border border-cyan-500/20 p-6 hover:border-cyan-500/40 transition-all duration-700 ease-out",
+                servicesVisible[4]
+                  ? "opacity-100 translate-y-0 scale-100"
+                  : "opacity-0 translate-y-8 scale-95"
+              )}
+              style={{ transitionDelay: "800ms" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/5 via-transparent to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <span className="ml-auto text-xs text-gray-400 font-mono">tech.stack</span>
+                </div>
+
+                <h3 className="text-lg font-bold text-white mb-3">{t("services.stack.title")}</h3>
+
+                <p className="text-gray-300 mb-4 leading-relaxed text-sm">
+                  {t("services.stack.desc")}
+                </p>
+
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-1">
+                    <span className="tech-badge px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs font-medium border border-blue-500/30">
+                      TypeScript
+                    </span>
+                    <span className="tech-badge px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs font-medium border border-green-500/30">
+                      Node.js
+                    </span>
+                    <span className="tech-badge px-2 py-1 bg-cyan-500/20 text-cyan-300 rounded text-xs font-medium border border-cyan-500/30">
+                      React
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="tech-badge px-2 py-1 bg-orange-500/20 text-orange-300 rounded text-xs font-medium border border-orange-500/30">
+                      Docker
+                    </span>
+                    <span className="tech-badge px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded text-xs font-medium border border-yellow-500/30">
+                      AWS
+                    </span>
+                    <span className="tech-badge px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-xs font-medium border border-purple-500/30">
+                      Vercel
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Collaboration & Support - Carte élargie (span 7) - SANS BOUTONS */}
+            <div
+              className={cn(
+                "lg:col-span-7 performance-card group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-900/20 to-slate-900 border border-indigo-500/20 p-6 hover:border-indigo-500/40 transition-all duration-700 ease-out",
+                servicesVisible[5]
+                  ? "opacity-100 translate-y-0 scale-100"
+                  : "opacity-0 translate-y-8 scale-95"
+              )}
+              style={{ transitionDelay: "1000ms" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <span className="ml-auto text-sm text-gray-400 font-mono">collaboration.md</span>
+                </div>
+
+                <h3 className="text-lg font-bold text-white mb-4">
+                  {t("services.collaboration.title")}
+                </h3>
+
+                <p className="text-gray-300 mb-4 leading-relaxed">
+                  {t("services.collaboration.desc")}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-400 flex items-center gap-2">
+                    <span className="text-green-400">●</span>
+                    <span>{t("services.available")}</span>
+                  </div>
+                  <div className="text-xs text-gray-500 font-mono">
+                    {t("services.responseTime")}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 
+// Section Projets (sans bouton "voir tous")
+const ProjectsSection = () => {
+  const { t } = useTranslation();
+  const [projectsVisible, setProjectsVisible] = useState<boolean[]>(new Array(6).fill(false));
+
+  const { ref, isIntersecting } = useIntersectionObserver({
+    threshold: 0.2,
+    rootMargin: "-50px 0px -100px 0px",
+    triggerOnce: true,
+  });
+
+  useEffect(() => {
+    if (isIntersecting) {
+      projects.slice(0, 6).forEach((_, index) => {
+        setTimeout(() => {
+          setProjectsVisible((prev) => {
+            const newState = [...prev];
+            newState[index] = true;
+            return newState;
+          });
+        }, index * 100);
+      });
+    }
+  }, [isIntersecting]);
+
+  return (
+    <section id="projects" ref={ref} className="py-20" aria-labelledby="projects-title">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 id="projects-title" className="text-3xl md:text-4xl font-bold mb-4">
+            {t("projects.title")}
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            {t("projects.subtitle")}
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.slice(0, 6).map((project, index) => (
+            <div
+              key={`project-${project.slug}-${index}`}
+              className={cn(
+                "transition-all duration-700 ease-out",
+                projectsVisible[index]
+                  ? "opacity-100 translate-y-0 scale-100"
+                  : "opacity-0 translate-y-8 scale-95"
+              )}
+              style={{
+                transitionDelay: `${index * 100}ms`,
+              }}
+            >
+              <ProjectCard project={project} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Section Processus
+const ProcessSection = () => {
+  const { t } = useTranslation();
+  const [processVisible, setProcessVisible] = useState<boolean[]>(new Array(4).fill(false));
+
+  const { ref, isIntersecting } = useIntersectionObserver({
+    threshold: 0.2,
+    rootMargin: "-50px 0px -100px 0px",
+    triggerOnce: true,
+  });
+
+  const processSteps = React.useMemo(
+    () => [
+      {
+        icon: Search,
+        title: t("process.discovery.title"),
+        description: t("process.discovery.desc"),
+      },
+      {
+        icon: PencilRuler,
+        title: t("process.design.title"),
+        description: t("process.design.desc"),
+      },
+      {
+        icon: CodeXml,
+        title: t("process.development.title"),
+        description: t("process.development.desc"),
+      },
+      {
+        icon: Rocket,
+        title: t("process.deployment.title"),
+        description: t("process.deployment.desc"),
+      },
+    ],
+    [t]
+  );
+
+  useEffect(() => {
+    if (isIntersecting) {
+      processSteps.forEach((_, index) => {
+        setTimeout(() => {
+          setProcessVisible((prev) => {
+            const newState = [...prev];
+            newState[index] = true;
+            return newState;
+          });
+        }, index * 200);
+      });
+    }
+  }, [isIntersecting, processSteps]);
+
+  return (
+    <section
+      id="processus"
+      ref={ref}
+      className="py-20 bg-secondary/30"
+      aria-labelledby="process-title"
+    >
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 id="process-title" className="text-3xl md:text-4xl font-bold mb-4">
+            {t("process.title")}
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{t("process.subtitle")}</p>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          {processSteps.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <div
+                key={index}
+                className={cn(
+                  "flex gap-6 mb-12 last:mb-0 transition-all duration-700 ease-out",
+                  processVisible[index] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                )}
+                style={{
+                  transitionDelay: `${index * 200}ms`,
+                }}
+              >
+                <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Section À propos
 const AboutSection = () => {
   const { t } = useTranslation();
   const { ref, isIntersecting } = useIntersectionObserver({
@@ -183,103 +760,64 @@ const AboutSection = () => {
     <section
       id="a-propos"
       ref={ref}
-      className="py-20 md:py-24 bg-secondary/20"
+      className="py-20 bg-secondary/20"
       aria-labelledby="about-title"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* En-tête de section avec animation d'apparition */}
         <div
           className={cn(
-            "text-center mb-12 md:mb-16",
-            isIntersecting ? "animate-fade-in-up" : "opacity-0"
+            "text-center mb-16 transition-all duration-800 ease-out",
+            isIntersecting ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           )}
         >
-          <h2
-            id="about-title"
-            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground whitespace-nowrap sm:whitespace-normal"
-          >
-            {t('about.title')}
+          <h2 id="about-title" className="text-3xl md:text-4xl font-bold mb-4">
+            {t("about.title")}
           </h2>
-          <p
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4"
-            style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
-          >
-            {t('about.subtitle')}
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            {t("about.subtitle")}
           </p>
         </div>
 
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
-            {/* Photo - Animation fluide depuis la gauche */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="flex justify-center lg:justify-end order-2 lg:order-1">
               <div
                 className={cn(
-                  "about-photo-container",
-                  isIntersecting
-                    ? "animate-slide-in-left animate-delay-200"
-                    : "opacity-0"
+                  "transition-all duration-800 ease-out",
+                  isIntersecting ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
                 )}
+                style={{ transitionDelay: "200ms" }}
               >
-                <div className="relative group cursor-pointer interactive-element focus-enhanced" aria-label="Mattheo Termine - Intégrateur web freelance" role="img" aria-roledescription="Photo de Matthéo Termine" style={{ left: -15 }}>
+                <div className="relative group">
                   <Image
-                    src="/images/mattheo-termine-photo.png"
+                    src="/images/mattheo-termine-photo.webp"
                     alt="Mattheo Termine - Intégrateur web freelance"
                     width={280}
                     height={280}
-                    className="rounded-full border-4 border-white shadow-enhanced transition-all duration-500 ease-out group-hover:scale-105 group-hover:border-primary/50 crisp-edges image-load-animation"
+                    className="rounded-full border-4 border-white shadow-lg transition-all duration-500 ease-out group-hover:scale-105"
                     priority
                     sizes="(max-width: 768px) 200px, 280px"
                     quality={85}
-                    loading="eager"
-                    fetchPriority="high"
                   />
-                  {/* Effet de halo amélioré */}
-                  <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 rounded-full blur-xl opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 ease-out will-change-transform"></div>
-                  {/* Effet de brillance au hover */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 will-change-opacity"></div>
-                  {/* Indicateur d'interactivité pour l'accessibilité */}
-                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 rounded-full blur-xl opacity-70 group-hover:opacity-100 transition-all duration-500"></div>
                 </div>
               </div>
             </div>
 
-            {/* Contenu - Animation depuis la droite */}
             <div
               className={cn(
-                "order-1 lg:order-2",
-                isIntersecting
-                  ? "animate-slide-in-right animate-delay-400"
-                  : "opacity-0"
+                "order-1 lg:order-2 transition-all duration-800 ease-out",
+                isIntersecting ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
               )}
+              style={{ transitionDelay: "400ms" }}
             >
-              <div className="space-y-6 md:space-y-8 text-base md:text-lg leading-relaxed text-muted-foreground">
-                <p
-                  className="first-letter:text-2xl first-letter:font-bold first-letter:text-primary first-letter:mr-1 px-4"
-                  style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
-                >
-                  {t('about.p1')}
+              <div className="space-y-6 text-base md:text-lg leading-relaxed text-muted-foreground">
+                <p className="first-letter:text-2xl first-letter:font-bold first-letter:text-primary first-letter:mr-1">
+                  {t("about.p1")}
                 </p>
-
-                <p
-                  className="px-4"
-                  style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
-                >
-                  {t('about.p2')}
-                </p>
-
-                <p
-                  className="px-4"
-                  style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
-                >
-                  {t('about.p3')}
-                </p>
-
-                <p
-                  className="px-4"
-                  style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
-                >
-                  {t('about.p4')}
-                </p>
+                <p>{t("about.p2")}</p>
+                <p>{t("about.p3")}</p>
+                <p>{t("about.p4")}</p>
               </div>
             </div>
           </div>
@@ -289,823 +827,94 @@ const AboutSection = () => {
   );
 };
 
-const HeroSection = () => {
+// Section Contact
+const ContactSection = () => {
   const { t } = useTranslation();
-  const [animationStep, setAnimationStep] = useState(0);
-  const [typingText, setTypingText] = useState("");
-  const [showCursor, setShowCursor] = useState(false);
-
-  const fullText = t('hero.subtitle');
-
-  useEffect(() => {
-    // Smooth startup animation sequence
-    const animationSequence = [
-      () => setAnimationStep(1), // Name appears
-      () => setAnimationStep(2), // Subtitle starts
-      () => setAnimationStep(3), // Description appears
-      () => setAnimationStep(4), // Button appears
-    ];
-
-    const timers = animationSequence.map(
-      (fn, index) => setTimeout(fn, (index + 1) * 500) // Smoother timing
-    );
-
-    return () => timers.forEach(clearTimeout);
-  }, []);
-
-  // Smooth typing animation
-  useEffect(() => {
-    if (animationStep < 2) return;
-
-    setShowCursor(true);
-    let currentIndex = 0;
-
-    const typingInterval = setInterval(() => {
-      if (currentIndex <= fullText.length) {
-        setTypingText(fullText.slice(0, currentIndex));
-        currentIndex++;
-      } else {
-        clearInterval(typingInterval);
-        setTimeout(() => setShowCursor(false), 1500);
-      }
-    }, 60); // Faster typing
-
-    return () => clearInterval(typingInterval);
-  }, [animationStep, fullText]);
+  const { ref, isIntersecting } = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: "-20px 0px -50px 0px",
+    triggerOnce: true,
+  });
 
   return (
     <section
-      id="accueil"
-      className="hero-section relative min-h-screen flex items-center justify-center py-20 overflow-hidden"
-      role="banner"
-      aria-labelledby="hero-title"
+      id="contact"
+      ref={ref}
+      className="py-20 bg-secondary/30"
+      aria-labelledby="contact-title"
     >
-      {/* Arrière-plan galaxie interactif */}
-      <InteractiveGalaxy />
-
-      <div
-        className="container mx-auto px-4 text-center relative z-10"
-        suppressHydrationWarning
-      >
-        {/* Nom principal avec animation fluide */}
-        <h1
-          id="hero-title"
-          className={cn(
-            "text-5xl md:text-7xl lg:text-8xl font-bold mb-4 text-foreground drop-shadow-2xl whitespace-nowrap transition-all duration-1000 ease-out",
-            animationStep >= 1
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-8"
-          )}
-        >
-          <span className="hero-title-enhanced inline-block">
-            {"Matthéo\u00A0Termine".split("").map((char, index) => (
-              <span
-                key={`name-${index}`}
-                className={cn(
-                  "inline-block transition-all duration-700 ease-out",
-                  animationStep >= 1
-                    ? "opacity-100 translate-y-0 rotate-0"
-                    : "opacity-0 translate-y-12 rotate-12"
-                )}
-                style={{
-                  transitionDelay: `${index * 50 + 100}ms`,
-                }}
-              >
-                {char === " " ? "\u00A0" : char}
-              </span>
-            ))}
-          </span>
-        </h1>
-
-        {/* Sous-titre avec effet de typing amélioré */}
+      <div className="container mx-auto px-4">
         <div
           className={cn(
-            "text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 flex items-center justify-center transition-all duration-800 ease-out",
-            animationStep >= 2
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-6"
+            "text-center mb-16 transition-all duration-800 ease-out",
+            isIntersecting ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           )}
         >
-          <span className="text-primary whitespace-nowrap">
-            {typingText.replace(/\s/g, "\u00A0")}
-            {showCursor && (
-              <span className="animate-pulse text-primary">|</span>
+          <h2 id="contact-title" className="text-3xl md:text-4xl font-bold mb-4">
+            {t("contact.title")}
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{t("contact.subtitle")}</p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div
+            className={cn(
+              "transition-all duration-800 ease-out",
+              isIntersecting ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             )}
-          </span>
-        </div>
+            style={{ transitionDelay: "200ms" }}
+          >
+            <div className="space-y-8">
+              <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-primary/5 transition-colors duration-300">
+                <Mail className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold mb-2">Email</h3>
+                  <a
+                    href="mailto:mattheotermine104@gmail.com"
+                    className="text-muted-foreground hover:text-primary transition-colors duration-300"
+                  >
+                    mattheotermine104@gmail.com
+                  </a>
+                </div>
+              </div>
 
-        {/* Description principale */}
-        <p
-          className={cn(
-            "text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed px-4 transition-all duration-800 ease-out",
-            animationStep >= 3
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-6"
-          )}
-          style={{
-            wordBreak: "keep-all",
-            overflowWrap: "break-word",
-            transitionDelay: "200ms",
-          }}
-        >
-          {t('hero.description')}
-        </p>
-
-        {/* Sous-description */}
-        <p
-          className={cn(
-            "text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed px-4 transition-all duration-800 ease-out",
-            animationStep >= 3
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-6"
-          )}
-          style={{
-            wordBreak: "keep-all",
-            overflowWrap: "break-word",
-            transitionDelay: "400ms",
-          }}
-        >
-          {t('hero.subdescription')}
-        </p>
-
-        <div
-          className={cn(
-            "flex justify-center px-4 transition-all duration-800 ease-out",
-            animationStep >= 4
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-6"
-          )}
-          style={{ transitionDelay: "600ms" }}
-        >
-
-          {/* Indicateur de scroll principal - version discrète */}
-          <div className="flex flex-col items-center gap-4 mt-12">
-            <button
-              className="flex flex-col items-center gap-3 cursor-pointer group focus-enhanced bg-transparent border-none p-6 rounded-lg hover:bg-white/3 transition-all duration-500 animate-slow-bounce animate-subtle-pulse"
-              onClick={() => {
-                const projectsSection = document.querySelector("#projects");
-                if (projectsSection) {
-                  projectsSection.scrollIntoView({ behavior: "smooth" });
-                }
-              }}
-              aria-label={t('a11y.scrollToProjects')}
-              aria-describedby="scroll-indicator-description"
-              type="button"
-            >
-              <span className="text-white/50 text-sm font-light group-hover:text-white/70 transition-colors duration-500">
-                {t('hero.discover')}
-              </span>
-              <svg
-                className="w-6 h-6 text-white/40 group-hover:text-white/60 group-hover:scale-105 transition-all duration-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                />
-              </svg>
-            </button>
+              <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-primary/5 transition-colors duration-300">
+                <MessageCircle className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold mb-2">{t("contact.quickResponse")}</h3>
+                  <p className="text-muted-foreground">{t("contact.quickResponseDesc")}</p>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Description accessible pour l'indicateur de scroll */}
-        <div className="sr-only">
-          <p id="scroll-indicator-description">
-            {t('a11y.scrollDescription')}
-          </p>
+          <div
+            className={cn(
+              "transition-all duration-800 ease-out",
+              isIntersecting ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            )}
+            style={{ transitionDelay: "400ms" }}
+          >
+            <ContactForm />
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
+// Composant principal
 export default function Home() {
-  const { t } = useTranslation();
-  
-  // États pour les animations des sections - initialisés comme visibles pour éviter l'hydratation
-  const [isMounted, setIsMounted] = useState(false);
-  const [servicesVisible, setServicesVisible] = useState<boolean[]>(
-    new Array(services.length).fill(true)
-  );
-  const [processVisible, setProcessVisible] = useState<boolean[]>(
-    new Array(processSteps.length).fill(true)
-  );
-
-  // Hooks pour déclencher les animations des sections
-  const { ref: servicesObserverRef, isIntersecting: servicesIntersecting } =
-    useIntersectionObserver({
-      threshold: 0.2,
-      rootMargin: "-50px 0px -100px 0px",
-      triggerOnce: true,
-    });
-
-  const { ref: processObserverRef, isIntersecting: processIntersecting } =
-    useIntersectionObserver({
-      threshold: 0.2,
-      rootMargin: "-50px 0px -100px 0px",
-      triggerOnce: true,
-    });
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Déclencher les animations séquentielles
-  useEffect(() => {
-    if (isMounted && servicesIntersecting) {
-      // Reset pour l'animation
-      setServicesVisible(new Array(services.length).fill(false));
-
-      services.forEach((_, index) => {
-        setTimeout(() => {
-          setServicesVisible((prev: boolean[]) => {
-            const newState = [...prev];
-            newState[index] = true;
-            return newState;
-          });
-        }, index * 150);
-      });
-    }
-  }, [servicesIntersecting, isMounted]);
-
-  useEffect(() => {
-    if (isMounted && processIntersecting) {
-      // Reset pour l'animation
-      setProcessVisible(new Array(processSteps.length).fill(false));
-
-      processSteps.forEach((_, index) => {
-        setTimeout(() => {
-          setProcessVisible((prev: boolean[]) => {
-            const newState = [...prev];
-            newState[index] = true;
-            return newState;
-          });
-        }, index * 200);
-      });
-    }
-  }, [processIntersecting, isMounted]);
-
-  // Stubs pour la section tarifs (préservés pour compatibilité après suppression)
-  type PricingPlan = {
-    featured?: boolean;
-    title?: string;
-    headerClass?: string;
-    price?: string;
-    description?: string;
-    features?: string[];
-    link?: string;
-    cta?: string;
-  };
-
-  const pricingObserverRef = React.createRef<HTMLDivElement>();
-  const pricingPlans: PricingPlan[] = [];
-  const pricingVisible: boolean[] = [];
-
   return (
     <>
       <StructuredData />
-
       <HeroSection />
-
-      {/* SECTION MES SERVICES - TEMPORAIREMENT MASQUÉE */}
-      {false && (
-        <AnimatedSection
-          id="services"
-          className="py-16 bg-secondary/30"
-          aria-labelledby="services-title"
-        >
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2
-                id="services-title"
-                className="text-3xl md:text-4xl font-bold mb-4 whitespace-nowrap sm:whitespace-normal"
-              >
-                Mes&nbsp;Services
-              </h2>
-              <p
-                className="text-lg text-muted-foreground max-w-2xl mx-auto px-4"
-                style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
-              >
-                Expertise technique et&nbsp;solutions web&nbsp;avancées
-              </p>
-            </div>
-
-            <div
-              ref={servicesObserverRef as React.RefObject<HTMLDivElement>}
-              className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
-            >
-              {services.map((service, index) => {
-                const Icon = service.icon;
-                return (
-                  <Card
-                    key={index}
-                    className="h-full"
-                    suppressHydrationWarning
-                    style={{
-                      opacity: !isMounted ? 1 : servicesVisible[index] ? 1 : 0,
-                      transform: !isMounted
-                        ? "translateY(0px) scale(1)"
-                        : servicesVisible[index]
-                        ? "translateY(0px) scale(1)"
-                        : "translateY(32px) scale(0.95)",
-                      transitionProperty: "all",
-                      transitionDuration: "700ms",
-                      transitionTimingFunction: "ease-out",
-                      transitionDelay: `${index * 150}ms`,
-                    }}
-                  >
-                    <CardHeader className="text-center pb-3">
-                      <div className="w-12 h-12 mx-auto mb-3 bg-primary/10 rounded-full flex items-center justify-center">
-                        <Icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <CardTitle className="text-lg">{service.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <p className="text-muted-foreground text-center text-sm leading-relaxed">
-                        {service.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-
-            {/* Technical Expertise Subsection - More compact */}
-            <div className="mt-12 max-w-4xl mx-auto">
-              <div className="grid md:grid-cols-3 gap-4 text-center">
-                <div className="p-4 rounded-lg bg-card border">
-                  <h3 className="font-semibold mb-1 text-primary text-sm">
-                    Stack moderne
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Next.js, React, TypeScript
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg bg-card border">
-                  <h3 className="font-semibold mb-1 text-primary text-sm">
-                    Performance
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Vitesse &lt;2s, Lighthouse &gt;90
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg bg-card border">
-                  <h3 className="font-semibold mb-1 text-primary text-sm">
-                    Standards
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    RGAA 4.1, WCAG 2.1 AA
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </AnimatedSection>
-      )}
-
-      <AnimatedSection
-        id="projects"
-        className="py-24"
-        aria-labelledby="projects-title"
-      >
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2
-              id="projects-title"
-              className="text-3xl md:text-4xl font-bold mb-4 whitespace-nowrap sm:whitespace-normal"
-            >
-              {t('projects.title')}
-            </h2>
-            <p
-              className="text-xl text-muted-foreground max-w-2xl mx-auto px-4"
-              style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
-            >
-              {t('projects.subtitle')}
-            </p>
-          </div>
-
-          <div
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-            role="list"
-            aria-label={t('projects.listLabel')}
-          >
-            {projects.slice(0, 6).map((project, index) => (
-              <AnimatedDiv
-                key={`project-${project.slug}-${index}`}
-                delay={index * 100}
-                className="will-change-transform"
-                role="listitem"
-              >
-                <ProjectCard project={project} />
-              </AnimatedDiv>
-            ))}
-          </div>
-
-          {projects.length > 3 && (
-            <div className="text-center mt-12">
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="group px-4 whitespace-nowrap shadow-enhanced interactive-element focus-visible min-h-[44px]"
-              >
-                <Link
-                  href="/projets"
-                  aria-label={t('a11y.viewAllProjects')}
-                  className="inline-flex items-center gap-2"
-                >
-                  <span className="transition-transform duration-300 group-hover:scale-105">
-                    Voir tous mes&nbsp;projets
-                  </span>
-                  <svg
-                    className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              </Button>
-            </div>
-          )}
-        </div>
-      </AnimatedSection>
-
-      {/* SECTION MON PROCESSUS DE TRAVAIL - TEMPORAIREMENT MASQUÉE */}
-      {false && (
-        <AnimatedSection
-          id="processus"
-          className="py-24 bg-secondary/30"
-          aria-labelledby="process-title"
-        >
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2
-                id="process-title"
-                className="text-3xl md:text-4xl font-bold mb-4"
-              >
-                Mon Processus de Travail
-              </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Une approche structurée pour garantir le succès de votre projet
-                web
-              </p>
-            </div>
-
-            <div
-              ref={processObserverRef as React.RefObject<HTMLDivElement>}
-              className="max-w-4xl mx-auto"
-            >
-              {processSteps.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <div
-                    key={index}
-                    className="flex gap-6 mb-12 last:mb-0"
-                    suppressHydrationWarning
-                    style={{
-                      opacity: !isMounted ? 1 : processVisible[index] ? 1 : 0,
-                      transform: !isMounted
-                        ? "translateY(0px)"
-                        : processVisible[index]
-                        ? "translateY(0px)"
-                        : "translateY(32px)",
-                      transitionProperty: "all",
-                      transitionDuration: "700ms",
-                      transitionTimingFunction: "ease-out",
-                      transitionDelay: `${index * 200}ms`,
-                    }}
-                  >
-                    <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold mb-3">
-                        {step.title}
-                      </h3>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </AnimatedSection>
-      )}
-
-      {/* SECTION MES TARIFS - TEMPORAIREMENT MASQUÉE */}
-      {false && (
-        <AnimatedSection
-          id="pricing"
-          className="py-24 bg-secondary/30"
-          aria-labelledby="pricing-title"
-          aria-describedby="pricing-description"
-        >
-          <div className="container mx-auto px-4">
-            <header className="text-center mb-16">
-              <h2
-                id="pricing-title"
-                className="text-3xl md:text-4xl font-bold mb-4 text-foreground"
-              >
-                Mes Tarifs de Création de Sites Web
-              </h2>
-              <p
-                id="pricing-description"
-                className="text-xl text-muted-foreground max-w-2xl mx-auto"
-              >
-                Des solutions adaptées à tous les budgets, de la vitrine simple
-                à l&apos;application complexe. Tarifs transparents pour
-                développeur web freelance spécialisé en accessibilité RGAA.
-              </p>
-            </header>
-
-            <div
-              ref={pricingObserverRef as React.RefObject<HTMLDivElement>}
-              className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
-              role="group"
-              aria-label="Offres tarifaires de création de sites web"
-              style={{ paddingTop: "2rem", overflow: "visible" }}
-            >
-              {pricingPlans.map((plan, index) => {
-                const planId = `pricing-plan-${index + 1}`;
-                const isBasic = index === 0;
-                const isPremium = plan.featured;
-                const isPro = index === 2;
-                const isEnterprise = index === 3;
-
-                return (
-                  <article
-                    key={index}
-                    id={planId}
-                    className={cn(
-                      "relative bg-card border border-border rounded-lg flex flex-col",
-                      "hover:shadow-xl hover:-translate-y-1",
-                      plan.featured && "ring-2 ring-primary shadow-lg scale-105"
-                    )}
-                    suppressHydrationWarning
-                    style={{
-                      opacity: !isMounted ? 1 : pricingVisible[index] ? 1 : 0,
-                      transform: !isMounted
-                        ? "translateY(0px) scale(1)"
-                        : pricingVisible[index]
-                        ? "translateY(0px) scale(1)"
-                        : "translateY(32px) scale(0.95)",
-                      transitionProperty: "all",
-                      transitionDuration: "700ms",
-                      transitionTimingFunction: "ease-out",
-                      transitionDelay: `${index * 150}ms`,
-                      zIndex: plan.featured ? 10 : 1,
-                      overflow: "visible",
-                    }}
-                    role="region"
-                    aria-labelledby={`${planId}-title`}
-                    aria-describedby={`${planId}-description ${planId}-features`}
-                  >
-                    {plan.featured && (
-                      <div
-                        className="absolute left-1/2 transform -translate-x-1/2"
-                        style={{
-                          top: "-22px",
-                          zIndex: 50,
-                        }}
-                      >
-                        <span
-                          className="bg-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-medium shadow-lg border-2 border-white/50"
-                          aria-label="Offre la plus populaire"
-                          style={{
-                            position: "relative",
-                            display: "inline-block",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          🌟 Populaire
-                        </span>
-                      </div>
-                    )}
-
-                    <header
-                      className={cn(
-                        "pricing-card-header p-6 text-center border-b border-border",
-                        isBasic &&
-                          "bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20",
-                        isPremium &&
-                          "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20",
-                        isPro &&
-                          "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20",
-                        isEnterprise &&
-                          "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20"
-                      )}
-                    >
-                      <h3
-                        id={`${planId}-title`}
-                        className={cn(
-                          "pricing-card-title text-xl font-bold mb-3",
-                          isBasic && "text-emerald-700 dark:text-emerald-300",
-                          isPremium && "text-purple-700 dark:text-purple-300",
-                          isPro && "text-blue-700 dark:text-blue-300",
-                          isEnterprise && "text-orange-700 dark:text-orange-300"
-                        )}
-                      >
-                        {plan.title}
-                      </h3>
-                      <div
-                        className={cn(
-                          "pricing-card-price text-3xl font-bold mb-3",
-                          isBasic && "text-emerald-800 dark:text-emerald-200",
-                          isPremium && "text-purple-800 dark:text-purple-200",
-                          isPro && "text-blue-800 dark:text-blue-200",
-                          isEnterprise && "text-orange-800 dark:text-orange-200"
-                        )}
-                      >
-                        <span aria-label={`Prix: ${plan.price}`}>
-                          {plan.price}
-                        </span>
-                      </div>
-                      <p
-                        id={`${planId}-description`}
-                        className="pricing-card-description text-sm text-muted-foreground leading-relaxed"
-                      >
-                        {plan.description}
-                      </p>
-                    </header>
-
-                    <div className="p-6 flex flex-col flex-1">
-                      <h4 className="sr-only">
-                        Fonctionnalités incluses dans l&apos;offre {plan.title}
-                      </h4>
-                      <ul
-                        id={`${planId}-features`}
-                        className="space-y-3 mb-6 flex-1"
-                        role="list"
-                        aria-label={`Fonctionnalités de l'offre ${plan.title}`}
-                      >
-                        {plan.features?.map((feature: string, featureIndex: number) => (
-                          <li
-                            key={featureIndex}
-                            className="flex items-start gap-3"
-                            role="listitem"
-                          >
-                            <CheckCircle2
-                              className={cn(
-                                "w-5 h-5 mt-0.5 flex-shrink-0",
-                                isBasic &&
-                                  "text-emerald-600 dark:text-emerald-400",
-                                isPremium &&
-                                  "text-purple-600 dark:text-purple-400",
-                                isPro && "text-blue-600 dark:text-blue-400",
-                                isEnterprise &&
-                                  "text-orange-600 dark:text-orange-400"
-                              )}
-                              aria-hidden="true"
-                            />
-                            <span className="text-sm text-card-foreground leading-relaxed">
-                              {feature}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      <div className="mt-auto">
-                        <Button
-                          asChild
-                          className={cn(
-                            "w-full font-semibold transition-all duration-300",
-                            isBasic &&
-                              "bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-500 dark:hover:bg-emerald-600",
-                            isPremium &&
-                              "bg-purple-600 hover:bg-purple-700 text-white dark:bg-purple-500 dark:hover:bg-purple-600",
-                            isPro &&
-                              "bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600",
-                            isEnterprise &&
-                              "bg-orange-600 hover:bg-orange-700 text-white dark:bg-orange-500 dark:hover:bg-orange-600"
-                          )}
-                          variant={plan.featured ? "default" : "secondary"}
-                        >
-                          <Link
-                            href={plan.link ?? '#'}
-                            aria-label={`${plan.cta} - Offre ${plan.title} à ${plan.price}`}
-                            className="flex items-center justify-center gap-2 px-4 py-2"
-                          >
-                            {plan.cta}
-                            <span aria-hidden="true">→</span>
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-
-            <div className="text-center mt-12 p-6 bg-muted/50 rounded-lg max-w-3xl mx-auto">
-              <h3 className="text-lg font-semibold mb-3 text-foreground">
-                💡 Besoin d&apos;un conseil personnalisé ?
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                Tous mes tarifs incluent l&apos;optimisation SEO, la conformité
-                RGAA (accessibilité), et un suivi personnalisé. Chaque projet
-                est unique, n&apos;hésitez pas à me contacter pour une
-                estimation précise et gratuite.
-              </p>
-              <Button asChild variant="outline" className="font-medium">
-                <Link
-                  href="#contact"
-                  aria-label={t('a11y.contactForQuote')}
-                >
-                  📞 {t('contact.discussProject')}
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </AnimatedSection>
-      )}
-
+      <ServicesSection />
+      <ProjectsSection />
+      <ProcessSection />
       <AboutSection />
-
-      <AnimatedSection
-        id="contact"
-        className="py-24 bg-secondary/30"
-        aria-labelledby="contact-title"
-      >
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2
-              id="contact-title"
-              className="text-3xl md:text-4xl font-bold mb-4"
-            >
-              {t('contact.title')}
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              {t('contact.subtitle')}
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            <AnimatedDiv delay={200} className="will-change-transform">
-              <div
-                className="space-y-8"
-                role="list"
-                aria-label={t('contact.infoLabel')}
-              >
-                <div
-                  className="flex items-start gap-4 interactive-element p-4 rounded-lg hover:bg-primary/5 transition-colors duration-300"
-                  role="listitem"
-                >
-                  <Mail
-                    className="w-6 h-6 text-primary mt-1 flex-shrink-0"
-                    aria-hidden="true"
-                  />
-                  <div>
-                    <h3 className="font-semibold mb-2">Email</h3>
-                    <a
-                      href="mailto:mattheotermine104@gmail.com"
-                      className="text-muted-foreground hover:text-primary transition-colors duration-300 focus-visible"
-                      aria-label={t('a11y.emailMe')}
-                    >
-                      mattheotermine104@gmail.com
-                    </a>
-                  </div>
-                </div>
-
-                <div
-                  className="flex items-start gap-4 interactive-element p-4 rounded-lg hover:bg-primary/5 transition-colors duration-300"
-                  role="listitem"
-                >
-                  <MessageCircle
-                    className="w-6 h-6 text-primary mt-1 flex-shrink-0"
-                    aria-hidden="true"
-                  />
-                  <div>
-                    <h3 className="font-semibold mb-2">{t('contact.quickResponse')}</h3>
-                    <p className="text-muted-foreground">
-                      {t('contact.quickResponseDesc')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </AnimatedDiv>
-
-            <AnimatedDiv delay={400} className="will-change-transform">
-              <ContactForm />
-            </AnimatedDiv>
-          </div>
-        </div>
-      </AnimatedSection>
+      <ContactSection />
+      <ScrollToTopButton />
     </>
   );
 }
-

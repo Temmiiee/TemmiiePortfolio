@@ -46,17 +46,17 @@ async function submitAction(data: FormData) {
     const result = await response.json();
 
     if (!response.ok || result.error) {
-      throw new Error(result.error || "Erreur lors de l'envoi du formulaire.");
+      throw new Error(result.error || "Form submission error.");
     }
 
-    return { success: true, message: "Message envoyé avec succès !" };
+    return { success: true, message: "success" };
   } catch (error) {
-    console.error("Erreur lors de l'envoi:", error);
+    console.error("Form submission error:", error);
     return {
       success: false,
       message: error instanceof Error
         ? error.message
-        : "Une erreur est survenue lors de l'envoi.",
+        : "error",
     };
   }
 }
@@ -80,13 +80,13 @@ export function ContactForm() {
     if (result.success) {
       toast({
         title: t("contact.successTitle"),
-        description: result.message,
+        description: t("contact.success"),
       });
       form.reset();
     } else {
       toast({
         title: t("contact.errorTitle"),
-        description: result.message,
+        description: t("contact.error"),
         variant: "destructive",
       });
     }

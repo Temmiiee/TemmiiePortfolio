@@ -21,6 +21,7 @@ export function useIntersectionObserver(options: UseIntersectionObserverOptions 
             setIntersecting(true);
             if (triggerOnce && observerRef.current && ref.current) {
                 observerRef.current.unobserve(ref.current);
+                observerRef.current.disconnect();
             }
         } else if (!triggerOnce) {
             setIntersecting(false);
