@@ -1,0 +1,452 @@
+/* =============================================================================
+   NON-CRITICAL STYLES - LOADED ASYNCHRONOUSLY
+   ============================================================================= */
+
+/* Styles non-critiques intégrés directement (pas d'@import pour éviter les requêtes supplémentaires) */
+
+/* =============================================================================
+   TYPOGRAPHY ENHANCEMENTS - POLICES PLUS GRASSES
+   ============================================================================= */
+
+/* Corps de texte plus gras et impactant */
+p, .text-base, .text-lg {
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* Titres encore plus gras */
+.text-xl, .text-2xl {
+  font-weight: 600;
+}
+
+.text-3xl, .text-4xl {
+  font-weight: 700;
+}
+
+.text-5xl, .text-6xl, .text-7xl, .text-8xl {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+/* Classes utilitaires pour différents niveaux de graisse */
+.font-medium-plus {
+  font-weight: 600;
+}
+
+.font-bold-plus {
+  font-weight: 800;
+}
+
+.font-black {
+  font-weight: 900;
+}
+
+/* Amélioration de la lisibilité avec plus de contraste */
+.text-enhanced {
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* =============================================================================
+   UTILITY CLASSES MANQUANTES
+   ============================================================================= */
+
+/* Text contrast utilities */
+.text-contrast-enhanced {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 2px 6px rgba(0, 0, 0, 0.6),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.bg-overlay-strong {
+  background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.6) 50%,
+      rgba(0, 0, 0, 0.3) 100%
+    ),
+    rgba(0, 0, 0, 0.4);
+}
+
+/* Text shadow utilities */
+.text-shadow-hero-title {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-hero-subtitle {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-shadow-hero-description {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-section-title {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Interactive background effect */
+.interactive-bg {
+  position: relative;
+  background-color: hsl(var(--secondary));
+  overflow: hidden;
+  --x: 50%;
+  --y: 50%;
+}
+
+.interactive-bg::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: radial-gradient(
+    600px circle at var(--x) var(--y),
+    hsl(var(--primary) / 0.15),
+    hsl(var(--accent) / 0.05) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .interactive-bg::before {
+    opacity: 0.7;
+  }
+  .interactive-bg:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Animation classes */
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.animate-fade-in-left {
+  animation: fade-in-left 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.6s ease-out;
+}
+
+.animate-fade-in-right {
+  animation: fade-in-right 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.6s ease-out;
+}
+
+/* Active states when visible */
+.animate-fade-in-up.opacity-100 {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-fade-in-left.opacity-100 {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.animate-fade-in-right.opacity-100 {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* =============================================================================
+   DESIGN TOKENS ESSENTIELS
+   ============================================================================= */
+
+/* Variables CSS supplémentaires pour les composants non-critiques */
+:root {
+  --accent: 258 89% 55%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 214 31% 90%;
+  --ring: 258 89% 50%;
+}
+
+.dark {
+  --accent: 258 89% 75%;
+  --accent-foreground: 222 84% 4.9%;
+  --destructive: 0 63% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 217 33% 22%;
+  --ring: 258 89% 70%;
+}
+
+/* =============================================================================
+   PERFORMANCE & ACCESSIBILITY IMPROVEMENTS
+   ============================================================================= */
+
+/* Amélioration des performances pour les animations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Optimisation pour éviter les re-rendus inutiles */
+.animation-complete {
+  will-change: auto;
+}
+
+/* Réduction des animations pour les utilisateurs qui préfèrent moins de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Amélioration des effets hover pour la section À propos */
+.about-photo-container {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.about-photo-container:hover {
+  transform: translateZ(0);
+}
+
+/* Optimisation des ombres */
+.shadow-enhanced {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.shadow-enhanced:hover {
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Amélioration du contraste pour l'accessibilité */
+.high-contrast {
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+
+/* Optimisation des images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Amélioration des transitions pour les éléments interactifs */
+.interactive-element {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.interactive-element:hover {
+  transform: translateY(-2px);
+}
+
+/* Animation bounce très lente et discrète */
+@keyframes slow-bounce {
+  0%, 100% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-4px);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-slow-bounce {
+  animation: slow-bounce 5s infinite;
+}
+
+/* Animation du curseur de typing améliorée */
+@keyframes typing-blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.typing-cursor {
+  display: inline-block;
+  font-weight: 300;
+  line-height: 1;
+  transform: translateZ(0);
+  will-change: opacity;
+  animation: typing-blink 1s ease-in-out infinite;
+}
+
+.typing-text {
+  display: inline-block;
+  white-space: nowrap;
+  transform: translateZ(0);
+  will-change: auto;
+  min-height: 1.2em;
+}
+
+/* Réduction encore plus importante pour prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slow-bounce {
+    animation: none;
+  }
+  
+  .typing-cursor {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  
+  .typing-text {
+    animation: none !important;
+  }
+  
+  /* Affichage immédiat du texte complet en mode réduit */
+  .hero-section .typing-text {
+    opacity: 1 !important;
+  }
+}
+
+/* =============================================================================
+   LIGHT MODE IMPROVEMENTS
+   ============================================================================= */
+
+/* Amélioration des contrastes en mode light */
+html:not(.dark) {
+  /* Amélioration de la section Hero en mode light */
+  .hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  /* Amélioration des cartes en mode light */
+  .shadow-enhanced {
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+  
+  .shadow-enhanced:hover {
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.15),
+      0 10px 10px -5px rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* =============================================================================
+   ABOUT SECTION ANIMATIONS
+   ============================================================================= */
+
+/* Animation d'entrée pour la section À propos */
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(50px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Classes d'animation pour la section À propos */
+.animate-slide-in-left {
+  animation: slideInFromLeft 1s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 1s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out forwards;
+}
+
+/* Animation avec délais */
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animate-delay-600 {
+  animation-delay: 600ms;
+}
+
+.animate-delay-800 {
+  animation-delay: 800ms;
+}
+
+/* États initiaux pour les animations */
+.animate-slide-in-left,
+.animate-slide-in-right,
+.animate-fade-in-up,
+.animate-scale-in {
+  opacity: 0;
+}
+
+/* Respect des préférences d'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-fade-in-up,
+  .animate-scale-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

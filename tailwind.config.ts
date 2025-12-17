@@ -17,9 +17,16 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['var(--font-pt-sans)', 'sans-serif'],
-        headline: ['var(--font-space-grotesk)', 'sans-serif'],
-        code: ['monospace'],
+        body: ['var(--font-inter)', 'system-ui', '-apple-system', 'sans-serif'],
+        headline: ['var(--font-outfit)', 'system-ui', '-apple-system', 'sans-serif'],
+        code: ['ui-monospace', 'SFMono-Regular', 'Monaco', 'Consolas', 'monospace'],
+      },
+      fontWeight: {
+        normal: '500',
+        medium: '600',
+        semibold: '700',
+        bold: '800',
+        extrabold: '900',
       },
       colors: {
         background: 'hsl(var(--background))',

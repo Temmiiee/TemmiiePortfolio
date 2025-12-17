@@ -1,26 +1,8 @@
 /* =============================================================================
-   MAIN STYLESHEET - MODULAR ARCHITECTURE
+   MAIN STYLESHEET - OPTIMIZED FOR PERFORMANCE
    ============================================================================= */
 
-/* Design System */
-@import "../styles/tokens.css";
-@import "../styles/base.css";
-@import "../styles/accessibility.css";
-
-/* Animations */
-@import "../styles/animations.css";
-@import "../styles/utilities.css";
-
-/* Components */
-@import "../styles/components/hero.css";
-@import "../styles/components/services.css";
-@import "../styles/components/pricing.css";
-@import "../styles/components/navigation.css";
-@import "../styles/components/interactive.css";
-@import "../styles/components/process.css";
-@import "../styles/components/about.css";
-
-/* Tailwind CSS directives */
+/* Tailwind CSS directives - loaded first for critical styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -41,19 +23,6 @@
 /* Optimisation pour éviter les re-rendus inutiles */
 .animation-complete {
   will-change: auto;
-}
-
-/* Optimisation des fonts pour éviter le blocage */
-@font-face {
-  font-family: 'PT Sans';
-  font-display: optional;
-  src: local('PT Sans');
-}
-
-@font-face {
-  font-family: 'Space Grotesk';
-  font-display: optional;
-  src: local('Space Grotesk');
 }
 
 /* Réduction des animations pour les utilisateurs qui préfèrent moins de mouvement */

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { PT_Sans, Space_Grotesk } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-import "@/styles/accessibility.css";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -16,21 +15,22 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Link from "next/link";
 
-const ptSans = PT_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-body",
+  weight: ["500", "600"],
+  variable: "--font-inter",
   display: "swap",
-  fallback: ["system-ui", "sans-serif"],
-  preload: true,
+  fallback: ["system-ui", "-apple-system", "sans-serif"],
+  preload: false,
 });
 
-const spaceGrotesk = Space_Grotesk({
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  weight: ["600", "700", "800"],
+  variable: "--font-outfit",
   display: "swap",
-  fallback: ["system-ui", "sans-serif"],
-  preload: true,
+  fallback: ["system-ui", "-apple-system", "sans-serif"],
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.svg",
+        url: "/og-image.webp",
         width: 1200,
         height: 630,
         alt: "Matthéo Termine - Intégrateur Web Freelance spécialisé en accessibilité RGAA et optimisation SEO",
@@ -93,7 +93,7 @@ export const metadata: Metadata = {
     title: "Matthéo Termine | Intégrateur Web Freelance RGAA",
     description:
       "Expert en sites web accessibles et performants. Spécialiste Next.js, React, WordPress. Conformité RGAA et optimisation SEO garanties. Contactez-moi !",
-    images: ["/og-image.svg"],
+    images: ["/og-image.webp"],
     creator: "@mattheo_termine",
     site: "@mattheo_termine",
   },
@@ -145,7 +145,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={cn(ptSans.variable, spaceGrotesk.variable, "scroll-smooth dark")}
+      className={cn(inter.variable, outfit.variable, "scroll-smooth dark")}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
@@ -164,17 +164,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="msapplication-TileColor" content="#a259ff" />
         <style id="critical-css" dangerouslySetInnerHTML={{
-          __html: `:root{--background:0 0% 100%;--foreground:222 84% 4.9%;--primary:258 89% 50%;--primary-foreground:0 0% 100%}.dark{--background:222 84% 4.9%;--foreground:210 40% 98%;--primary:258 89% 70%;--primary-foreground:222 84% 4.9%}html{background-color:#ffffff;color-scheme:light dark}html.dark{background-color:#0a0a1a}body{background-color:hsl(var(--background));color:hsl(var(--foreground));font-family:var(--font-body),sans-serif;min-height:100vh;opacity:0;animation:fadeInBody 0.3s ease-out forwards}.dark body{background:linear-gradient(to bottom,#0a0a1a 0%,#0f0f23 30%,#1a1a2e 60%,#0d1117 100%)}h1,h2,h3,h4,h5,h6{font-family:var(--font-headline),sans-serif}.hero-section{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center}.skip-link{position:absolute;top:-40px;left:6px;background:hsl(var(--background));color:hsl(var(--foreground));padding:8px;text-decoration:none;z-index:100}.skip-link:focus{top:6px}@keyframes fadeInBody{to{opacity:1}}`
+          __html: `:root{--background:0 0% 100%;--foreground:222 84% 4.9%;--primary:258 89% 50%;--primary-foreground:0 0% 100%;--secondary:210 40% 96%;--muted:210 40% 94%;--border:214 31% 85%;--card:0 0% 98%;--card-foreground:222 84% 4.9%;--radius:0.5rem}.dark{--background:222 84% 4.9%;--foreground:210 40% 98%;--primary:258 89% 70%;--primary-foreground:222 84% 4.9%;--secondary:217 33% 20%;--muted:217 33% 18%;--border:217 33% 25%;--card:222 84% 6%;--card-foreground:210 40% 98%}*{border-color:hsl(var(--border))}html{background-color:#ffffff;color-scheme:light dark;font-family:var(--font-inter),system-ui,-apple-system,sans-serif;text-rendering:optimizeLegibility}html.dark{background-color:#0a0a1a}body{background-color:hsl(var(--background));color:hsl(var(--foreground));font-family:inherit;min-height:100vh;opacity:0;animation:fadeInBody 0.3s ease-out forwards;line-height:1.6;font-weight:500}.dark body{background:linear-gradient(to bottom,#0a0a1a 0%,#0f0f23 30%,#1a1a2e 60%,#0d1117 100%)}h1,h2,h3,h4,h5,h6{font-family:var(--font-outfit),system-ui,-apple-system,sans-serif;font-weight:700;line-height:1.2;letter-spacing:-0.025em}h1{font-weight:800}.hero-section{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center}.skip-link{position:absolute;top:-40px;left:6px;background:hsl(var(--primary));color:hsl(var(--primary-foreground));padding:8px 16px;font-size:0.875rem;font-weight:600;text-decoration:none;border-radius:0 0 4px 4px;z-index:1000;transition:top 0.3s}.skip-link:focus{top:0}*:focus-visible{outline:2px solid transparent;outline-offset:2px;box-shadow:0 0 0 2px hsl(var(--background)),0 0 0 4px hsl(var(--primary));border-radius:2px}@keyframes fadeInBody{to{opacity:1}}@media(prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}}`
         }} />
-        {/* Critical resource hints for performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-        
-        {/* Preload critical fonts */}
-        <link rel="preload" href="https://fonts.gstatic.com/s/ptsans/v17/jizaRExUiTo99u79D0KExcOPIDU.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mPbF4C4-uBg.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        {/* Critical resource hints for performance - Next.js gère automatiquement les fonts */}
 
         {/* Explicit icon links for better browser compatibility (especially Firefox) */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -199,6 +191,10 @@ export default function RootLayout({
         <link rel="preload" href="/favicon.svg" as="image" type="image/svg+xml" />
         <link rel="preload" href="/theme-init.js" as="script" />
         
+        {/* Optimisation fonts - chargement manuel pour éviter les warnings */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
         {/* Performance hints - Google Analytics uniquement si activé */}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
@@ -215,6 +211,28 @@ export default function RootLayout({
         {/* Theme initialization must be synchronous */}
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/theme-init.js" />
+        
+        {/* Load non-critical CSS asynchronously after page load */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              function loadNonCriticalCSS() {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = '/styles/non-critical.css';
+                link.media = 'print';
+                link.onload = function() { this.media = 'all'; };
+                document.head.appendChild(link);
+              }
+              
+              if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadNonCriticalCSS, { timeout: 2000 });
+              } else {
+                setTimeout(loadNonCriticalCSS, 1000);
+              }
+            })();
+          `
+        }} />
         
         {/* Structured Data for SEO */}
         <StructuredData />
