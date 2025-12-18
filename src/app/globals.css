@@ -1,6 +1,25 @@
-/* =============================================================================
-   MAIN STYLESHEET - OPTIMIZED FOR PERFORMANCE
-   ============================================================================= */
+/* 
+===================================================
+MAIN STYLESHEET - OPTIMIZED FOR PERFORMANCE
+===================================================
+*/
+
+/* Import custom styles */
+@import '../styles/base.css';
+@import '../styles/tokens.css';
+@import '../styles/utilities.css';
+@import '../styles/animations.css';
+@import '../styles/accessibility.css';
+@import '../styles/responsive.css';
+
+/* Import component styles */
+@import '../styles/components/hero.css';
+@import '../styles/components/about.css';
+@import '../styles/components/services.css';
+@import '../styles/components/process.css';
+@import '../styles/components/navigation.css';
+@import '../styles/components/interactive.css';
+@import '../styles/components/pricing.css';
 
 /* Tailwind CSS directives - loaded first for critical styles */
 @tailwind base;

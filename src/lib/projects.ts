@@ -58,12 +58,12 @@ export const projects: Project[] = [
       en: "TDM Factory"
     },
     description: {
-      fr: "Une application de fouille de texte (text mining) pour analyser divers types de corpus.",
-      en: "A text mining application to analyze various types of corpus."
+      fr: "Une plateforme de fouille de texte pour l'ESR transformant des corpus scientifiques en connaissances exploitables.",
+      en: "A text mining platform for higher education and research, transforming scientific corpus into actionable knowledge."
     },
     longDescription: {
-      fr: "TDM Factory est une application web de fouille de texte qui permet aux chercheurs et analystes de lancer des traitements sur de grands volumes de données. Elle supporte divers formats de fichiers, incluant les fichiers texte bruts, les PDF, et les corpus scientifiques tabulaires (CSV, Excel). De plus, elle s'intègre avec l'API IstexSearch pour analyser directement des résultats de recherche. L'interface a été pensée pour être intuitive, même pour un utilisateur non-technique.",
-      en: "TDM Factory is a text mining web application that allows researchers and analysts to run processing on large volumes of data. It supports various file formats, including raw text files, PDFs, and tabular scientific corpus (CSV, Excel). Additionally, it integrates with the IstexSearch API to directly analyze search results. The interface was designed to be intuitive, even for non-technical users."
+      fr: "TDM Factory offre à l'ESR un service centralisé et simple d'usage pour transformer un corpus scientifique en connaissances exploitables. La plateforme propose de nombreux traitements : extraction d'informations, enrichissement automatique et structuration des textes. Les résultats sont accessibles en ligne avec une confidentialité renforcée grâce à un traitement temporaire sur serveurs internes.\n\nParmi les outils disponibles : bibCheck (vérification de fiabilité des références et détection d'articles rétractés ou générés par IA), textSummarize (résumé de textes scientifiques en anglais), diseaseTag (détection d'entités nommées de maladies), Teeft (extraction de termes significatifs), et speciesTag (détection de noms scientifiques d'espèces).\n\nNote : TDM Factory n'est accessible qu'aux membres du CNRS.",
+      en: "TDM Factory provides higher education and research with a centralized, user-friendly service to transform scientific corpus into actionable knowledge. The platform offers numerous processing options: information extraction, automatic enrichment, and text structuring. Results are accessible online with enhanced confidentiality through temporary processing on internal servers.\n\nAvailable tools include: bibCheck (reference reliability verification and detection of retracted or AI-generated articles), textSummarize (scientific text summarization in English), diseaseTag (disease named entity detection), Teeft (significant term extraction), and speciesTag (scientific species name detection).\n\nNote: TDM Factory is only accessible to CNRS members."
     },
     technologies: [
       { name: "React", icon: CodeXml },
@@ -72,7 +72,7 @@ export const projects: Project[] = [
     ],
     imageUrl: "/images/projects/tdm-factory.webp",
     dataAiHint: "data analysis",
-    liveLink: "https://www.istex.fr/tdm-factory-la-fouille-de-textes-a-portee-de-main/",
+    liveLink: "https://www.linkedin.com/feed/update/urn:li:ugcPost:7401654287451443200/",
     repoLink: "https://github.com/Inist-CNRS/tdm-factory",
   },
   {
