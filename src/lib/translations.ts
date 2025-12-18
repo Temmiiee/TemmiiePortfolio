@@ -105,27 +105,11 @@ export const translations = {
     'social.linkedinAria': 'Visitez mon profil LinkedIn (ouvre dans une nouvelle fenêtre)',
     'social.githubAria': 'Visitez mon profil GitHub (ouvre dans une nouvelle fenêtre)',
     'social.maltAria': 'Visitez mon profil Malt (ouvre dans une nouvelle fenêtre)',
+
     
-    // Cookie Banner
-    'cookies.title': 'Respect de votre vie privée',
-    'cookies.description': 'Ce site utilise des cookies pour améliorer votre expérience et analyser le trafic. Vous pouvez choisir les cookies que vous acceptez.',
-    'cookies.acceptAll': 'Accepter tout',
-    'cookies.rejectAll': 'Refuser tout',
-    'cookies.customize': 'Personnaliser',
-    'cookies.preferences': 'Préférences des cookies',
-    'cookies.essential': 'Cookies essentiels',
-    'cookies.essentialDesc': 'Nécessaires au fonctionnement du site (obligatoires)',
-    'cookies.analytics': 'Cookies analytiques',
-    'cookies.analyticsDesc': 'Google Analytics pour comprendre l\'utilisation du site',
-    'cookies.marketing': 'Cookies marketing',
-    'cookies.marketingDesc': 'Cookies tiers pour le suivi d\'audience et le remarketing',
-    'cookies.save': 'Sauvegarder mes préférences',
-    'cookies.learnMore': 'En savoir plus :',
-    'cookies.status': 'Cookies',
-    'cookies.accepted': 'acceptés',
-    'cookies.rejected': 'refusés',
-    'cookies.partial': 'partiels',
-    'cookies.savedFor': 'Vos préférences sont sauvegardées pour un an',
+    // Common
+    'common.cancel': 'Annuler',
+    'common.close': 'Fermer',
     
     // Accessibility
     'a11y.skipToMain': 'Aller au contenu principal',
@@ -140,8 +124,7 @@ export const translations = {
     'a11y.downloadIcon': 'Icône de téléchargement',
     'a11y.scrollToProjects': 'Faire défiler vers mes réalisations',
     'a11y.scrollDescription': 'Cliquez pour découvrir mes réalisations et projets récents',
-    'a11y.closeAndReject': 'Fermer et refuser les cookies non essentiels',
-    'a11y.modifyCookies': 'Modifier les préférences des cookies',
+
     'a11y.downloadCV': 'Télécharger mon CV au format PDF (ouvre dans une nouvelle fenêtre)',
     'a11y.viewAllProjects': 'Voir tous mes projets et réalisations',
     'a11y.emailMe': 'Envoyer un email à mattheotermine104@gmail.com',
@@ -270,27 +253,11 @@ export const translations = {
     'social.linkedinAria': 'Visit my LinkedIn profile (opens in a new window)',
     'social.githubAria': 'Visit my GitHub profile (opens in a new window)',
     'social.maltAria': 'Visit my Malt profile (opens in a new window)',
+
     
-    // Cookie Banner
-    'cookies.title': 'Respect for Your Privacy',
-    'cookies.description': 'This site uses cookies to improve your experience and analyze traffic. You can choose which cookies you accept.',
-    'cookies.acceptAll': 'Accept All',
-    'cookies.rejectAll': 'Reject All',
-    'cookies.customize': 'Customize',
-    'cookies.preferences': 'Cookie Preferences',
-    'cookies.essential': 'Essential Cookies',
-    'cookies.essentialDesc': 'Necessary for the site to function (required)',
-    'cookies.analytics': 'Analytics Cookies',
-    'cookies.analyticsDesc': 'Google Analytics to understand site usage',
-    'cookies.marketing': 'Marketing Cookies',
-    'cookies.marketingDesc': 'Third-party cookies for audience tracking and remarketing',
-    'cookies.save': 'Save My Preferences',
-    'cookies.learnMore': 'Learn more:',
-    'cookies.status': 'Cookies',
-    'cookies.accepted': 'accepted',
-    'cookies.rejected': 'rejected',
-    'cookies.partial': 'partial',
-    'cookies.savedFor': 'Your preferences are saved for one year',
+    // Common
+    'common.cancel': 'Cancel',
+    'common.close': 'Close',
     
     // Accessibility
     'a11y.skipToMain': 'Skip to main content',
@@ -305,8 +272,7 @@ export const translations = {
     'a11y.downloadIcon': 'Download icon',
     'a11y.scrollToProjects': 'Scroll to my projects',
     'a11y.scrollDescription': 'Click to discover my recent projects and work',
-    'a11y.closeAndReject': 'Close and reject non-essential cookies',
-    'a11y.modifyCookies': 'Modify cookie preferences',
+
     'a11y.downloadCV': 'Download my CV in PDF format (opens in a new window)',
     'a11y.viewAllProjects': 'View all my projects and work',
     'a11y.emailMe': 'Send an email to mattheotermine104@gmail.com',

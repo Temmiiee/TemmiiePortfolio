@@ -2,49 +2,26 @@
    NON-CRITICAL STYLES - LOADED ASYNCHRONOUSLY
    ============================================================================= */
 
-/* Styles non-critiques intégrés directement (pas d'@import pour éviter les requêtes supplémentaires) */
-
 /* =============================================================================
-   TYPOGRAPHY ENHANCEMENTS - POLICES PLUS GRASSES
+   TYPOGRAPHY ENHANCEMENTS
    ============================================================================= */
 
-/* Corps de texte plus gras et impactant */
-p, .text-base, .text-lg {
-  font-weight: 500;
-  line-height: 1.6;
+/* Enhanced text weights for better visual hierarchy */
+p, .text-base, .text-lg { font-weight: 500; line-height: 1.6; }
+.text-xl, .text-2xl { font-weight: 600; }
+.text-3xl, .text-4xl { font-weight: 700; }
+.text-5xl, .text-6xl, .text-7xl, .text-8xl { 
+  font-weight: 800; 
+  letter-spacing: -0.03em; 
 }
 
-/* Titres encore plus gras */
-.text-xl, .text-2xl {
-  font-weight: 600;
-}
-
-.text-3xl, .text-4xl {
-  font-weight: 700;
-}
-
-.text-5xl, .text-6xl, .text-7xl, .text-8xl {
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-/* Classes utilitaires pour différents niveaux de graisse */
-.font-medium-plus {
-  font-weight: 600;
-}
-
-.font-bold-plus {
-  font-weight: 800;
-}
-
-.font-black {
-  font-weight: 900;
-}
-
-/* Amélioration de la lisibilité avec plus de contraste */
-.text-enhanced {
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+/* Utility classes */
+.font-medium-plus { font-weight: 600; }
+.font-bold-plus { font-weight: 800; }
+.font-black { font-weight: 900; }
+.text-enhanced { 
+  font-weight: 600; 
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); 
 }
 
 /* =============================================================================

@@ -1,8 +1,7 @@
 /**
  * Main exports for optimization system
- * Only runtime analytics tracking is included in production
+ * Core Web Vitals tracking for performance monitoring
  */
 
 export * from './types';
 export * from './config';
-export * from './analytics-tracker';

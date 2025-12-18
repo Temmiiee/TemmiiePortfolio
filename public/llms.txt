@@ -106,7 +106,6 @@ The portfolio showcases several projects demonstrating expertise in:
 ### Analytics & Tracking
 - Google Analytics 4 for traffic analysis
 - Core Web Vitals monitoring
-- Cookie consent management (GDPR compliant)
 
 ## Content Guidelines for AI Agents
 

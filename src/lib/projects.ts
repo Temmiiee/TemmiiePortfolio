@@ -108,8 +108,8 @@ export const projects: Project[] = [
       en: "An immersive neon-styled 3D Tic-Tac-Toe game with advanced game modes and full accessibility.",
     },
     longDescription: {
-      fr: "3D Morpion est une réinterprétation moderne du jeu de morpion en trois dimensions. Construit avec React Three Fiber, il propose un plateau 3D interactif entièrement rotatif, des effets visuels néon (bloom, glassmorphism) et plusieurs modes de jeu. Le projet met un fort accent sur l’accessibilité, avec une navigation complète au clavier et un support des lecteurs d’écran via une grille accessible invisible. Il inclut également des variantes de règles comme le mode Misère, qui transforme totalement la stratégie du jeu.",
-      en: "3D Morpion is a modern reinterpretation of Tic-Tac-Toe in three dimensions. Built with React Three Fiber, it features a fully rotatable interactive 3D board, neon visual effects (bloom, glassmorphism), and multiple game modes. The project strongly emphasizes accessibility, offering full keyboard navigation and screen reader support through an invisible accessible grid. It also includes rule variants such as Misère mode, which completely changes the game strategy.",
+      fr: "3D Morpion est une réinterprétation moderne du jeu de morpion en trois dimensions. Construit avec React Three Fiber, il propose un plateau 3D interactif entièrement rotatif, des effets visuels néon (bloom, glassmorphism) et plusieurs modes de jeu.",
+      en: "3D Morpion is a modern reinterpretation of Tic-Tac-Toe in three dimensions. Built with React Three Fiber, it features a fully rotatable interactive 3D board, neon visual effects (bloom, glassmorphism), and multiple game modes.",
     },
     technologies: [
       { name: "React", icon: CodeXml },

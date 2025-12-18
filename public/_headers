@@ -1,5 +1,5 @@
-# Headers pour Cloudflare Pages
-# Ces headers améliorent la sécurité et les performances
+# Headers for Cloudflare Pages
+# Performance and security improvements
 
 /*
   X-DNS-Prefetch-Control: on
@@ -8,41 +8,74 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-XSS-Protection: 1; mode=block
 
-# Cache pour les assets statiques Next.js
+# Next.js static assets - long cache with immutable
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
-
-# Cache pour les images
-/images/*
+  
+# CSS and JS files - long cache
+/*.css
   Cache-Control: public, max-age=31536000, immutable
-
-# Cache pour les images optimisées
-/images/optimized/*
+  Content-Type: text/css; charset=utf-8
+  
+/*.js
   Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/javascript; charset=utf-8
 
-# Cache pour les fichiers d'images
+# Fonts - long cache
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff2
+  
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff
+
+# Images - long cache with compression
 /*.svg
   Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/svg+xml
+  
 /*.jpg
   Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/jpeg
+  
 /*.jpeg
   Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/jpeg
+  
 /*.png
   Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/png
+  
 /*.webp
   Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/webp
+  
 /*.avif
   Cache-Control: public, max-age=31536000, immutable
-/*.gif
-  Cache-Control: public, max-age=31536000, immutable
-/*.ico
-  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/avif
 
-# Cache pour le manifest
+# Favicon and manifest
+/favicon.*
+  Cache-Control: public, max-age=86400
+  
 /manifest.webmanifest
   Cache-Control: public, max-age=604800, must-revalidate
+  Content-Type: application/manifest+json
 
-# Pas de cache pour le service worker
+# Service worker - no cache
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+
+# Theme script - short cache for updates
+/theme-init.js
+  Cache-Control: public, max-age=3600, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+
+# HTML pages - short cache with revalidation
+/*.html
+  Cache-Control: public, max-age=300, must-revalidate
+  Content-Type: text/html; charset=utf-8

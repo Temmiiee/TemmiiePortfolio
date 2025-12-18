@@ -12,7 +12,6 @@ A modern, accessible website for Matthéo Termine, a freelance web integrator sp
 - 🔧 Built with Next.js 15, React 19, and TypeScript
 - 📱 Mobile-first, responsive approach
 - 🌍 Multi-language support (FR/EN)
-- 🍪 GDPR-compliant cookie consent management
 
 ## 🛠️ Tech Stack
 

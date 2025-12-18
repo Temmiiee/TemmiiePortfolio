@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
   reactStrictMode: true,
   
-  // Optimisations pour réduire les requêtes bloquantes
+  // Performance optimizations
   experimental: {
     optimizePackageImports: [
       'lucide-react', 
@@ -21,14 +21,13 @@ const nextConfig: NextConfig = {
       'date-fns'
     ],
   },
-  
 
   // Compression and optimizations
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
   
-  // Compiler optimizations
+  // Compiler optimizations for modern browsers
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],

@@ -126,7 +126,6 @@ const HeroSection = () => {
     <section
       id="accueil"
       className="hero-section relative min-h-[85vh] md:min-h-[95vh] flex items-center justify-center py-8 md:py-12 overflow-hidden"
-      role="banner"
       aria-labelledby="hero-title"
     >
       {/* Arrière-plan galaxie interactif */}
