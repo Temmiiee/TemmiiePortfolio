@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matthéo Termine — Ingénieur Accessibilité Web & Développeur</title>
+  <meta name="description" content="Matthéo Termine est un développeur web français spécialisé en accessibilité (RGAA 4.1, WCAG 2.1 AA), optimisation de performances et développement front-end moderne avec Next.js, React et TypeScript." />
+  <meta name="author" content="Matthéo Termine" />
+  <meta property="og:title" content="Matthéo Termine — Ingénieur Accessibilité Web & Développeur" />
+  <meta property="og:description" content="Développeur web français spécialisé en accessibilité, performance et développement front-end moderne." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://mattheo-termine.fr/" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Skip Links for accessibility -->
+  <a href="#main-content" class="skip-link" data-i18n="skipMain">Aller au contenu principal</a>
+  <a href="#navigation" class="skip-link" data-i18n="skipNav">Aller à la navigation</a>
+
+  <!-- Header / Navigation -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="#hero" class="logo" aria-label="Matthéo Termine — retour en haut">
+        <span class="logo-text">MT</span>
+      </a>
+      <nav id="navigation" aria-label="Navigation principale">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Ouvrir le menu de navigation">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </button>
+        <ul class="nav-menu" id="nav-menu" role="list">
+          <li><a href="#about" class="nav-link" data-i18n="navAbout">À propos</a></li>
+          <li><a href="#services" class="nav-link" data-i18n="navServices">Services</a></li>
+          <li><a href="#projects" class="nav-link" data-i18n="navProjects">Projets</a></li>
+          <li><a href="#process" class="nav-link" data-i18n="navProcess">Processus</a></li>
+          <li><a href="#contact" class="nav-link" data-i18n="navContact">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Switch to English">
+        <span class="lang-label">EN</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Hero Section -->
+    <section class="hero" id="hero" aria-labelledby="hero-heading">
+      <div class="container hero-inner">
+        <div class="hero-content">
+          <p class="hero-eyebrow" data-i18n="heroEyebrow">Ingénieur Accessibilité Web</p>
+          <h1 id="hero-heading">Matthéo Termine</h1>
+          <p class="hero-description" data-i18n="heroDesc">
+            Je conçois des sites web modernes, performants et accessibles. Spécialisé dans la conformité RGAA 4.1 et WCAG 2.1 AA, je crée des expériences numériques utilisables par tous, depuis la France.
+          </p>
+          <div class="hero-cta">
+            <a href="#projects" class="btn btn-primary" id="cta-view-projects" data-i18n="heroCtaProjects">Voir mes projets</a>
+            <a href="#contact" class="btn btn-secondary" id="cta-hire-me" data-i18n="heroCtaHire">Me contacter</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-code-block">
+            <div class="code-header">
+              <span class="code-dot"></span>
+              <span class="code-dot"></span>
+              <span class="code-dot"></span>
+              <span class="code-filename">accessibility.ts</span>
+            </div>
+            <pre class="code-content"><code><span class="code-keyword">interface</span> <span class="code-type">A11yAudit</span> {
+  <span class="code-prop">standard</span>: <span class="code-string">"RGAA 4.1"</span> | <span class="code-string">"WCAG 2.1"</span>;
+  <span class="code-prop">level</span>: <span class="code-string">"AA"</span> | <span class="code-string">"AAA"</span>;
+  <span class="code-prop">score</span>: <span class="code-type">number</span>;
+}
+
+<span class="code-keyword">const</span> <span class="code-fn">ensureAccessibility</span> = (
+  <span class="code-param">site</span>: <span class="code-type">Website</span>
+): <span class="code-type">A11yAudit</span> => {
+  <span class="code-keyword">return</span> {
+    standard: <span class="code-string">"RGAA 4.1"</span>,
+    level: <span class="code-string">"AA"</span>,
+    score: <span class="code-number">100</span>
+  };
+};</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number">01</span>
+          <h2 id="about-heading" data-i18n="aboutTitle">À propos</h2>
+        </div>
+        <div class="about-grid">
+          <div class="about-text">
+            <p data-i18n="aboutP1">
+              Je suis un développeur web français passionné par la création de sites modernes, performants et accessibles. Diplômé d'un BUT Métiers du Multimédia et de l'Internet (MMI) à l'Université de Lorraine, je suis spécialisé en développement web et interfaces interactives.
+            </p>
+            <p data-i18n="aboutP2">
+              J'aime créer des expériences numériques qui allient code propre, design UX/UI réfléchi et optimisation SEO technique. Mon expertise en accessibilité web garantit que chaque projet que je livre est utilisable par tous, quelles que soient leurs capacités.
+            </p>
+            <p data-i18n="aboutP3">
+              En dehors du code, j'explore les nouveaux standards web, je contribue à des projets open-source et j'expérimente des projets créatifs comme des bots et du développement de jeux.
+            </p>
+            <a href="https://github.com/Temmiiee" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" id="cta-github-profile">
+              <span data-i18n="aboutCtaGithub">Voir mon GitHub</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            </a>
+          </div>
+          <div class="about-details">
+            <div class="detail-card">
+              <h3 data-i18n="aboutEduLabel">Formation</h3>
+              <p class="detail-value">BUT MMI</p>
+              <p class="detail-label">Université de Lorraine</p>
+            </div>
+            <div class="detail-card">
+              <h3 data-i18n="aboutFocusLabel">Spécialité</h3>
+              <p class="detail-value" data-i18n="aboutFocusValue">Accessibilité Web</p>
+              <p class="detail-label">RGAA 4.1 & WCAG 2.1 AA</p>
+            </div>
+            <div class="detail-card">
+              <h3 data-i18n="aboutLocLabel">Localisation</h3>
+              <p class="detail-value">France</p>
+              <p class="detail-label" data-i18n="aboutLocDesc">Disponible en télétravail</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services" aria-labelledby="services-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number">02</span>
+          <h2 id="services-heading" data-i18n="servicesTitle">Ce que je fais</h2>
+        </div>
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            </div>
+            <h3 data-i18n="svc1Title">Développement Web Sur-Mesure</h3>
+            <p data-i18n="svc1Desc">Sites web construits avec Vite, TypeScript, JavaScript et CSS vanilla. Chaque projet est conçu sur mesure, avec un code léger et performant, sans dépendances superflues.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line></svg>
+            </div>
+            <h3 data-i18n="svc2Title">Audits & Conformité Accessibilité</h3>
+            <p data-i18n="svc2Desc">Audits approfondis selon les normes RGAA 4.1 et WCAG 2.1 AA. J'identifie les obstacles, fournis des recommandations concrètes et implémente les corrections pour rendre votre site accessible à tous.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+            </div>
+            <h3 data-i18n="svc3Title">Optimisation des Performances</h3>
+            <p data-i18n="svc3Desc">Optimisation des Core Web Vitals visant un LCP inférieur à 2,5 secondes et des scores Lighthouse supérieurs à 95. Un site rapide est mieux référencé et convertit davantage.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </div>
+            <h3 data-i18n="svc4Title">Solutions WordPress</h3>
+            <p data-i18n="svc4Desc">Thèmes personnalisés, plugins sur-mesure et installations WordPress optimisées. Je crée des sites WordPress rapides, accessibles et faciles à gérer.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+            <h3 data-i18n="svc5Title">SEO Technique</h3>
+            <p data-i18n="svc5Desc">Données structurées, optimisation des balises meta, sitemaps et configuration robots.txt. Je m'assure que les moteurs de recherche comprennent votre contenu et le référencent correctement.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
+            </div>
+            <h3 data-i18n="svc6Title">Collaboration & Conseil</h3>
+            <p data-i18n="svc6Desc">Je travaille étroitement avec les designers, chefs de projet et équipes de développement. Une communication claire et des méthodes agiles garantissent des livraisons dans les délais.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="stack" id="stack" aria-labelledby="stack-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number">03</span>
+          <h2 id="stack-heading" data-i18n="stackTitle">Technologies</h2>
+        </div>
+        <div class="stack-grid">
+          <div class="stack-category">
+            <h3>Frontend</h3>
+            <ul class="stack-list" role="list">
+              <li>Next.js</li>
+              <li>React</li>
+              <li>TypeScript</li>
+              <li>JavaScript ES6+</li>
+              <li>Tailwind CSS</li>
+              <li>HTML5</li>
+              <li>CSS3</li>
+            </ul>
+          </div>
+          <div class="stack-category">
+            <h3>Backend</h3>
+            <ul class="stack-list" role="list">
+              <li>Node.js</li>
+              <li>PHP</li>
+              <li>WordPress</li>
+            </ul>
+          </div>
+          <div class="stack-category">
+            <h3 data-i18n="stackTools">Outils</h3>
+            <ul class="stack-list" role="list">
+              <li>Git</li>
+              <li>Docker</li>
+              <li>Webpack</li>
+              <li>Jest</li>
+              <li>ESLint</li>
+              <li>Prettier</li>
+            </ul>
+          </div>
+          <div class="stack-category">
+            <h3 data-i18n="stackDeploy">Déploiement</h3>
+            <ul class="stack-list" role="list">
+              <li>Vercel</li>
+              <li>AWS</li>
+              <li>Cloudflare Pages</li>
+            </ul>
+          </div>
+          <div class="stack-category">
+            <h3>Standards</h3>
+            <ul class="stack-list" role="list">
+              <li>RGAA 4.1</li>
+              <li>WCAG 2.1 AA</li>
+              <li>Schema.org</li>
+              <li>Open Graph</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects" id="projects" aria-labelledby="projects-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number">04</span>
+          <h2 id="projects-heading" data-i18n="projectsTitle">Projets Sélectionnés</h2>
+        </div>
+        <div class="projects-list">
+          <article class="project-card" id="project-istex">
+            <div class="project-info">
+              <div class="project-meta">
+                <span class="project-tag">WordPress</span>
+                <span class="project-tag">Design System</span>
+              </div>
+              <h3 data-i18n="proj1Title">Istex Design System</h3>
+              <p data-i18n="proj1Desc">Un thème WordPress sur-mesure conçu pour centraliser un design system et une bibliothèque de composants UI pour l'équipe Istex. Il sert de référence pour la charte graphique, les pictogrammes et les règles d'affichage, assurant la cohérence visuelle sur tous les produits Istex.</p>
+              <div class="project-actions">
+                <a href="https://design.istex.fr/" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" id="cta-istex-live">
+                  <span data-i18n="projViewSite">Voir le site</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card" id="project-tdm">
+            <div class="project-info">
+              <div class="project-meta">
+                <span class="project-tag">React</span>
+                <span class="project-tag">Text Mining</span>
+                <span class="project-tag">CNRS</span>
+              </div>
+              <h3>TDM Factory</h3>
+              <p data-i18n="proj2Desc">Une plateforme de fouille de texte pour l'Enseignement Supérieur et la Recherche, transformant des corpus scientifiques en connaissances exploitables. Extraction d'informations, enrichissement automatique et structuration des textes avec confidentialité renforcée.</p>
+              <div class="project-actions">
+                <a href="https://github.com/Inist-CNRS/tdm-factory" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" id="cta-tdm-source">
+                  <span data-i18n="projViewCode">Voir le code source</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card" id="project-3dmorpion">
+            <div class="project-info">
+              <div class="project-meta">
+                <span class="project-tag">React Three Fiber</span>
+                <span class="project-tag">3D</span>
+                <span class="project-tag">Game</span>
+              </div>
+              <h3>3D Morpion</h3>
+              <p data-i18n="proj3Desc">Un jeu de morpion 3D immersif construit avec React Three Fiber. Plateau 3D entièrement rotatif, effets visuels néon avec bloom et glassmorphism, plusieurs modes de jeu et accessibilité clavier complète.</p>
+              <div class="project-actions">
+                <a href="https://3d-morpion.pages.dev/" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" id="cta-morpion-live">
+                  <span data-i18n="proj3Cta">Jouer au jeu</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </a>
+                <a href="https://github.com/Temmiiee/3DMorpion" class="btn btn-ghost" target="_blank" rel="noopener noreferrer" id="cta-morpion-source">
+                  <span data-i18n="projViewCode2">Voir le code source</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card" id="project-mimoo">
+            <div class="project-info">
+              <div class="project-meta">
+                <span class="project-tag">HTML/CSS</span>
+                <span class="project-tag">Portfolio</span>
+              </div>
+              <h3>Mimoo Portfolio</h3>
+              <p data-i18n="proj4Desc">Un portfolio artistique avec un thème nature et illustrations. Conçu pour mettre en valeur des créations originales dans un univers doux et coloré avec une navigation immersive et poétique.</p>
+              <div class="project-actions">
+                <a href="https://temmiiee.github.io/Mimoo-portfolio/" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" id="cta-mimoo-live">
+                  <span data-i18n="projViewSite2">Voir le site</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card" id="project-naturebot">
+            <div class="project-info">
+              <div class="project-meta">
+                <span class="project-tag">JavaScript</span>
+                <span class="project-tag">Bot</span>
+                <span class="project-tag">Bluesky</span>
+              </div>
+              <h3>Everyday Nature Bot</h3>
+              <p data-i18n="proj5Desc">Un bot Bluesky qui publie des photos de nature quotidiennement. Un projet automatisé combinant intégration d'API et curation de contenu pour apporter une dose quotidienne de nature sur les réseaux sociaux.</p>
+              <div class="project-actions">
+                <a href="https://github.com/Temmiiee/everyday-nature-bot" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" id="cta-bot-source">
+                  <span data-i18n="projViewCode3">Voir le code source</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process" id="process" aria-labelledby="process-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number">05</span>
+          <h2 id="process-heading" data-i18n="processTitle">Mon Processus</h2>
+        </div>
+        <div class="process-grid">
+          <article class="process-step">
+            <div class="process-number" aria-hidden="true">01</div>
+            <h3 data-i18n="proc1Title">Découverte</h3>
+            <p data-i18n="proc1Desc">Je commence chaque projet en comprenant vos objectifs, votre audience et vos contraintes. Nous définissons ensemble le périmètre, les critères de succès et les exigences d'accessibilité.</p>
+          </article>
+          <article class="process-step">
+            <div class="process-number" aria-hidden="true">02</div>
+            <h3>Design</h3>
+            <p data-i18n="proc2Desc">Les maquettes et prototypes sont construits avec l'accessibilité en tête dès le premier jour. Je valide les contrastes, l'ordre de focus et la structure sémantique avant la moindre ligne de code.</p>
+          </article>
+          <article class="process-step">
+            <div class="process-number" aria-hidden="true">03</div>
+            <h3 data-i18n="proc3Title">Développement</h3>
+            <p data-i18n="proc3Desc">Code propre et modulaire avec tests automatisés. Chaque composant est conçu pour être navigable au clavier, compatible avec les lecteurs d'écran et performant sur tous les appareils.</p>
+          </article>
+          <article class="process-step">
+            <div class="process-number" aria-hidden="true">04</div>
+            <h3 data-i18n="proc4Title">Livraison</h3>
+            <p data-i18n="proc4Desc">Audit d'accessibilité complet, benchmarks de performance et validation SEO avant le lancement. Je fournis la documentation et le support pour assurer la maintenabilité à long terme.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact" aria-labelledby="contact-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number">06</span>
+          <h2 id="contact-heading" data-i18n="contactTitle">Me Contacter</h2>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-info">
+            <p class="contact-lead" data-i18n="contactLead">Un projet en tête ou besoin d'un audit d'accessibilité ? N'hésitez pas à me contacter.</p>
+            <div class="contact-methods">
+              <a href="mailto:mattheotermine104@gmail.com" class="contact-method" id="cta-email">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>mattheotermine104@gmail.com</span>
+              </a>
+              <a href="https://github.com/Temmiiee" target="_blank" rel="noopener noreferrer" class="contact-method" id="cta-github">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                <span>github.com/Temmiiee</span>
+              </a>
+              <a href="https://www.linkedin.com/in/mattheo-termine-a6918522b/" target="_blank" rel="noopener noreferrer" class="contact-method" id="cta-linkedin">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                <span data-i18n="contactLinkedin">Profil LinkedIn</span>
+              </a>
+            </div>
+          </div>
+          <form class="contact-form" id="contact-form" aria-label="Formulaire de contact" novalidate>
+            <div class="form-group">
+              <label for="contact-name" data-i18n="formName">Nom complet</label>
+              <input type="text" id="contact-name" name="name" required autocomplete="name" data-i18n-placeholder="formNamePh" placeholder="Votre nom complet" />
+              <span class="form-error" id="name-error" role="alert" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="contact-email" data-i18n="formEmail">Adresse e-mail</label>
+              <input type="email" id="contact-email" name="email" required autocomplete="email" data-i18n-placeholder="formEmailPh" placeholder="vous@exemple.com" />
+              <span class="form-error" id="email-error" role="alert" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="contact-message" data-i18n="formMsg">Message</label>
+              <textarea id="contact-message" name="message" required rows="5" data-i18n-placeholder="formMsgPh" placeholder="Parlez-moi de votre projet..."></textarea>
+              <span class="form-error" id="message-error" role="alert" aria-live="polite"></span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-submit" id="cta-send-message">
+              <span class="btn-text" data-i18n="formSubmit">Envoyer le message</span>
+              <span class="btn-loading" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-dasharray="30 60" /></svg>
+              </span>
+              <span class="btn-success" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <p data-i18n="footerCopy">&copy; 2025 Matthéo Termine. Tous droits réservés.</p>
+      <nav aria-label="Navigation pied de page">
+        <ul class="footer-links" role="list">
+          <li><a href="#hero" data-i18n="footerTop">Retour en haut</a></li>
+          <li><a href="https://github.com/Temmiiee" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/mattheo-termine-a6918522b/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
